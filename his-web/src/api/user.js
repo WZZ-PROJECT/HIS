@@ -58,26 +58,26 @@ export function getUserList(data){
   })
 }
 
-//阿里云上传附件
-export const uploadFileAli = (file,callback) => {
-  let OSS = require('ali-oss')
-  let client = new OSS({
-    region: 'oss-cn-beijing',
-    accessKeyId: 'LTAI4GEuRodq2mqRe8pigqT2',
-    accessKeySecret: 'DB6pN1VRizFzU62qdza9o80bu8B3pN',
-    bucket: 'shandongciguang'
-  });
+// //阿里云上传附件
+// export const uploadFileAli = (file,callback) => {
+//   let OSS = require('ali-oss')
+//   let client = new OSS({
+//     region: 'oss-cn-beijing',
+//     accessKeyId: 'LTAI4GEuRodq2mqRe8pigqT2',
+//     accessKeySecret: 'DB6pN1VRizFzU62qdza9o80bu8B3pN',
+//     bucket: 'shandongciguang'
+//   });
 
-  const tmpcnt = file.name.lastIndexOf(".")
-  const exname = file.name.substring(tmpcnt + 1)
+//   const tmpcnt = file.name.lastIndexOf(".")
+//   const exname = file.name.substring(tmpcnt + 1)
 
-  let storeAs = new Date().getTime() + '.' + exname;//图片名称
-  client.multipartUpload(storeAs,file).then(result =>{
-    const imgurl = result.res.requestUrls[0].split('?')[0];//返回图片地址
-    callback(file,imgurl);
-  }).catch(function (err) {
-    console.log(err);
-  });
-}
+//   let storeAs = new Date().getTime() + '.' + exname;//图片名称
+//   client.multipartUpload(storeAs,file).then(result =>{
+//     const imgurl = result.res.requestUrls[0].split('?')[0];//返回图片地址
+//     callback(file,imgurl);
+//   }).catch(function (err) {
+//     console.log(err);
+//   });
+// }
 
 
