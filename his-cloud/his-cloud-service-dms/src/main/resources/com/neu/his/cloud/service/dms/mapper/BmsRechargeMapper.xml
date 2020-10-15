@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.his.cloud.service.dms.mapper.BmsRechargeMapper">
+  <resultMap id="BaseResultMap" type="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="account_code" jdbcType="VARCHAR" property="accountCode" />
+    <result column="amout" jdbcType="DECIMAL" property="amout" />
+    <result column="channel" jdbcType="INTEGER" property="channel" />
+    <result column="recharge_time" jdbcType="TIMESTAMP" property="rechargeTime" />
+    <result column="recharge_states" jdbcType="INTEGER" property="rechargeStates" />
+    <result column="out_trade_id" jdbcType="VARCHAR" property="outTradeId" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    <result column="result" jdbcType="LONGVARCHAR" property="result" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, account_code, amout, channel, recharge_time, recharge_states, out_trade_id, create_user, 
+    create_time, update_user, update_time, is_deleted
+  </sql>
+  <sql id="Blob_Column_List">
+    result
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.neu.his.cloud.service.dms.model.BmsRechargeExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bms_recharge
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.BmsRechargeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from bms_recharge
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bms_recharge
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from bms_recharge
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.neu.his.cloud.service.dms.model.BmsRechargeExample">
+    delete from bms_recharge
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bms_recharge (account_code, amout, channel, 
+      recharge_time, recharge_states, out_trade_id, 
+      create_user, create_time, update_user, 
+      update_time, is_deleted, result
+      )
+    values (#{accountCode,jdbcType=VARCHAR}, #{amout,jdbcType=DECIMAL}, #{channel,jdbcType=INTEGER}, 
+      #{rechargeTime,jdbcType=TIMESTAMP}, #{rechargeStates,jdbcType=INTEGER}, #{outTradeId,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=INTEGER}, #{result,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into bms_recharge
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="accountCode != null">
+        account_code,
+      </if>
+      <if test="amout != null">
+        amout,
+      </if>
+      <if test="channel != null">
+        channel,
+      </if>
+      <if test="rechargeTime != null">
+        recharge_time,
+      </if>
+      <if test="rechargeStates != null">
+        recharge_states,
+      </if>
+      <if test="outTradeId != null">
+        out_trade_id,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+      <if test="result != null">
+        result,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="accountCode != null">
+        #{accountCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amout != null">
+        #{amout,jdbcType=DECIMAL},
+      </if>
+      <if test="channel != null">
+        #{channel,jdbcType=INTEGER},
+      </if>
+      <if test="rechargeTime != null">
+        #{rechargeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rechargeStates != null">
+        #{rechargeStates,jdbcType=INTEGER},
+      </if>
+      <if test="outTradeId != null">
+        #{outTradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.neu.his.cloud.service.dms.model.BmsRechargeExample" resultType="java.lang.Integer">
+    select count(*) from bms_recharge
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update bms_recharge
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.accountCode != null">
+        account_code = #{record.accountCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amout != null">
+        amout = #{record.amout,jdbcType=DECIMAL},
+      </if>
+      <if test="record.channel != null">
+        channel = #{record.channel,jdbcType=INTEGER},
+      </if>
+      <if test="record.rechargeTime != null">
+        recharge_time = #{record.rechargeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.rechargeStates != null">
+        recharge_states = #{record.rechargeStates,jdbcType=INTEGER},
+      </if>
+      <if test="record.outTradeId != null">
+        out_trade_id = #{record.outTradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isDeleted != null">
+        is_deleted = #{record.isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="record.result != null">
+        result = #{record.result,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update bms_recharge
+    set id = #{record.id,jdbcType=BIGINT},
+      account_code = #{record.accountCode,jdbcType=VARCHAR},
+      amout = #{record.amout,jdbcType=DECIMAL},
+      channel = #{record.channel,jdbcType=INTEGER},
+      recharge_time = #{record.rechargeTime,jdbcType=TIMESTAMP},
+      recharge_states = #{record.rechargeStates,jdbcType=INTEGER},
+      out_trade_id = #{record.outTradeId,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_deleted = #{record.isDeleted,jdbcType=INTEGER},
+      result = #{record.result,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update bms_recharge
+    set id = #{record.id,jdbcType=BIGINT},
+      account_code = #{record.accountCode,jdbcType=VARCHAR},
+      amout = #{record.amout,jdbcType=DECIMAL},
+      channel = #{record.channel,jdbcType=INTEGER},
+      recharge_time = #{record.rechargeTime,jdbcType=TIMESTAMP},
+      recharge_states = #{record.rechargeStates,jdbcType=INTEGER},
+      out_trade_id = #{record.outTradeId,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      is_deleted = #{record.isDeleted,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    update bms_recharge
+    <set>
+      <if test="accountCode != null">
+        account_code = #{accountCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amout != null">
+        amout = #{amout,jdbcType=DECIMAL},
+      </if>
+      <if test="channel != null">
+        channel = #{channel,jdbcType=INTEGER},
+      </if>
+      <if test="rechargeTime != null">
+        recharge_time = #{rechargeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rechargeStates != null">
+        recharge_states = #{rechargeStates,jdbcType=INTEGER},
+      </if>
+      <if test="outTradeId != null">
+        out_trade_id = #{outTradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    update bms_recharge
+    set account_code = #{accountCode,jdbcType=VARCHAR},
+      amout = #{amout,jdbcType=DECIMAL},
+      channel = #{channel,jdbcType=INTEGER},
+      recharge_time = #{rechargeTime,jdbcType=TIMESTAMP},
+      recharge_states = #{rechargeStates,jdbcType=INTEGER},
+      out_trade_id = #{outTradeId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      result = #{result,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.neu.his.cloud.service.dms.model.BmsRecharge">
+    update bms_recharge
+    set account_code = #{accountCode,jdbcType=VARCHAR},
+      amout = #{amout,jdbcType=DECIMAL},
+      channel = #{channel,jdbcType=INTEGER},
+      recharge_time = #{rechargeTime,jdbcType=TIMESTAMP},
+      recharge_states = #{rechargeStates,jdbcType=INTEGER},
+      out_trade_id = #{outTradeId,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      is_deleted = #{isDeleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

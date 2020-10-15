@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.his.cloud.service.bms.mapper.WxResultsMapper">
+  <resultMap id="BaseResultMap" type="com.neu.his.cloud.service.bms.model.WxResults">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="patient_id" jdbcType="BIGINT" property="patientId" />
+    <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="total_fee" jdbcType="VARCHAR" property="totalFee" />
+    <result column="time_end" jdbcType="TIMESTAMP" property="timeEnd" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.neu.his.cloud.service.bms.model.WxResults">
+    <result column="results" jdbcType="LONGVARCHAR" property="results" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, patient_id, transaction_id, openid, mch_id, out_trade_no, total_fee, time_end
+  </sql>
+  <sql id="Blob_Column_List">
+    results
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.neu.his.cloud.service.bms.model.WxResultsExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from wx_results
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.neu.his.cloud.service.bms.model.WxResultsExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from wx_results
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from wx_results
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from wx_results
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.neu.his.cloud.service.bms.model.WxResultsExample">
+    delete from wx_results
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.neu.his.cloud.service.bms.model.WxResults">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into wx_results (patient_id, transaction_id, openid, 
+      mch_id, out_trade_no, total_fee, 
+      time_end, results)
+    values (#{patientId,jdbcType=BIGINT}, #{transactionId,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
+      #{mchId,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalFee,jdbcType=VARCHAR}, 
+      #{timeEnd,jdbcType=TIMESTAMP}, #{results,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.neu.his.cloud.service.bms.model.WxResults">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into wx_results
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="patientId != null">
+        patient_id,
+      </if>
+      <if test="transactionId != null">
+        transaction_id,
+      </if>
+      <if test="openid != null">
+        openid,
+      </if>
+      <if test="mchId != null">
+        mch_id,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="totalFee != null">
+        total_fee,
+      </if>
+      <if test="timeEnd != null">
+        time_end,
+      </if>
+      <if test="results != null">
+        results,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="patientId != null">
+        #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="transactionId != null">
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null">
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null">
+        #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null">
+        #{totalFee,jdbcType=VARCHAR},
+      </if>
+      <if test="timeEnd != null">
+        #{timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="results != null">
+        #{results,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.neu.his.cloud.service.bms.model.WxResultsExample" resultType="java.lang.Integer">
+    select count(*) from wx_results
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update wx_results
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.patientId != null">
+        patient_id = #{record.patientId,jdbcType=BIGINT},
+      </if>
+      <if test="record.transactionId != null">
+        transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openid != null">
+        openid = #{record.openid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mchId != null">
+        mch_id = #{record.mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outTradeNo != null">
+        out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalFee != null">
+        total_fee = #{record.totalFee,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeEnd != null">
+        time_end = #{record.timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.results != null">
+        results = #{record.results,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update wx_results
+    set id = #{record.id,jdbcType=BIGINT},
+      patient_id = #{record.patientId,jdbcType=BIGINT},
+      transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      openid = #{record.openid,jdbcType=VARCHAR},
+      mch_id = #{record.mchId,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      total_fee = #{record.totalFee,jdbcType=VARCHAR},
+      time_end = #{record.timeEnd,jdbcType=TIMESTAMP},
+      results = #{record.results,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update wx_results
+    set id = #{record.id,jdbcType=BIGINT},
+      patient_id = #{record.patientId,jdbcType=BIGINT},
+      transaction_id = #{record.transactionId,jdbcType=VARCHAR},
+      openid = #{record.openid,jdbcType=VARCHAR},
+      mch_id = #{record.mchId,jdbcType=VARCHAR},
+      out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
+      total_fee = #{record.totalFee,jdbcType=VARCHAR},
+      time_end = #{record.timeEnd,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.neu.his.cloud.service.bms.model.WxResults">
+    update wx_results
+    <set>
+      <if test="patientId != null">
+        patient_id = #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="transactionId != null">
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null">
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null">
+        mch_id = #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null">
+        total_fee = #{totalFee,jdbcType=VARCHAR},
+      </if>
+      <if test="timeEnd != null">
+        time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="results != null">
+        results = #{results,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.neu.his.cloud.service.bms.model.WxResults">
+    update wx_results
+    set patient_id = #{patientId,jdbcType=BIGINT},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      mch_id = #{mchId,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      total_fee = #{totalFee,jdbcType=VARCHAR},
+      time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      results = #{results,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.neu.his.cloud.service.bms.model.WxResults">
+    update wx_results
+    set patient_id = #{patientId,jdbcType=BIGINT},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      mch_id = #{mchId,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      total_fee = #{totalFee,jdbcType=VARCHAR},
+      time_end = #{timeEnd,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

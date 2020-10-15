@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: his-cloud-config
+  cloud:
+    config:
+      label: master
+      server:
+        git:
+          uri: https://github.com/ZainZhao/spring-cloud-config
+          search-paths: respo
+          username: ZainZhao
+          password: 
+          force-pull: true
+  boot:
+    admin:
+      client:
+        url: http://localhost:8084
+        instance:
+          service-base-url: http://localhost:8087
+
+  zipkin:
+    base-url: http://localhost:9411
+
+  rabbitmq:
+    host: 152.136.233.245
+    port: 15672
+    virtual-host: his
+    username: admin
+    password: admin
+    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+
+
+server:
+  port: 8888  #只能在bootstrap中才能呢个改
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10030/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"   #暴露所有的端点我们可以看到更多的服务实例相关信息，
+    endpoint:
+      health:
+        show-details: ALWAYS   #health endpoint是否必须显示全部细节
