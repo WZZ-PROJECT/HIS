@@ -1,0 +1,23 @@
+p {
+    padding: 0;
+    margin: 0;
+}
+.flex-empty {
+    height: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.empty-content {
+    position: relative;
+    width: 100%;
+    line-height: 50px;
+    height: 50px;
+}
+.empty-content::after {
+    content: '暂无数据';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}

@@ -1,0 +1,2 @@
+webpackJsonp([6],{EGDg:function(e,t){},haEB:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r={components:{Tab:n("WmY6").a}},a={render:function(){var e=this.$createElement,t=this._self._c||e;return t("div",[t("tab",{attrs:{name:"center"}})],1)},staticRenderFns:[]};var c=n("VU/8")(r,a,!1,function(e){n("EGDg")},null,null);t.default=c.exports}});
+//# sourceMappingURL=6.fe4c20f593f1f0d80ab7.js.map
