@@ -134,4 +134,15 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }
+
+    /**
+     * 根据用户信息生成token
+     */
+    public String APPGenerateToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, username); //名字
+        claims.put(CLAIM_KEY_CREATED, new Date()); //时间
+        return generateToken(claims);
+    }
+
 }

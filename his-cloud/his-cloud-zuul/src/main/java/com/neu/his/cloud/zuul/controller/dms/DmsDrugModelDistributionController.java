@@ -54,10 +54,10 @@ public class DmsDrugModelDistributionController {
     @ApiOperation(value = "更新药品模版")
     @RequestMapping(value = "/updateModel", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam, BindingResult result){
+    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam){
         return apiPcDmsDrugModelDistributionService.updateModel(modelId,dmsDrugModelParam);
     }
-    private CommonResult updateModelFallbackInfo(Long modelId,DmsDrugModelParam dmsDrugModelParam, BindingResult result){
+    private CommonResult updateModelFallbackInfo(Long modelId,DmsDrugModelParam dmsDrugModelParam){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 

@@ -6,6 +6,7 @@ import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.distribution.api.pc.dms.ApiPcDmsMechanicItemRecordDistributionService;
 import com.neu.his.cloud.zuul.distribution.api.pc.dms.ApiPcDmsMedicinePrescriptionRecordDistributionService;
 import com.neu.his.cloud.zuul.dto.dms.DmsMechanicItemRecordResult;
+import com.neu.his.cloud.zuul.dto.dms.ListByDeptChangeParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,12 @@ public class DmsMechanicItemRecordDistributionController {
     @RequestMapping(value = "/listByDept", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDept(@RequestParam("deptId") Long deptId,
+                                                                            @RequestParam("name") String name,
                                                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-        return  apiPcDmsMechanicItemRecordDistributionService.listByDept(deptId,pageSize,pageNum);
+        return  apiPcDmsMechanicItemRecordDistributionService.listByDept(deptId,name,pageSize,pageNum);
     }
-    private CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptFallbackInfo(Long deptId,Integer pageSize,Integer pageNum){
+    private CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptFallbackInfo(Long deptId, String name,Integer pageSize,Integer pageNum){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
@@ -63,5 +65,20 @@ public class DmsMechanicItemRecordDistributionController {
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
+
+    /**
+     * 描述:收费员账号： 根据科室id刷新患者列表
+     * <p>author: ma
+     */
+    @HystrixCommand(fallbackMethod = "listByDeptChangeFallbackInfo")
+    @ApiOperation(value = "根据科室id刷新患者列表")
+    @RequestMapping(value = "/listByDeptChange", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptChange(@RequestBody ListByDeptChangeParam listByDeptChangeParam){
+        return apiPcDmsMechanicItemRecordDistributionService.listByDeptChange(listByDeptChangeParam);
+    }
+    private CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptChangeFallbackInfo(ListByDeptChangeParam listByDeptChangeParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
 
 }

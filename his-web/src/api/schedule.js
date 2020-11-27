@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 export function getRulelist(data) {
-  console.log(data)
+
   return request({
     url: '/skd/listRule',
     method: 'post',

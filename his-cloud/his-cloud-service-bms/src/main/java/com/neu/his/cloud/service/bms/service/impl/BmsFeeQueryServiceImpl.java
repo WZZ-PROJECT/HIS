@@ -9,6 +9,7 @@ import com.neu.his.cloud.service.bms.model.*;
 import com.neu.his.cloud.service.bms.service.BmsFeeQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +52,15 @@ public class BmsFeeQueryServiceImpl implements BmsFeeQueryService {
                 continue;
             }
             BmsDoctorPatientFeeResult result = new BmsDoctorPatientFeeResult();
+            result.setId(item.getId());
             result.setItemName(nonDrug.getName());
             result.setFormat(nonDrug.getFormat());
             result.setPrice(nonDrug.getPrice());
             result.setCurrentNum(new Long(1));
             result.setType(item.getType());
             result.setStatus(item.getStatus());
+            result.setInvoice(item.getInvoice());
+            result.setPlace(nonDrug.getPlace());
             //添加收费状态
             if(item.getStatus() == 2 || item.getStatus() == 3 || item.getStatus() == 4){
                 result.setChargeStatus(1);
@@ -83,12 +87,18 @@ public class BmsFeeQueryServiceImpl implements BmsFeeQueryService {
                     continue;
                 }
                 BmsDoctorPatientFeeResult result = new BmsDoctorPatientFeeResult();
+                result.setId(itemRecord.getId());
                 result.setItemName(drug.getName());
                 result.setFormat(drug.getFormat());
                 result.setPrice(drug.getPrice());
                 result.setCurrentNum(itemRecord.getCurrentNum());
                 result.setType(4);
-                result.setStatus(itemRecord.getStatus());
+                result.setStatus(item.getStatus());
+                result.setInvoice(itemRecord.getInvoice());
+                result.setMedicalAdvice(item.getMedicalAdvice());
+                result.setFrequency(itemRecord.getFrequency());
+                result.setUsageNum(itemRecord.getUsageNum());
+                result.setUsageNumUnit(itemRecord.getUsageNumUnit());
                 //添加收费状态
                 if(item.getStatus() == 2){
                     result.setChargeStatus(1);
@@ -116,12 +126,14 @@ public class BmsFeeQueryServiceImpl implements BmsFeeQueryService {
                     continue;
                 }
                 BmsDoctorPatientFeeResult result = new BmsDoctorPatientFeeResult();
+                result.setId(itemRecord.getId());
                 result.setItemName(drug.getName());
                 result.setFormat(drug.getFormat());
                 result.setPrice(drug.getPrice());
                 result.setCurrentNum(itemRecord.getCurrentNum());
                 result.setType(5);
-                result.setStatus(itemRecord.getStatus());
+                result.setStatus(item.getStatus());
+                result.setInvoice(itemRecord.getInvoice());
                 //添加收费状态
                 if(item.getStatus() == 2){
                     result.setChargeStatus(1);
@@ -238,6 +250,38 @@ public class BmsFeeQueryServiceImpl implements BmsFeeQueryService {
         }
 
         return resultList;
+    }
+
+
+    //打发票
+    @Override
+    public int updateInvoice(List<BmsDoctorPatientFeeResult> list) {
+        int i=0;
+        if(!CollectionUtils.isEmpty(list)){
+            for(BmsDoctorPatientFeeResult bmsDoctorPatientFeeResult:list){
+                if(bmsDoctorPatientFeeResult.getType()==1 || bmsDoctorPatientFeeResult.getType()==2 || bmsDoctorPatientFeeResult.getType()==3 || bmsDoctorPatientFeeResult.getType()==0){
+                    DmsNonDrugItemRecord dmsNonDrugItemRecord=new DmsNonDrugItemRecord();
+                    dmsNonDrugItemRecord.setId(bmsDoctorPatientFeeResult.getId());
+                    dmsNonDrugItemRecord.setType(bmsDoctorPatientFeeResult.getType());
+                    dmsNonDrugItemRecord.setInvoice(1L);
+                    i+=dmsNonDrugItemRecordMapper.updateByPrimaryKeySelective(dmsNonDrugItemRecord);
+
+                }else if (bmsDoctorPatientFeeResult.getType()==4){
+                    DmsHerbalItemRecord dmsHerbalItemRecord=new DmsHerbalItemRecord();
+                    dmsHerbalItemRecord.setId(bmsDoctorPatientFeeResult.getId());
+                    dmsHerbalItemRecord.setInvoice(1L);
+                    i+=dmsHerbalItemRecordMapper.updateByPrimaryKeySelective(dmsHerbalItemRecord);
+
+                }else if(bmsDoctorPatientFeeResult.getType()==5){
+                    DmsMedicineItemRecord dmsMedicineItemRecord=new DmsMedicineItemRecord();
+                    dmsMedicineItemRecord.setId(bmsDoctorPatientFeeResult.getId());
+                    dmsMedicineItemRecord.setInvoice(1L);
+                    i+=dmsMedicineItemRecordMapper.updateByPrimaryKeySelective(dmsMedicineItemRecord);
+
+                }
+            }
+        }
+        return i;
     }
 
 

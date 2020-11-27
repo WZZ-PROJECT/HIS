@@ -1,7 +1,6 @@
 package com.neu.his.cloud.zuul.model;
 
 import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 public class SmsSetmealSkdRuleItem implements Serializable {
@@ -11,6 +10,7 @@ public class SmsSetmealSkdRuleItem implements Serializable {
     @ApiModelProperty(value = "医疗套餐ID")
     private Long nonDrugId;
 
+    @ApiModelProperty(value = "一周中的排班时间")
     private String daysOfWeek;
 
     @ApiModelProperty(value = "状态")

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SmsDescription implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private String description;

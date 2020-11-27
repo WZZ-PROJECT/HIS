@@ -1,5 +1,7 @@
 package com.neu.his.cloud.zuul.service.sms;
 
+import com.neu.his.cloud.zuul.common.CommonResult;
+import com.neu.his.cloud.zuul.dto.sms.CheckPassword;
 import com.neu.his.cloud.zuul.dto.sms.SmsStaffParam;
 import com.neu.his.cloud.zuul.model.SmsStaff;
 
@@ -26,5 +28,16 @@ public interface SmsStaffService {
      */
     SmsStaff register(SmsStaffParam smsStaffParam);
 
+    CommonResult checkPasswords(CheckPassword checkPassword);
 
+    CommonResult checkPassword(CheckPassword checkPassword);
+
+    CommonResult updatePassword(CheckPassword checkPassword);
+
+
+    /**
+     * 描述：小程序获得Token
+     * <p>return 生成的JWT的token
+     */
+    String getToken(String username);
 }

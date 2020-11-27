@@ -2,14 +2,11 @@ package com.neu.his.cloud.service.dms.service;
 
 import com.neu.his.cloud.service.dms.common.CommonResult;
 import com.neu.his.cloud.service.dms.dto.app.AppRegistrationParam;
-import com.neu.his.cloud.service.dms.dto.dms.DmsRegHistoryResult;
-import com.neu.his.cloud.service.dms.dto.dms.WXDmsRegistrationParam;
-import com.neu.his.cloud.service.dms.dto.dms.WxProgramResultsParam;
+import com.neu.his.cloud.service.dms.dto.dms.*;
 import com.neu.his.cloud.service.dms.model.BmsAccount;
 
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +14,13 @@ import java.util.Map;
  * 挂号
  */
 public interface DmsRegistrationService {
+
+    /**
+     * 同一患者在同一午别，未就诊情况下应不能重复挂同一医生
+     * @param wxDmsRegistrationParam
+     * @return
+     */
+    int queryCreateRegistration(WXDmsRegistrationParam wxDmsRegistrationParam,long patientId);
 
     CommonResult amountSufficient(Long registrationId,List<BigDecimal> amount);
 
@@ -50,7 +54,7 @@ public interface DmsRegistrationService {
     /**
      * 描述：封装微信支付的结果
      */
-    int WxPayResult(Map<String, String> stringStringMap,Long patientid);
+    int WxPayResult(Map<String, String> stringStringMap,Long patientid,Long type);
     /**
      * 描述：查看该病人是不是有账号
      */
@@ -74,15 +78,46 @@ public interface DmsRegistrationService {
      */
     int WxProgramResults(WxProgramResultsParam wxProgramResultsParam);
 
-    WXDmsRegistrationParam WxProgramCompletion(WXDmsRegistrationParam wXDmsRegistrationParam);
+    /**
+     * 描述：补全用户信息
+     */
+    WXDmsRegistrationParam WxProgramCompletion(WxRegisteredPatam wxRegisteredPatam);
 
+    /**
+     * 描述：余额是否足够
+     */
     int amountSufficient(Long patientId,BigDecimal acount);
-
+    /**
+     * 描述：扣费
+     */
     int subBmsAccount(Long patientId,BigDecimal acount);
 
     /**
      * 描述：微信小程序生成病人账号
      */
     int WXXinsertBmsAccount(WXDmsRegistrationParam dmsRegistrationParam);
+
+    /**
+     * 描述：判断是不用有账户
+     */
+    int isAccount(String identificationNo);
+
+    /**
+     * 描述：获得病人账户信息
+     */
+    BmsAccount returnAccount(WXDmsRegistrationParam dmsRegistrationParam);
+    /**
+     * 描述：修改病人信息
+     */
+    int updateInformation(WXDmsRegistrationParam wxDmsRegistrationParam);
+    /**
+     * 描述：充值、退费记录插入账单表
+     */
+    int insertBmsInvoiceRecord(WXDmsRegistrationParam wxDmsRegistrationParam);
+
+    /**
+     * 描述：退款显示各种方式
+     */
+    RefundResultsParam selectRefundResultsParam(WXDmsRegistrationParam wxDmsRegistrationParam);
 
 }

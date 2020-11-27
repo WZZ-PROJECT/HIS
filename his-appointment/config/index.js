@@ -14,9 +14,10 @@ module.exports = {
       '/api': { // 配置的url请求名字开头
         // 代理的目标服务器地址,这个路径是我代理到服务器,即你要请求的第三方接口
         // target: 'http://localhost:10022',
-        target: 'https://152.136.233.245:10022',
-        // 如果后端地址带路径’/api’, 路径：‘http://www.xxxxxx.com/api’
-        // target: 'http://10.18.110.107/api',  //注意
+        // target: 'https://his.cgjiankang.com:10022',
+        // target: 'https://his.cgjiankang.com/api',
+        // 如果后端地址带路径’/api’, 路径：‘http://www.xxxxxx.com/api’ 
+        target: 'https://192.168.0.44:10022',  //注意
         // https请求需要该设置
         secure: false,
         // 开启代理：在本地会创建一个虚拟服务端，然后发送请求的数据，
@@ -30,7 +31,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: 'https://152.136.233.245', // can be overwritten by process.env.HOST
+    host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
@@ -62,10 +63,10 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../app/index.html'),
+    index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../app'),
+    assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
 

@@ -29,7 +29,7 @@ public interface ApiDmsAppService {
      * 描述：查询该科室Id查询医生、排班、科室信息
      */
     @RequestMapping(value = "/staff/listNowDoctorRegistration", method = RequestMethod.GET)
-    CommonResult<List<DmsNowDoctorRegistrationResult>> listNowDoctorRegistration(@RequestParam("deptId") Long deptId,
+    CommonResult <DmsNowDoctorRegistrationResults> listNowDoctorRegistration(@RequestParam("deptId") Long deptId,
                                                                                  @RequestParam("thedate") String thedate);
 
     @ApiOperation(value = "根据医生ID查询医生信息")
@@ -56,5 +56,14 @@ public interface ApiDmsAppService {
     @ApiOperation(value = "根据openID获取当前患者已预约的信息列表")
     @RequestMapping(value = "/staff/listPatientConventionUpdate", method = RequestMethod.GET)
     CommonResult<List<BookingInformationResult>> listPatientConventionUpdate(@RequestParam("Id") Long Id);
+
+
+    @ApiOperation(value = "查看信息")
+    @RequestMapping(value = "/staff/selectMaintenanceParam", method = RequestMethod.POST)
+    CommonResult<List<InformationMaintenance>> selectMaintenanceParam();
+
+    @ApiOperation(value = "维护信息")
+    @RequestMapping(value = "/staff/updateMaintenanceParam", method = RequestMethod.POST)
+    CommonResult updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance);
 
 }

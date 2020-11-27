@@ -1,0 +1,24 @@
+<!-- pages/my/my.wxml -->
+<view class="appiontment">
+  <view class="main" bindtap="handleNavigate">
+    <view class="login-button" wx:if="{{userInfo}}" data-url="/pages/detail/detail">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="cover" data-url="/pages/detail/detail"></image>
+      <view class="nickname elli" data-url="/pages/detail/detail">{{userInfo.nickName}}</view>
+      <image class="detail" src="../../images/right_arrows.png" data-url="/pages/detail/detail" mode="cover"></image>
+    </view>
+    <button wx:else class="login-button" open-type="getUserInfo" bindgetuserinfo='bindgetuserinfo'>
+      <image class="avatar" src="../../images/touxiang.png" mode="cover"></image>
+      <view class="nickname">
+        <text>点击登录</text>
+      </view>
+      <image class="detail" src="../../images/right_arrows.png" mode="cover"></image>
+    </button>
+    <van-cell-group style="text-align: left">
+      <van-cell title="预约记录" is-link data-url="/pages/record/record"/>
+      <van-cell title="关注医生" is-link data-url="/pages/attention/attention" />
+      <van-cell title="历史病历" is-link data-url="/pages/case/case" />
+      <van-cell title="缴费记录" is-link data-url="/pages/payFee/payFee" />
+      <van-cell title="预存费用" is-link data-url="/pages/prestore/prestore" />
+    </van-cell-group>
+  </view>
+</view>

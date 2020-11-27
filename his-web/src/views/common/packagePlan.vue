@@ -10,11 +10,12 @@
         </el-date-picker>
       </el-form-item>
       <el-input v-model="listQuery.nonDrugName" placeholder="套餐名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select placeholder="所属科室" filterable  v-model="listQuery.deptId" style="width:180px">
+      <el-select placeholder="所属科室" clearable  v-model="listQuery.deptId" style="width:180px">
         <el-option v-for="item in alldept" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       </el-button>
+      <el-button @click="handleReset">清空</el-button>
     </el-form>
     <div style="padding: 5px 5px 5px 5px; margin-top:20px">
       <el-table :data="schedule"  border >
@@ -64,8 +65,17 @@ export default {
   },
   methods:{
     handleFilter() {
-      this.listQuery.startDate = parseTime(this.starttime)
+      if(this.starttime!=null){
+        this.listQuery.startDate = parseTime(this.starttime)
+      }else {
+        this.listQuery.startDate=''
+      }
       this.listSetmealSkd()
+    },
+    handleReset() {
+      this.starttime = '';
+      this.listQuery.nonDrugName = '';
+      this.listQuery.deptId = '';
     },
     getAllDep(){
       getAllDep().then(res=>{
@@ -75,6 +85,7 @@ export default {
     listSetmealSkd(){
       if(checkPermission([1,7])){
         //this.listQuery.staffId = null
+       /* this.listQuery.startDate=*/
         listSetmealSkd(this.listQuery).then(res=>{
         this.schedule = res.data.list
         this.total = res.data.total

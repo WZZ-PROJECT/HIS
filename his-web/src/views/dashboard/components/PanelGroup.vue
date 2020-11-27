@@ -67,7 +67,7 @@ export default {
     return{
       date: '',
       num:0,
-      depnum:0,
+      deptnum:0,
       totalnum:0
     }
   },
@@ -81,7 +81,7 @@ export default {
     staffPatients(){
       this.num = 0
       staffPatients(this.$store.getters.id).then(res=>{
-        res.data.numOfPatients.forEach(item=>{
+        res.data && res.data.numOfPatients.forEach(item=>{
           this.num += item
         })
       })
@@ -89,7 +89,7 @@ export default {
     deptPatients(){
       this.deptnum = 0
       deptPatients(this.$store.getters.deptId).then(res=>{
-        res.data.numOfPatients.forEach(item=>{
+        res.data && res.data.numOfPatients.forEach(item=>{
           this.deptnum += item
         })
       })
@@ -97,7 +97,7 @@ export default {
     totalPatients(){
       this.totalnum = 0
       totalPatients().then(res=>{
-        res.data.numOfPatients.forEach(item=>{
+        res.data && res.data.numOfPatients.forEach(item=>{
           this.totalnum += item
         })
       })

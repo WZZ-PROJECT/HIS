@@ -37,4 +37,5 @@ public class DmsDrugRedisParam implements Serializable {
     @ApiModelProperty(value = "用法" )
     private Integer usageMeans;
 
+
 }

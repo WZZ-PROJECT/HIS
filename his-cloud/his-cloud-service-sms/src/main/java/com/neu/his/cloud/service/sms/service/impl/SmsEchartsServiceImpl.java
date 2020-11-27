@@ -138,7 +138,7 @@ public class SmsEchartsServiceImpl implements SmsEchartsService {
 
         Date today = DateUtil.setMilliSecond(DateUtil.getDate(new Date()),0);
         SmsWorkloadRecordExample smsWorkloadRecordExample = new SmsWorkloadRecordExample();
-        smsWorkloadRecordExample.createCriteria().andDeptIdEqualTo(deptId).andDateBetween(DateUtil.getDateBefore(today,7),today).andTypeEqualTo(2);
+        smsWorkloadRecordExample.createCriteria().andDeptIdEqualTo(deptId).andDateBetween(DateUtil.getDateBefore(today,7),today).andTypeEqualTo(1);
         smsWorkloadRecordExample.setOrderByClause("date desc");
         List<SmsWorkloadRecord> smsWorkloadRecordList = smsWorkloadRecordMapper.selectByExample(smsWorkloadRecordExample);
         if (!smsWorkloadRecordList.isEmpty()){
@@ -161,7 +161,7 @@ public class SmsEchartsServiceImpl implements SmsEchartsService {
             smsPatientsStatisticsResult.setNumOfPatients(numOfPatients);
             return smsPatientsStatisticsResult;
         }
-        return null;
+        return new SmsPatientsStatisticsResult();
     }
 
     @Override

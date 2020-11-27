@@ -25,4 +25,11 @@ public class AppHistoryRegResult {
     @ApiModelProperty(value = "项目id")
     Long id;
 
+    @ApiModelProperty(value = "频次")
+    Integer frequency;
+    @ApiModelProperty(value = "用量")
+    Integer usageNum;
+    @ApiModelProperty(value = "单位")
+    Integer usageNumUnit;
+
 }

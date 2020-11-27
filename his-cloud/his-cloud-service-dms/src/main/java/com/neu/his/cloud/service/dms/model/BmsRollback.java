@@ -8,6 +8,9 @@ import java.util.Date;
 public class BmsRollback implements Serializable {
     private Long id;
 
+    @ApiModelProperty(value = "bms_refund_bill表的主键")
+    private Long refundBillId;
+
     private String accountCode;
 
     private BigDecimal rbAmount;
@@ -46,6 +49,14 @@ public class BmsRollback implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getRefundBillId() {
+        return refundBillId;
+    }
+
+    public void setRefundBillId(Long refundBillId) {
+        this.refundBillId = refundBillId;
     }
 
     public String getAccountCode() {
@@ -159,6 +170,7 @@ public class BmsRollback implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", refundBillId=").append(refundBillId);
         sb.append(", accountCode=").append(accountCode);
         sb.append(", rbAmount=").append(rbAmount);
         sb.append(", rbState=").append(rbState);

@@ -1,9 +1,7 @@
 package com.neu.his.cloud.api.pc.controller.dms;
 
 import com.neu.his.cloud.api.pc.common.CommonResult;
-import com.neu.his.cloud.api.pc.dto.dms.DmsRegistrationParam;
-import com.neu.his.cloud.api.pc.dto.dms.WXDmsRegistrationParam;
-import com.neu.his.cloud.api.pc.dto.dms.WxProgramResultsParam;
+import com.neu.his.cloud.api.pc.dto.dms.*;
 import com.neu.his.cloud.api.pc.service.dms.DmsRegistrationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,8 +58,8 @@ public class DmsRegistrationController {
     @ApiOperation(value = "小程序挂号")
     @RequestMapping(value = "/programCreateRegistration", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult programCreateRegistration(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam , BindingResult result){
-        return dmsRegistrationService.programCreateRegistration(wxDmsRegistrationParam);
+    public CommonResult programCreateRegistration(@RequestBody WxRegisteredPatam wxRegisteredPatam , BindingResult result){
+        return dmsRegistrationService.programCreateRegistration(wxRegisteredPatam);
     }
 
     @ApiOperation(value = "充值")
@@ -69,6 +67,36 @@ public class DmsRegistrationController {
     @ResponseBody
     public CommonResult WxProgramResults(@RequestBody WxProgramResultsParam wxProgramResultsParam , BindingResult result){
         return dmsRegistrationService.WxProgramResults(wxProgramResultsParam);
+    }
+
+    @ApiOperation(value = "判断是否有账户")
+    @RequestMapping(value = "/isAccount", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult isAccount(@RequestParam String identificationNo){
+        return dmsRegistrationService.isAccount(identificationNo);
+    }
+
+    @ApiOperation(value = "修改病人信息")
+    @RequestMapping(value = "/updateInformation", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateInformation(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return dmsRegistrationService.updateInformation(wxDmsRegistrationParam);
+
+    }
+
+    @ApiOperation(value = "获得各个方式的退款金额")
+    @RequestMapping(value = "/selectRefundResultsParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<RefundResultsParam> selectRefundResultsParam(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return dmsRegistrationService.selectRefundResultsParam(wxDmsRegistrationParam);
+
+    }
+
+    @ApiOperation(value = "同一患者在同一午别，未就诊情况下应不能重复挂同一医生")
+    @RequestMapping(value = "/queryCreateRegistration", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryCreateRegistration(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return dmsRegistrationService.queryCreateRegistration(wxDmsRegistrationParam);
 
     }
 }

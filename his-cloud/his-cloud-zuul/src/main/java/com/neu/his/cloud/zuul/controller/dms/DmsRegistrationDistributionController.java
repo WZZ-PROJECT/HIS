@@ -4,10 +4,9 @@ package com.neu.his.cloud.zuul.controller.dms;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.neu.his.cloud.zuul.common.CommonResult;
+import com.neu.his.cloud.zuul.controller.bms.GetPackageController;
 import com.neu.his.cloud.zuul.distribution.api.pc.dms.ApiPcDmsRegistrationDistributionService;
-import com.neu.his.cloud.zuul.dto.dms.DmsRegistrationParam;
-import com.neu.his.cloud.zuul.dto.dms.WXDmsRegistrationParam;
-import com.neu.his.cloud.zuul.dto.dms.WxProgramResultsParam;
+import com.neu.his.cloud.zuul.dto.dms.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Api(tags = "DmsRegistrationDistributionController", description = "挂号管理")
@@ -80,11 +80,13 @@ public class DmsRegistrationDistributionController {
     @ApiOperation(value = "小程序挂号")
     @RequestMapping(value = "/programCreateRegistration", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult programCreateRegistration(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam, BindingResult result){
-        return apiPcDmsRegistrationDistributionService.programCreateRegistration(wxDmsRegistrationParam);
+    public CommonResult programCreateRegistration(@RequestBody WxRegisteredPatam wxRegisteredPatam, BindingResult result) throws Exception {
+        /*Map<String, String> resultsMap = GetPackageController.getResultsMap(wxRegisteredPatam.getOut_trade_no());
+        wxRegisteredPatam.setResults(resultsMap);*/
+        return apiPcDmsRegistrationDistributionService.programCreateRegistration(wxRegisteredPatam);
 
     }
-    private CommonResult programCreateRegistrationFallbackInfo( WXDmsRegistrationParam dmsRegistrationParam , BindingResult result){
+    private CommonResult programCreateRegistrationFallbackInfo( WxRegisteredPatam wxRegisteredPatam , BindingResult result){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
@@ -96,11 +98,64 @@ public class DmsRegistrationDistributionController {
     @RequestMapping(value = "/WxProgramResults", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult WxProgramResults(@RequestBody WxProgramResultsParam wxProgramResultsParam, BindingResult result){
-        return apiPcDmsRegistrationDistributionService.WxProgramResults(wxProgramResultsParam);
-
+        try {
+            Map<String, String> resultsMap = GetPackageController.getResultsMap(wxProgramResultsParam.getOut_trade_no());
+            wxProgramResultsParam.setResults(resultsMap);
+            return apiPcDmsRegistrationDistributionService.WxProgramResults(wxProgramResultsParam);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     private CommonResult WxProgramResultsFallbackInfo(WxProgramResultsParam wxProgramResultsParam , BindingResult result){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
+    @HystrixCommand(fallbackMethod = "isAccountFallbackInfo")
+    @ApiOperation(value = "判断是否有账户")
+    @RequestMapping(value = "/isAccount", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult isAccount(@RequestParam String identificationNo){
+        return apiPcDmsRegistrationDistributionService.isAccount(identificationNo);
+
+    }
+    private CommonResult isAccountFallbackInfo(String identificationNo){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "updateInformationFallbackInfo")
+    @ApiOperation(value = "修改病人信息")
+    @RequestMapping(value = "/updateInformation", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateInformation(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return apiPcDmsRegistrationDistributionService.updateInformation(wxDmsRegistrationParam);
+
+    }
+    private CommonResult updateInformationFallbackInfo( WXDmsRegistrationParam wxDmsRegistrationParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "selectRefundResultsParamFallbackInfo")
+    @ApiOperation(value = "获得各个方式的退款金额")
+    @RequestMapping(value = "/selectRefundResultsParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<RefundResultsParam> selectRefundResultsParam(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return apiPcDmsRegistrationDistributionService.selectRefundResultsParam(wxDmsRegistrationParam);
+
+    }
+    private CommonResult<RefundResultsParam> selectRefundResultsParamFallbackInfo( WXDmsRegistrationParam wxDmsRegistrationParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "queryCreateRegistrationFallbackInfo")
+    @ApiOperation(value = "同一患者在同一午别，未就诊情况下应不能重复挂同一医生")
+    @RequestMapping(value = "/queryCreateRegistration", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryCreateRegistration(@RequestBody WXDmsRegistrationParam wxDmsRegistrationParam){
+        return apiPcDmsRegistrationDistributionService.queryCreateRegistration(wxDmsRegistrationParam);
+
+    }
+    private CommonResult queryCreateRegistrationFallbackInfo(WXDmsRegistrationParam wxDmsRegistrationParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
 }

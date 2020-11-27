@@ -774,6 +774,126 @@ public class DmsRegistrationExample {
             addCriterion("patient_age_str not between", value1, value2, "patientAgeStr");
             return (Criteria) this;
         }
+
+        public Criteria andWxResultsIdIsNull() {
+            addCriterion("wx_results_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdIsNotNull() {
+            addCriterion("wx_results_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdEqualTo(Long value) {
+            addCriterion("wx_results_id =", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotEqualTo(Long value) {
+            addCriterion("wx_results_id <>", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdGreaterThan(Long value) {
+            addCriterion("wx_results_id >", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("wx_results_id >=", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdLessThan(Long value) {
+            addCriterion("wx_results_id <", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdLessThanOrEqualTo(Long value) {
+            addCriterion("wx_results_id <=", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdIn(List<Long> values) {
+            addCriterion("wx_results_id in", values, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotIn(List<Long> values) {
+            addCriterion("wx_results_id not in", values, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdBetween(Long value1, Long value2) {
+            addCriterion("wx_results_id between", value1, value2, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotBetween(Long value1, Long value2) {
+            addCriterion("wx_results_id not between", value1, value2, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelIsNull() {
+            addCriterion("registeredLevel is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelIsNotNull() {
+            addCriterion("registeredLevel is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelEqualTo(Long value) {
+            addCriterion("registeredLevel =", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelNotEqualTo(Long value) {
+            addCriterion("registeredLevel <>", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelGreaterThan(Long value) {
+            addCriterion("registeredLevel >", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelGreaterThanOrEqualTo(Long value) {
+            addCriterion("registeredLevel >=", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelLessThan(Long value) {
+            addCriterion("registeredLevel <", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelLessThanOrEqualTo(Long value) {
+            addCriterion("registeredLevel <=", value, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelIn(List<Long> values) {
+            addCriterion("registeredLevel in", values, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelNotIn(List<Long> values) {
+            addCriterion("registeredLevel not in", values, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelBetween(Long value1, Long value2) {
+            addCriterion("registeredLevel between", value1, value2, "registeredlevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegisteredlevelNotBetween(Long value1, Long value2) {
+            addCriterion("registeredLevel not between", value1, value2, "registeredlevel");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

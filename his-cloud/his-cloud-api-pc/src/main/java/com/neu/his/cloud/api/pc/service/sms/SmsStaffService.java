@@ -36,9 +36,7 @@ public interface SmsStaffService {
 
 
     @RequestMapping(value = "/staff/select", method = RequestMethod.POST)
-    CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam,
-                                                         @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum);
+    CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam);
 
 
     @RequestMapping(value = "/staff/selectAll", method = RequestMethod.GET)

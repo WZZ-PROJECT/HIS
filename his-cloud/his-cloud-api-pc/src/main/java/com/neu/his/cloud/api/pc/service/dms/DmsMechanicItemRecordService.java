@@ -3,12 +3,10 @@ package com.neu.his.cloud.api.pc.service.dms;
 import com.neu.his.cloud.api.pc.common.CommonPage;
 import com.neu.his.cloud.api.pc.common.CommonResult;
 import com.neu.his.cloud.api.pc.dto.dms.DmsMechanicItemRecordResult;
+import com.neu.his.cloud.api.pc.dto.dms.ListByDeptChangeParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,7 @@ public interface DmsMechanicItemRecordService {
 
     @RequestMapping(value = "/DmsMechanicItemRecord/listByDept", method = RequestMethod.POST)
     CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDept(@RequestParam("deptId") Long deptId,
+                                                                     @RequestParam("name") String name,
                                                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum);
 
@@ -31,5 +30,16 @@ public interface DmsMechanicItemRecordService {
                                      @RequestParam("executeStaffId") Long excuteStaffId,
                                      @RequestParam("checkResult") String checkResult,
                                      @RequestParam("resultImgUrlList") String resultImgUrlList);
+
+    /**
+     * 描述:收费员账号： 根据科室id刷新患者列表
+     * <p>author: ma
+     */
+    @ApiOperation(value = "根据科室id刷新患者列表")
+    @RequestMapping(value = "/DmsMechanicItemRecord/listByDeptChange", method = RequestMethod.POST)
+    @ResponseBody
+    CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptChange(@RequestBody ListByDeptChangeParam listByDeptChangeParam);
+
+
 
 }

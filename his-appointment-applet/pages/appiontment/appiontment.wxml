@@ -1,0 +1,8 @@
+<!--pages/appiontment/appiontment.wxml-->
+<view class="appiontment">
+  <!--http://hc.hk1.tunnelfrp.cc-->
+  <view class="main">
+    <web-view src="{{web}}"></web-view>
+  </view>
+</view>
+

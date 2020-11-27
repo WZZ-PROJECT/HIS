@@ -3,10 +3,7 @@ package com.neu.his.cloud.service.pms.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.neu.his.cloud.service.pms.dto.dms.DmsCaseHistoryResult;
-import com.neu.his.cloud.service.pms.dto.pms.PmsDiagnosisPatientListResult;
-import com.neu.his.cloud.service.pms.dto.pms.PmsDiagnosisPatientResult;
-import com.neu.his.cloud.service.pms.dto.pms.PmsPatientParam;
-import com.neu.his.cloud.service.pms.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.service.pms.dto.pms.*;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStaffResult;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStopFollowDoctorParam;
 import com.neu.his.cloud.service.pms.mapper.*;
@@ -27,10 +24,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PmsPatientServiceImpl implements PmsPatientService {
@@ -125,7 +119,8 @@ public class PmsPatientServiceImpl implements PmsPatientService {
         System.err.println("date:"+date);
         System.err.println("beforeAday:"+beforeAday);
 
-        dmsRegistrationExample.createCriteria().andBindStatusEqualTo(0).andDeptIdEqualTo(deptId).andStatusEqualTo(1).andAttendanceDateBetween(getStartOfDay(beforeAday),getEndOfDay(date));
+        dmsRegistrationExample.createCriteria().andBindStatusEqualTo(0).andDeptIdEqualTo(deptId).andStatusEqualTo(1);
+        dmsRegistrationExample.setOrderByClause("create_time desc");//按创建时间降序
         List<DmsRegistration> dmsRegistrationList = dmsRegistrationMapper.selectByExample(dmsRegistrationExample);
 
         System.err.println("dmsRegistrationList.size: " + dmsRegistrationList.size());
@@ -138,6 +133,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
             pmsDiagnosisPatientResult.setPatientAge(dmsRegistration.getPatientAgeStr());
             pmsDiagnosisPatientResult.setRegistrationId(dmsRegistration.getId());
             pmsDiagnosisPatientResult.setRegistrationStatus(dmsRegistration.getStatus());
+            pmsDiagnosisPatientResult.setAttendanceDate(dmsRegistration.getAttendanceDate());
             //从PmsPatient中查询其他字段并封装
             PmsPatientExample pmsPatientExample = new PmsPatientExample();
             pmsPatientExample.createCriteria().andIdEqualTo(dmsRegistration.getPatientId());
@@ -146,6 +142,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
             pmsDiagnosisPatientResult.setPatientHomeAdress(pmsPatientList.get(0).getHomeAddress());
             pmsDiagnosisPatientResult.setPatientGender(pmsPatientList.get(0).getGender());
             pmsDiagnosisPatientResult.setPatientMedicalRecordNo(pmsPatientList.get(0).getMedicalRecordNo());
+            pmsDiagnosisPatientResult.setIdentificationNo(pmsPatientList.get(0).getIdentificationNo());
             deptWaitList.add(pmsDiagnosisPatientResult);//加入List<PmsDiagnosisPatientResult>
         }
         System.err.println("deptWaitList.size: " + deptWaitList.size());
@@ -157,7 +154,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
         //通过午别、时间、医生id在表sms_skd中查找出sms_skd的id
         SmsSkdExample smsSkdExample = new SmsSkdExample();
         System.err.println("staffId:"+staffId);
-        smsSkdExample.createCriteria().andStaffIdEqualTo(staffId).andDateEqualTo(DateUtil.getDate(DateUtil.setMilliSecond(date,0)));
+        smsSkdExample.createCriteria().andStaffIdEqualTo(staffId);
         List<SmsSkd> smsSkdList = smsSkdMapper.selectByExample(smsSkdExample);
 
         System.err.println(smsSkdList==null?"smsSkdList=null":"smsSkdList!=null");
@@ -177,8 +174,8 @@ public class PmsPatientServiceImpl implements PmsPatientService {
         //从dms_registration中根据bind_status（1）、attendance_date、skd_id查找出分配了的患者信息，并根据status分类（1，2，3）
         DmsRegistrationExample dmsRegistrationExample1 = new DmsRegistrationExample();
         //使用DateUtil只截取日期部分
-        dmsRegistrationExample1.createCriteria().andBindStatusEqualTo(1).andAttendanceDateBetween(getStartOfDay(new Date()),getEndOfDay(new Date())).andSkdIdIn(idList);
-
+        dmsRegistrationExample1.createCriteria().andBindStatusEqualTo(1).andSkdIdIn(idList);
+        dmsRegistrationExample1.setOrderByClause("create_time desc");
 
         List<DmsRegistration> dmsRegistrationList1 = dmsRegistrationMapper.selectByExample(dmsRegistrationExample1);
 
@@ -191,6 +188,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
             pmsDiagnosisPatientResult.setPatientAge(dmsRegistration.getPatientAgeStr());
             pmsDiagnosisPatientResult.setRegistrationId(dmsRegistration.getId());
             pmsDiagnosisPatientResult.setRegistrationStatus(dmsRegistration.getStatus());
+            pmsDiagnosisPatientResult.setAttendanceDate(dmsRegistration.getAttendanceDate());
             //从PmsPatient中查询其他字段并封装
             PmsPatientExample pmsPatientExample = new PmsPatientExample();
             pmsPatientExample.createCriteria().andIdEqualTo(dmsRegistration.getPatientId());
@@ -199,16 +197,40 @@ public class PmsPatientServiceImpl implements PmsPatientService {
             pmsDiagnosisPatientResult.setPatientHomeAdress(pmsPatientList.get(0).getHomeAddress());
             pmsDiagnosisPatientResult.setPatientGender(pmsPatientList.get(0).getGender());
             pmsDiagnosisPatientResult.setPatientMedicalRecordNo(pmsPatientList.get(0).getMedicalRecordNo());
+            pmsDiagnosisPatientResult.setPhoneNo(pmsPatientList.get(0).getPhoneNo());
+            pmsDiagnosisPatientResult.setIdentificationNo(pmsPatientList.get(0).getIdentificationNo());
             if (pmsDiagnosisPatientResult.getRegistrationStatus() == 1){//待诊
                 personalWaitList.add(pmsDiagnosisPatientResult);
             }
             else if (pmsDiagnosisPatientResult.getRegistrationStatus() == 2 || pmsDiagnosisPatientResult.getRegistrationStatus() == 6){//诊中
                 personalDuringList.add(pmsDiagnosisPatientResult);
             }
-            else if (pmsDiagnosisPatientResult.getRegistrationStatus() == 3){//诊毕
-                personalEndList.add(pmsDiagnosisPatientResult);
-            }
         }
+
+        // 查询今日诊必人数  状态 为 3
+        DmsRegistrationExample dms = new DmsRegistrationExample();
+        //使用DateUtil只截取日期部分
+        dms.createCriteria().andBindStatusEqualTo(1).andAttendanceDateBetween(getStartOfDay(new Date()),getEndOfDay(new Date()));
+        dms.setOrderByClause("create_time desc");
+        List<DmsRegistration> registrations = dmsRegistrationMapper.selectByExample(dms);
+        registrations.stream().filter(data -> data.getStatus() == 3).forEach(data -> {
+            PmsDiagnosisPatientResult pmsDiagnosisPatientResult = new PmsDiagnosisPatientResult();
+            pmsDiagnosisPatientResult.setPatientId(data.getPatientId());
+            pmsDiagnosisPatientResult.setPatientAge(data.getPatientAgeStr());
+            pmsDiagnosisPatientResult.setRegistrationId(data.getId());
+            pmsDiagnosisPatientResult.setRegistrationStatus(data.getStatus());
+            pmsDiagnosisPatientResult.setAttendanceDate(data.getAttendanceDate());
+            //从PmsPatient中查询其他字段并封装
+            PmsPatientExample pmsPatientExample = new PmsPatientExample();
+            pmsPatientExample.createCriteria().andIdEqualTo(data.getPatientId());
+            List<PmsPatient> pmsPatientList = pmsPatientMapper.selectByExample(pmsPatientExample);
+            pmsDiagnosisPatientResult.setPatientName(pmsPatientList.get(0).getName());
+            pmsDiagnosisPatientResult.setPatientHomeAdress(pmsPatientList.get(0).getHomeAddress());
+            pmsDiagnosisPatientResult.setPatientGender(pmsPatientList.get(0).getGender());
+            pmsDiagnosisPatientResult.setPatientMedicalRecordNo(pmsPatientList.get(0).getMedicalRecordNo());
+            pmsDiagnosisPatientResult.setIdentificationNo(pmsPatientList.get(0).getIdentificationNo());
+            personalEndList.add(pmsDiagnosisPatientResult);
+        });
         //封装PmsDiagnosisPatientListResult对象并返回
         PmsDiagnosisPatientListResult pmsDiagnosisPatientListResult = new PmsDiagnosisPatientListResult();
         pmsDiagnosisPatientListResult.setDeptWaitList(deptWaitList);
@@ -377,7 +399,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
         SmsPatientFollow smsPatientFollow = new SmsPatientFollow();
         smsPatientFollow.setId(smsPatientFollows.get(0).getId());
         smsPatientFollow.setState((long)0);
-        int i = smsPatientFollowMapper.updateByPrimaryKeySelective(smsPatientFollow);
+        int i = smsPatientFollowMapper.deleteByPrimaryKey(smsPatientFollows.get(0).getId());
         if (i >0) {
             return true;
         }
@@ -389,10 +411,14 @@ public class PmsPatientServiceImpl implements PmsPatientService {
      * @return
      */
     @Override
-    public PmsPatient patientByOpenId(String openId) {
-        PmsPatientExample pmsPatientExample=new PmsPatientExample();
-        pmsPatientExample.createCriteria().andOpenIdEqualTo(openId);
-        PmsPatient pmsPatient = pmsPatientMapper.selectByExample(pmsPatientExample).get(0);
+    public PmsPatients patientByOpenId(String openId) {
+        PmsPatients pmsPatient =new PmsPatients();
+        if(!StringUtils.isEmpty(openId)){
+            PmsPatientExample pmsPatientExample=new PmsPatientExample();
+            pmsPatientExample.createCriteria().andOpenIdEqualTo(openId);
+            PmsPatient pmsPatient1 = pmsPatientMapper.selectByExample(pmsPatientExample).get(0);
+            BeanUtils.copyProperties(pmsPatient1,pmsPatient);
+        }
         return pmsPatient;
     }
 
@@ -431,6 +457,7 @@ public class PmsPatientServiceImpl implements PmsPatientService {
             pmsPatient.setMedicalRecordNo(generateMedicalRecordNo(pmsPatientParam.getIdentificationNo()));
             pmsPatient.setOpenId(pmsPatientParam.getOpenId());
             pmsPatient.setPicture(pmsPatientParam.getPicture());
+            pmsPatient.setRecommendOpenId(pmsPatientParam.getRecommend_open_id());
             int insert = pmsPatientMapper.insertSelective(pmsPatient);
             if (insert > 0) {
                 PmsPatientExample example = new PmsPatientExample();
@@ -496,4 +523,104 @@ public class PmsPatientServiceImpl implements PmsPatientService {
         return null;
     }
 
+
+    @Override
+    public PmsDiagnosisPatientListResult queryPeople(PmsQueryPeople pmsQueryPeople) {
+
+        PmsDiagnosisPatientListResult pmsDiagnosisPatientListResult=new PmsDiagnosisPatientListResult();
+        List<PmsDiagnosisPatientResult> personalEndList =new ArrayList<>();
+
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Calendar c = Calendar.getInstance();
+
+        //过去七天
+        c.setTime(new Date());
+        c.add(Calendar.DATE, - 7);
+        Date d = c.getTime();
+
+
+        //查询满足条件的患者
+        PmsPatientExample pmsPatientExample=new PmsPatientExample();
+        PmsPatientExample.Criteria criteria1 = pmsPatientExample.createCriteria();
+
+        if(!StringUtils.isEmpty(pmsQueryPeople.getName())){
+            criteria1.andNameEqualTo(pmsQueryPeople.getName());
+        }
+
+        if(!StringUtils.isEmpty(pmsQueryPeople.getCardId())){
+            criteria1.andIdentificationNoEqualTo(pmsQueryPeople.getCardId());
+        }
+
+
+
+        List<PmsPatient> pmsPatientList = pmsPatientMapper.selectByExample(pmsPatientExample);
+
+        //查询病例信息
+        DmsRegistrationExample dmsRegistrationExample=new DmsRegistrationExample();
+        DmsRegistrationExample.Criteria criteria = dmsRegistrationExample.createCriteria();
+        criteria.andStatusEqualTo(3);
+        if(!StringUtils.isEmpty(pmsQueryPeople.getDeptId())){
+            criteria.andDeptIdEqualTo(pmsQueryPeople.getDeptId());
+        }
+
+        criteria.andCreateTimeBetween(d,new Date());
+        try {
+            Date parse = simpleDateFormat.parse("0000-00-00 00:00:00");
+            if(!StringUtils.isEmpty(pmsQueryPeople.getStartDate()) && !StringUtils.isEmpty(pmsQueryPeople.getEndDate()) && parse.compareTo(simpleDateFormat.parse(pmsQueryPeople.getStartDate()))!=0 &&parse.compareTo(simpleDateFormat.parse(pmsQueryPeople.getEndDate()))!=0) {
+
+                criteria.andCreateTimeBetween(simpleDateFormat.parse(pmsQueryPeople.getStartDate()), simpleDateFormat.parse(pmsQueryPeople.getEndDate()));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        List<DmsRegistration> dmsRegistrationList = dmsRegistrationMapper.selectByExample(dmsRegistrationExample);
+
+        dmsRegistrationList.stream().forEach(dmsRegistration -> {
+            pmsPatientList.stream().forEach(pmsPatient -> {
+                if(dmsRegistration.getPatientId()==pmsPatient.getId()){
+
+                    PmsDiagnosisPatientResult pmsDiagnosisPatientResult=new PmsDiagnosisPatientResult();
+
+                    pmsDiagnosisPatientResult.setPatientId(pmsPatient.getId());
+                    pmsDiagnosisPatientResult.setPatientName(pmsPatient.getName());
+                    pmsDiagnosisPatientResult.setPhoneNo(pmsPatient.getPhoneNo());
+                    pmsDiagnosisPatientResult.setPatientAge(dmsRegistration.getPatientAgeStr());
+                    pmsDiagnosisPatientResult.setPatientHomeAdress(pmsPatient.getHomeAddress());
+                    pmsDiagnosisPatientResult.setPatientGender(pmsPatient.getGender());
+                    pmsDiagnosisPatientResult.setPatientMedicalRecordNo(pmsPatient.getMedicalRecordNo());
+                    pmsDiagnosisPatientResult.setRegistrationId(dmsRegistration.getId());
+                    pmsDiagnosisPatientResult.setRegistrationStatus(dmsRegistration.getStatus());
+                    pmsDiagnosisPatientResult.setIdentificationNo(pmsPatient.getIdentificationNo());
+                    personalEndList.add(pmsDiagnosisPatientResult);
+                }
+            });
+        });
+        pmsDiagnosisPatientListResult.setPersonalEndList(personalEndList);
+        return pmsDiagnosisPatientListResult;
+    }
+
+    @Override
+    public PmsDiagnosisPatientResult selectPeopleByRegistrationId(Long registrationId) {
+        PmsDiagnosisPatientResult pmsDiagnosisPatientResult=new PmsDiagnosisPatientResult();
+        DmsRegistration dmsRegistration = dmsRegistrationMapper.selectByPrimaryKey(registrationId);
+        if(dmsRegistration!=null){
+            PmsPatient pmsPatient = pmsPatientMapper.selectByPrimaryKey(dmsRegistration.getPatientId());
+            if(pmsPatient!=null){
+                pmsDiagnosisPatientResult.setPatientId(pmsPatient.getId());
+                pmsDiagnosisPatientResult.setPatientName(pmsPatient.getName());
+                pmsDiagnosisPatientResult.setPatientAge(dmsRegistration.getPatientAgeStr());
+                pmsDiagnosisPatientResult.setPatientHomeAdress(pmsPatient.getHomeAddress());
+                pmsDiagnosisPatientResult.setPatientGender(pmsPatient.getGender());
+                pmsDiagnosisPatientResult.setPatientMedicalRecordNo(pmsPatient.getMedicalRecordNo());
+                pmsDiagnosisPatientResult.setRegistrationId(registrationId);
+                pmsDiagnosisPatientResult.setRegistrationStatus(dmsRegistration.getStatus());
+                pmsDiagnosisPatientResult.setAttendanceDate(dmsRegistration.getAttendanceDate());
+                pmsDiagnosisPatientResult.setPhoneNo(pmsPatient.getPhoneNo());
+                return pmsDiagnosisPatientResult;
+            }
+        }
+        return null;
+    }
 }

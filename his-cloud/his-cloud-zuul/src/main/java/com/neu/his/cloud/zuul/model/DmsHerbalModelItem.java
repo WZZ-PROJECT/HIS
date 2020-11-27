@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 public class DmsHerbalModelItem implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private Integer status;

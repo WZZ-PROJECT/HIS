@@ -5,20 +5,26 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SmsSkd implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "时间")
     private Date date;
 
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
     private Long remain;
 
     private Integer noon;
 
+    @ApiModelProperty(value = "工作人员ID")
     private Long staffId;
 
+    @ApiModelProperty(value = "所属科室ID")
     private Long deptId;
 
+    @ApiModelProperty(value = "排班限额")
     private Long skLimit;
 
     private static final long serialVersionUID = 1L;

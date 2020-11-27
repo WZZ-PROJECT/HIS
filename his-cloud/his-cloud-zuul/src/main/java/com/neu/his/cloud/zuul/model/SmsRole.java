@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SmsRole implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private String name;

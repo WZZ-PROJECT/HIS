@@ -1,0 +1,52 @@
+<!--pages/payFee/payFee.wxml-->
+<!--pages/case/case.wxml-->
+<list-wrap data="{{resultList}}">
+<view class="record" wx:for="{{resultList}}" wx:key="index" >
+  <view class="patient">
+    <view class="myline elli-item" style="border-bottom:2px solid #666666;">
+      <view class="item-name elli" style="float: left;font-size:18px;font-weight:bold;">{{item.name}}</view>
+      <!-- <view wx:if="{{item.status === -1}}" style="float: right">未开立</view>
+      <view wx:elif="{{item.status === 0}}" style="float: right">已作废</view> -->
+      <view wx:if="{{item.status === 1}}" style="float: right">未缴费</view>
+      <view wx:elif="{{item.status === 2}}" style="float: right">未登记</view>
+      <view wx:elif="{{item.status === 3}}" style="float: right">已登记</view>
+      <view wx:elif="{{item.status === 4}}" style="float: right">已完成</view>
+    </view>
+    <view class="myline">
+      <view class="left">病历号</view>
+      <view class="right">{{item.medicalRecordNo}}</view>
+    </view>
+    <view class="myline">
+      <view class="left">看诊时间</view>
+      <view class="right">{{item.attendanceDate}}</view>
+    </view>
+    <view class="myline">
+      <view class="left">总金额</view>
+      <view class="right">{{item.amount}}元</view>
+    </view>
+    <view class="myline">
+      <view class="left">开立时间</view>
+      <view class="right">{{item.createTime}}</view>
+    </view>
+    <view class="myline">
+      <view class="left">项目类型</view>
+      <view class="right" wx:if="{{item.type == 1}}">检查</view>
+      <view class="right" wx:elif="{{item.type == 2}}">检验</view>
+      <view class="right" wx:elif="{{item.type == 3}}">处置</view>
+      <view class="right" wx:elif="{{item.type == 4}}">草药处方</view>
+      <view class="right" wx:elif="{{item.type == 5}}">成药处方</view>
+    </view>
+    <!-- <view class="myline">
+      <view class="left" bindtap="changeStatus" data-index="{{index}}">使用方法</view>
+    </view>
+    <view class="myline" wx:if="{{index == status}}" style="height: auto;margin-left:50rpx;color:#666666;font-size:14px;">
+      <view>使用方法：口服</view>
+      <view>频次：一天三次</view>
+      <view>天数：7</view>
+      <view>用量：10</view>
+      <view>单位：克</view>
+    </view> -->
+    <!--<view class="myline"><button style="margin-right:50rpx;margin-bottom: 20rpx;"  data-gid='{{item.id}}' bindtap="cancel">微信支付</button></view>-->    
+  </view>
+</view>
+</list-wrap>

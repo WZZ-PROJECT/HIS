@@ -1,17 +1,19 @@
 package com.neu.his.cloud.service.sms.dto.sms;
 
+import com.neu.his.cloud.service.sms.common.Page;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Setter
 @Getter
 @ToString
-public class SmsStaffParam  implements Serializable {
+public class SmsStaffParam extends Page implements Serializable {
     @ApiModelProperty(value = "登录名")
     private String username;
     @ApiModelProperty(value = "登录名")
@@ -41,4 +43,6 @@ public class SmsStaffParam  implements Serializable {
     private String description;
     @ApiModelProperty(value = "头像")
     private String picture;
+    @ApiModelProperty(value = "挂号医生金额")
+    private BigDecimal amount;
 }

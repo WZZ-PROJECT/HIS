@@ -48,6 +48,16 @@ public class DmsNonDrugItemRecord implements Serializable {
 
     private BigDecimal amount;
 
+    private Long invoice;
+
+    public Long getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Long invoice) {
+        this.invoice = invoice;
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {

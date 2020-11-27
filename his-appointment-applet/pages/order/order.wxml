@@ -1,0 +1,49 @@
+<!--pages/order.wxml-->
+<view>
+  <view class="doctor-info">
+    <view>
+      <text>{{ name }}</text>
+      <text>{{ role }}</text>
+    </view>
+    <view>
+      <image src="{{ src }}"/>
+    </view>
+  </view>
+  <view>
+  <van-field value="{{ dept }}" label="就诊科室" readonly />
+    <van-field value="{{ patientName }}" label="就诊人" readonly />
+    <van-field value="{{ price }}" label="诊疗费" readonly />
+    <van-field value="{{ date }}" label="就诊日期" readonly />
+    <van-field value="{{ time }}" label="就诊时间" readonly />
+  </view>
+  <view class="order-notice">
+    <text bindtap="handleNoticeOpen">预约即同意 《预约须知》</text>
+  </view>      
+  <van-button type="primary" color="#21bb9d" block round bindtap="handlePay">确认预约并支付</van-button>
+  <van-overlay show="{{showNotice}}" bindtap="handleNoticeClose"/>
+  <van-transition show="{{ showNotice }}" custom-class="notice-modal">
+    <text class="notice-title">预约须知</text>
+    <view class="notice-wrap">
+      <text>尊敬的患者及家属朋友，为方便您早日就医康复，请您认真阅读预约就诊须知:</text>
+      <text>一、预约挂号须知</text>
+      <text>1、您可预约2周内的专家号。</text>
+      <text>2、节假日后第一天门诊号源于节前最后一个工作日下午15点停止预约。</text>
+      <text>二、 预约实名制</text>
+      <text>预约就诊采取实名制注册预约，请您如实提供患者的真实姓名、有效身份证证件号、地址、手机号码。（注意事项：预约信息为就诊患者的实名信息）。</text>
+      <text>三、预约挂号</text>
+      <text>1、预约成功后，请于就诊当日携带患者本人身份证等有效证件（医保患者带社保卡)，到济南市槐荫区经七路586号新泉城大厦21楼（国际医学中心）；</text>
+      <text>2、预约挂号时线上支付挂号费用；</text>
+      <text>3、中心专家号就诊顺序按照预约时间为准，提前10分钟即可，避免就诊排队等待时间过长；</text>
+      <text>4、请您保持手机畅通，防止遗漏已经预约成功的专家停诊通知。</text>
+      <text>四、取消预约</text>
+      <text>中心预约号源有限，预约成功后请您按时就诊。如不能按时就诊，请于24小时之前通过微信小程序或电话进行退号退费。24小时之内退号不退费。</text>
+      <text>五、预约方式</text>
+      <text>我中心预约就诊三种方法：</text>
+      <text>1. 微信小程序预约（24小时预约）</text>
+      <text>2. 电话预约400-102-5678（09：00-12:00、13:00 -16:30）</text>
+      <text>3. 现场预约（周一至周日09：00-12:00、13:00 -16:30），切勿重复预约。</text>
+    </view>
+    <van-button block round color="#21bb9d" bindtap="handleNoticeClose">我知道了</van-button>
+  </van-transition>
+  <van-dialog id="van-dialog" />
+</view>

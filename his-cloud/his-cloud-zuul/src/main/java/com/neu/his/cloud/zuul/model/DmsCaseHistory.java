@@ -5,32 +5,46 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DmsCaseHistory implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "主诉")
     private String chiefComplaint;
 
+    @ApiModelProperty(value = "现病史")
     private String historyOfPresentIllness;
 
+    @ApiModelProperty(value = "现治疗情况")
     private String historyOfTreatment;
 
+    @ApiModelProperty(value = "既往史")
     private String pastHistory;
 
+    @ApiModelProperty(value = "过敏史")
     private String allergies;
 
+    @ApiModelProperty(value = "体格检查")
     private String healthCheckup;
 
-    private Long registrationId;
+    @ApiModelProperty(value = "门诊号(挂号号)")
+    private Integer registrationId;
 
+    @ApiModelProperty(value = "初诊结果str串")
     private String priliminaryDiseStrList;
 
+    @ApiModelProperty(value = "发病时间")
     private Date startDate;
 
+    @ApiModelProperty(value = "病人姓名")
     private String name;
 
+    @ApiModelProperty(value = "病人性别")
     private Integer gender;
 
+    @ApiModelProperty(value = "病人年龄")
     private String ageStr;
 
+    @ApiModelProperty(value = "检查:  name<>部位<>result<>url ><")
     private String checkStrList;
 
     private String dispositionStrList;
@@ -39,21 +53,32 @@ public class DmsCaseHistory implements Serializable {
 
     private Date createTime;
 
+    @ApiModelProperty(value = "确诊诊断串")
     private String definiteDiseStrList;
 
-    private Long patientId;
+    private Integer patientId;
 
     private String testStrList;
 
     private String medicinePrescriptionStrList;
 
+    @ApiModelProperty(value = "1 初诊结束")
     private Integer status;
 
+    @ApiModelProperty(value = "初诊结果Id串")
     private String priliminaryDiseIdList;
 
+    @ApiModelProperty(value = "检查结果（门诊医生填写）")
     private String checkResult;
 
+    @ApiModelProperty(value = "检验结果（门诊医生填写）")
     private String testResult;
+
+    @ApiModelProperty(value = "医嘱")
+    private String testAdvice;
+
+    @ApiModelProperty(value = "知情告知Id串用，号隔开  形式 1，2，3")
+    private String familiarinform;
 
     private static final long serialVersionUID = 1L;
 
@@ -113,11 +138,11 @@ public class DmsCaseHistory implements Serializable {
         this.healthCheckup = healthCheckup;
     }
 
-    public Long getRegistrationId() {
+    public Integer getRegistrationId() {
         return registrationId;
     }
 
-    public void setRegistrationId(Long registrationId) {
+    public void setRegistrationId(Integer registrationId) {
         this.registrationId = registrationId;
     }
 
@@ -201,11 +226,11 @@ public class DmsCaseHistory implements Serializable {
         this.definiteDiseStrList = definiteDiseStrList;
     }
 
-    public Long getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(Long patientId) {
+    public void setPatientId(Integer patientId) {
         this.patientId = patientId;
     }
 
@@ -257,6 +282,22 @@ public class DmsCaseHistory implements Serializable {
         this.testResult = testResult;
     }
 
+    public String gettestAdvice() {
+        return testAdvice;
+    }
+
+    public void settestAdvice(String testAdvice) {
+        this.testAdvice = testAdvice;
+    }
+
+    public String getFamiliarinform() {
+        return familiarinform;
+    }
+
+    public void setFamiliarinform(String familiarinform) {
+        this.familiarinform = familiarinform;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -288,6 +329,8 @@ public class DmsCaseHistory implements Serializable {
         sb.append(", priliminaryDiseIdList=").append(priliminaryDiseIdList);
         sb.append(", checkResult=").append(checkResult);
         sb.append(", testResult=").append(testResult);
+        sb.append(", testAdvice=").append(testAdvice);
+        sb.append(", familiarinform=").append(familiarinform);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

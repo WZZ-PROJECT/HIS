@@ -2,17 +2,23 @@ package com.neu.his.cloud.service.dms.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.util.StringUtil;
 import com.neu.his.cloud.service.dms.common.CommonPage;
 import com.neu.his.cloud.service.dms.common.CommonResult;
 import com.neu.his.cloud.service.dms.dto.dms.DmsMechanicItemRecordResult;
+import com.neu.his.cloud.service.dms.dto.dms.ListByDeptChangeParam;
 import com.neu.his.cloud.service.dms.service.DmsMechanicItemRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @Api(tags = "DmsMechanicItemRecordController", description = "医技工作台管理")
@@ -31,17 +37,34 @@ public class DmsMechanicItemRecordController {
     @RequestMapping(value = "/listByDept", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDept(@RequestParam("deptId") Long deptId,
+                                                                            @RequestParam("name") String name,
                                                                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
 
-        Page page = PageHelper.startPage(pageNum, pageSize);
-
-        List<DmsMechanicItemRecordResult> list = dmsMechanicItemRecordService.listByDept(deptId);
-       /* return CommonResult.success(list);*/
-        Long pageTotal=page.getTotal();
-        return CommonResult.success(CommonPage.restPage(list,pageTotal));
+        List<DmsMechanicItemRecordResult> list = dmsMechanicItemRecordService.listByDept(deptId,name);
+        Long pageTotal=new Long((long)list.size()) ;
+        Stream<DmsMechanicItemRecordResult> streDatas = list.stream();
+        Long skipNumber = (pageNum - 1) * pageSize.longValue();
+        List<DmsMechanicItemRecordResult> collect = streDatas.skip(skipNumber).limit(pageSize).collect(Collectors.toList());
+        return CommonResult.success(CommonPage.restPage(collect,pageTotal));
     }
 
+    /**
+     * 描述:收费员账号： 根据科室id刷新患者列表
+     * <p>author: ma
+     */
+    @ApiOperation(value = "根据科室id刷新患者列表")
+    @RequestMapping(value = "/listByDeptChange", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptChange(@RequestBody ListByDeptChangeParam listByDeptChangeParam){
+
+        List<DmsMechanicItemRecordResult> list = dmsMechanicItemRecordService.listByDeptChange(listByDeptChangeParam.getDeptId(),listByDeptChangeParam.getIdentificationNo());
+        Long pageTotal=new Long((long)list.size()) ;
+        Stream<DmsMechanicItemRecordResult> streDatas = list.stream();
+        Long skipNumber = (listByDeptChangeParam.getPageNum() - 1) * listByDeptChangeParam.getPageSize().longValue();
+        List<DmsMechanicItemRecordResult> collect = streDatas.skip(skipNumber).limit(listByDeptChangeParam.getPageSize()).collect(Collectors.toList());
+        return CommonResult.success(CommonPage.restPage(collect,pageTotal));
+    }
     /**
      * 描述:医技登记
      * <p>author: ma

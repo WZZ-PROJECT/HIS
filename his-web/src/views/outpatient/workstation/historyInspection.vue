@@ -1,8 +1,12 @@
 <template>
   <!-- 检查申请 -->
   <el-container>
+   <!-- <div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
   <el-aside :width="mainwidth" style="background:white;padding:0 10px 0 0">
     <el-table
+      id="historyInspection1"
     ref="multipleTable"
     :data="record"
     border
@@ -272,12 +276,12 @@ export default {
         })
         this.refresh()
       })
-      console.log(data)
+
     },
     async listRecord(){
       list(this.patient.registrationId,0).then(res=>{
         this.record = res.data
-        console.log(this.record)
+
         this.record.forEach(item=>{
           this.checkList.filter(check=>{
             if(check.id===item.noDrugId){
@@ -301,7 +305,7 @@ export default {
     },
     handleClick(){
       this.$notify({
-        title: '暂无数据',
+        title: '检查',
         message: '您开立的项目中包含已开立的项目，请检查后重新提交！',
         type: 'warning',
         duration: 2000
@@ -356,12 +360,12 @@ export default {
     },
     async getNondrugList() {
       const response = await getNondrugList(this.listQuery)
-      console.log(response)
+
       this.checkList = response.data.list
       this.total = response.data.total
     },
     selectCheckred(val){
-      console.log(val)
+
       let flag = 1
       val.status = -1
       this.record.forEach(item=>{
@@ -394,14 +398,19 @@ export default {
           if(flag) {
             this.record.push(val)
           }else {
-            alert('已存在该诊断！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该诊断！')
           }
         }
         this.dialogTableVisible = false
       })
     },*/
     selectCheck(val){
-      console.log(val)
+
       val.status=0
       this.$confirm('是否添加 '+val.name+' 到该患者?', '添加检查', {
         confirmButtonText: '确认',
@@ -418,7 +427,12 @@ export default {
         if(flag)
           this.record.push(val)
         else
-          alert('已存在该检验项目！')
+          this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该检验项目！')
         this.dialogTableVisible = false
       })
     },
@@ -440,7 +454,7 @@ export default {
         })
         this.deleteTS()
       })
-      console.log(data)
+
     },
     controlfast(){
       this.isclose=!this.isclose
@@ -448,6 +462,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="65%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyInspection1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

@@ -485,123 +485,63 @@ public class BmsBillsRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdEqualTo(Long value) {
+        public Criteria andRegistrationIdEqualTo(String value) {
             addCriterion("registration_id =", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotEqualTo(Long value) {
+        public Criteria andRegistrationIdNotEqualTo(String value) {
             addCriterion("registration_id <>", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdGreaterThan(Long value) {
+        public Criteria andRegistrationIdGreaterThan(String value) {
             addCriterion("registration_id >", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andRegistrationIdGreaterThanOrEqualTo(String value) {
             addCriterion("registration_id >=", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdLessThan(Long value) {
+        public Criteria andRegistrationIdLessThan(String value) {
             addCriterion("registration_id <", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdLessThanOrEqualTo(Long value) {
+        public Criteria andRegistrationIdLessThanOrEqualTo(String value) {
             addCriterion("registration_id <=", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdIn(List<Long> values) {
+        public Criteria andRegistrationIdLike(String value) {
+            addCriterion("registration_id like", value, "registrationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegistrationIdNotLike(String value) {
+            addCriterion("registration_id not like", value, "registrationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegistrationIdIn(List<String> values) {
             addCriterion("registration_id in", values, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotIn(List<Long> values) {
+        public Criteria andRegistrationIdNotIn(List<String> values) {
             addCriterion("registration_id not in", values, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdBetween(Long value1, Long value2) {
+        public Criteria andRegistrationIdBetween(String value1, String value2) {
             addCriterion("registration_id between", value1, value2, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotBetween(Long value1, Long value2) {
+        public Criteria andRegistrationIdNotBetween(String value1, String value2) {
             addCriterion("registration_id not between", value1, value2, "registrationId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListIsNull() {
-            addCriterion("record_list is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListIsNotNull() {
-            addCriterion("record_list is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListEqualTo(String value) {
-            addCriterion("record_list =", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListNotEqualTo(String value) {
-            addCriterion("record_list <>", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListGreaterThan(String value) {
-            addCriterion("record_list >", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListGreaterThanOrEqualTo(String value) {
-            addCriterion("record_list >=", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListLessThan(String value) {
-            addCriterion("record_list <", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListLessThanOrEqualTo(String value) {
-            addCriterion("record_list <=", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListLike(String value) {
-            addCriterion("record_list like", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListNotLike(String value) {
-            addCriterion("record_list not like", value, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListIn(List<String> values) {
-            addCriterion("record_list in", values, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListNotIn(List<String> values) {
-            addCriterion("record_list not in", values, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListBetween(String value1, String value2) {
-            addCriterion("record_list between", value1, value2, "recordList");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecordListNotBetween(String value1, String value2) {
-            addCriterion("record_list not between", value1, value2, "recordList");
             return (Criteria) this;
         }
     }

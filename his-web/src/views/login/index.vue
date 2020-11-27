@@ -6,7 +6,7 @@
         <h3 class="title">慈光医疗信息系统</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="username" style="border: 1px solid #CACACA;">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
@@ -17,12 +17,12 @@
           name="username"
           type="text"
           tabindex="1"
-          auto-complete="on"
+          auto-complete="off"
         />
       </el-form-item>
 
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
+        <el-form-item prop="password" style="border: 1px solid #CACACA;">
           <span class="svg-container">
             <svg-icon icon-class="password" />
           </span>
@@ -34,7 +34,7 @@
             placeholder="密码"
             name="password"
             tabindex="2"
-            auto-complete="on"
+            auto-complete="off"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
             @keyup.enter.native="handleLogin"
@@ -45,7 +45,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;margin-top:30px;" @click="handleLogin">登录</el-button>
 
 
     </el-form>
@@ -121,6 +121,7 @@ export default {
       this.$refs.password.focus()
     }
   },
+
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
@@ -148,19 +149,19 @@ export default {
       })
     },
     handleLogin() {
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
+              this.$router.push({ path: this.redirect || '/index', query: this.otherQuery })
             })
-            .catch(() => {
+            .finally(() => {
               this.loading = false
-            })
+            });
         } else {
-          console.log('error submit!!')
+
           return false
         }
       })
@@ -187,7 +188,12 @@ export default {
     //         this.$router.push({ path: this.redirect || '/' })
     //       })
     //     } else {
-    //       alert('第三方登录失败')
+    //         this.$notify({
+    //           title: '提示',
+    //           message: '第三方登录失败',
+    //           type: 'warning',
+    //           duration: 2000
+    //         })
     //     }
     //   }
     // }
@@ -201,7 +207,7 @@ export default {
 
 $bg:#283443;
 $light_gray:black;
-$cursor: black;
+$cursor: transparent;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -217,19 +223,27 @@ $cursor: black;
     width: 85%;
 
     input {
-      background: transparent;
+      background-color: transparent !important;
       border: 0px;
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
       color: $light_gray;
       height: 47px;
-      caret-color: $cursor;
+      box-shadow: inset 0 0 0 1000px transparent!important;
+      // caret-color: $cursor;
 
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px  inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
+      // &:-webkit-autofill {
+        // box-shadow: 0 0 0px 1000px transparent inset !important;
+        // -webkit-text-fill-color: $cursor !important;
+      // }
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-transition-delay: 999999999999s;
+        -webkit-transition: color 999999999999s ease-out, background-color 999999999999s ease-out;
     }
   }
 
@@ -257,9 +271,13 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
+    padding: 70px 35px 0;
+    // margin: 0 auto;
+    margin-top: 8%;
+    margin-left: 60%;
     overflow: hidden;
+    background-color: #DEECF6;
+    border-radius: 10px;
   }
 
   .tips {
@@ -286,11 +304,13 @@ $light_gray:#eee;
     position: relative;
 
     .title {
-      font-size: 26px;
+      font-size: 30px;
       color: $light_gray;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
+      color: black;
+      margin-top: 20px;
     }
   }
 

@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DmsDrugModel implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private Integer status;
 
+    @ApiModelProperty(value = "处方号")
     private String name;
 
     private Integer scope;
@@ -25,12 +27,14 @@ public class DmsDrugModel implements Serializable {
 
     private Long pairNum;
 
+    @ApiModelProperty(value = "用量")
     private Integer frequency;
 
     private String therapy;
 
     private String therapyDetails;
 
+    @ApiModelProperty(value = "用药建议")
     private String medicalAdvice;
 
     private static final long serialVersionUID = 1L;

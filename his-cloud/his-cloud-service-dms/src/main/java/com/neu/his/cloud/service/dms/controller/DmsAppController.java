@@ -3,6 +3,7 @@ package com.neu.his.cloud.service.dms.controller;
 
 import com.neu.his.cloud.service.dms.common.CommonResult;
 import com.neu.his.cloud.service.dms.dto.dms.*;
+import com.neu.his.cloud.service.dms.model.InformationMaintenance;
 import com.neu.his.cloud.service.dms.model.SmsStaff;
 import com.neu.his.cloud.service.dms.service.DmsAppService;
 import io.swagger.annotations.Api;
@@ -44,7 +45,7 @@ public class DmsAppController {
     @ApiOperation(value = "根据科室Id查询医生、科室、排班信息")
     @RequestMapping(value = "/listNowDoctorRegistration", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<DmsNowDoctorRegistrationResult>> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
+    public CommonResult <DmsNowDoctorRegistrationResults> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
                                                                                         @RequestParam("thedate") String thedate){
         return CommonResult.success(dmsAppService.listNowDoctorRegistration(deptId,thedate));
     }
@@ -99,4 +100,29 @@ public class DmsAppController {
     public CommonResult<List<BookingInformationResult>> listPatientConventionUpdate(@RequestParam("Id")  Long Id){
         return CommonResult.success(dmsAppService.listPatientConventionUpdate(Id));
     }
+
+
+
+
+
+    @ApiOperation(value = "修改信息")
+    @RequestMapping(value = "/updateMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance){
+        int result = dmsAppService.updateMaintenanceParam(informationMaintenance);
+        if (result > 0) {
+            return CommonResult.success(1,"修改信息成功");
+        }
+        return CommonResult.success(0,"修改信息失败");
+    }
+
+    //1.根据openID查询预约信息
+    @ApiOperation(value = "查看信息")
+    @RequestMapping(value = "/selectMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<List<InformationMaintenance>> selectMaintenanceParam(){
+        return CommonResult.success(dmsAppService.selectMaintenanceParam());
+    }
+
+
 }

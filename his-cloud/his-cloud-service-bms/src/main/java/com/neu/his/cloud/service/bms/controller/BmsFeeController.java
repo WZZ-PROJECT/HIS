@@ -12,11 +12,15 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @Api(tags = "BmsFeeController", description = "收退费管理")
@@ -88,12 +92,13 @@ public class BmsFeeController {
     @ApiOperation(value = "挂号退费")
     @RequestMapping(value = "/refundRegistrationCharge", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult refundRegistrationCharge(@RequestBody BmsRefundRegChargeParam bmsRefundRegChargeParam){
+    public CommonResult refundRegistrationCharge(@RequestBody BmsRefundRegChargeParam bmsRefundRegChargeParam) throws Exception {
         int result = bmsFeeService.refundRegistrationCharge(bmsRefundRegChargeParam);
         if (result == 1){
-            return CommonResult.success(result);
-        }
-        else {
+            return CommonResult.success(result,"已退号");
+        }else if(result == 2){
+            return CommonResult.success(result,"已过看诊时间,无法退号");
+        } else {
             return CommonResult.failed();
         }
     }
@@ -119,6 +124,20 @@ public class BmsFeeController {
     public CommonResult<List<BmsResult>>  listCharge(@RequestBody BmsParam bmsParam){
         List<BmsResult> bmsResults = bmsFeeService.listCharge(bmsParam);
         return CommonResult.success(bmsResults);
+    }
+
+    @ApiOperation(value = "根据病人身份证号查询历史病人信息")
+    @RequestMapping(value = "/listPatientByCardId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardId(@RequestBody BmsPatientParam bmsPatientParam){
+
+
+            List<BmsRegistrationPatientResult> list = bmsFeeService.listRegisteredPatient(bmsPatientParam.getMedicalRecordNo(),null);
+            Long pageTotal=(long) list.size();
+            Stream<BmsRegistrationPatientResult> streDatas = list.stream();
+            Long skipNumber = (bmsPatientParam.getPageNum() - 1) * bmsPatientParam.getPageSize().longValue();
+            List<BmsRegistrationPatientResult> collect = streDatas.skip(skipNumber).limit(bmsPatientParam.getPageSize()).collect(Collectors.toList());
+            return CommonResult.success(CommonPage.restPage(collect,pageTotal));
     }
 }
 

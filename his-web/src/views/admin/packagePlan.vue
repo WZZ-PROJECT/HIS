@@ -175,7 +175,6 @@
         <span class="demonstration">开始时间:</span>
         <el-date-picker
                 v-model="value1"
-                default-value="2019-06-01"
                 align="right"
                 type="date"
                 placeholder="选择日期"
@@ -345,7 +344,7 @@ export default {
       let res = await getSetmealRuleDetail(id)
       this.addRule = res.data
       this.scheduleList = res.data.smsSetmealSkdRuleItemResult
-      console.log(this.scheduleList)
+
       let i =0
       this.scheduleList.forEach(item=>{
         item.limit = item.skLimit
@@ -451,31 +450,39 @@ export default {
       this.rulelistref=val
     },
     delrule(){
-      if(this.rulelistref.length===0)
-        alert('请先选中要删除的规则')
-      this.$confirm('确认删除选中的排班规则?', '警告', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(()=>{
-        let data = ''
-        this.rulelistref.forEach(item=>{
-          data+=item.id+','
+      if(this.rulelistref.length===0){
+        this.$notify({
+          title: '失败',
+          message: '请选择要删除的排班规则',
+          type: 'warning',
+          duration: 2000
         })
-        data = data.substr(0, data.length - 1);
-        deleteSetmealRule(data).then(res=>{
-          this.$notify({
-            title: '成功',
-            message: res.message,
-            type: 'success',
-            duration: 2000
+        return
+      }else {
+        this.$confirm('确认删除选中的排班规则?', '警告', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          let data = ''
+          this.rulelistref.forEach(item=>{
+            data+=item.id+','
           })
-          this.SetmealListRule()
+          data = data.substr(0, data.length - 1);
+          deleteRule(data).then(res=>{
+            this.$notify({
+              title: '成功',
+              message: res.message,
+              type: 'success',
+              duration: 2000
+            })
+            this.getRuleList()
+          })
         })
-      })
+      }
     },
     confirmdate(){
-      console.log(this.value2)
+
     },
     async getAlldep(){
       const res = await getAllDep()
@@ -520,7 +527,7 @@ export default {
     },
 
     getCurrentRow(val){
-      console.log(val)
+
     },
     choose(){
       this.schedule = !this.schedule;

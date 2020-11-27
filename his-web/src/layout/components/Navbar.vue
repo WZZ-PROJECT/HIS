@@ -24,11 +24,56 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">注销</span>
+          <el-dropdown-item divided @click.native="logout">
+            <span style="display:block;">注销</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided @click.native="beforeUpdatePassword()">
+            <span style="display:block;">修改密码</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+    </div>
+    <div>
+      <el-dialog title="重置密码" :visible.sync="resetPassword" width="400px">
+        <el-form :model="user"  ref="user" :rules="rules">
+          <el-form-item label="原始密码" label-width="100px" prop="oldPassword">
+            <el-input
+              v-model="user.oldPassword"
+              style="width: 200px"
+              placeholder="请填写原始密码"
+              @change="checkPassword()"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="新密码" label-width="100px" prop="newPassword">
+            <el-input
+              v-model="user.newPassword"
+              style="width: 200px"
+              type="password"
+              :key="passwordType"
+              :type="passwordType"
+              ref="password"
+              :disabled="isOff"
+              placeholder="请填写新密码"
+            ></el-input>
+            <span class="show-pwd" @click="showPwd">
+              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+            </span>
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              style="float: right; margin-left: 10px"
+              type="danger"
+              @click="resetPassword = false;user={};isOff=true"
+            >取消
+            </el-button
+            >
+            <el-button style="float: right" type="primary" @click="updatePassword('user')"
+            >确定
+            </el-button
+            >
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -41,6 +86,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import { checkPassword,updatePassword} from '@/api/user'
 
 export default {
   components: {
@@ -50,6 +96,24 @@ export default {
     Screenfull,
     SizeSelect,
     Search
+  },
+  data() {
+    return{
+      user:{
+        oldPassword:'',
+        newPassword:'',
+        staffId:''
+      },
+      resetPassword:false,
+      passwordType: 'password',
+      isOff:true,
+      rules:{
+        oldPassword:[{required: true, message: '请输入登录密码',trigger: 'blur'},
+          { min: 4, max: 16,  message: '长度在 4 到 16 个字符', trigger: 'blur' }],
+        newPassword:[{required: true, message: '请输入登录密码',trigger: 'blur'},
+          { min: 4, max: 16,pattern: /^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]{4,16}$/, message: '密码必须由字母、数字组成，区分大小写 长度在 4 到 16 个字符', trigger: 'blur' }]
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -64,7 +128,77 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      await this.$store.dispatch('tagsView/delAllViews')
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push('/login');
+    },
+    beforeUpdatePassword(){
+      this.resetPassword = true
+    },
+    checkPassword(){
+     this.user.staffId = this.$store.getters.id
+      checkPassword(this.user).then(res=>{
+          if (res.data === 0) {
+            this.$notify({
+              title: '提示',
+              message: res.message,
+              type: 'warning',
+              duration: 2000
+            })
+            this.isOff = true;
+            this.user = {};
+          } else {
+           this.isOff = false;
+          }
+      })
+    },
+    updatePassword(user){
+      this.$refs[user].validate((valid) => {
+        if (valid) {
+          this.user.staffId = this.$store.getters.id
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+          updatePassword(this.user).then(res=>{
+            setTimeout(() => {
+              loading.close();
+            }, 1);
+            if (res.data > 0) {
+              this.$notify({
+                title: '提示',
+                message: res.message,
+                type: 'success',
+                duration: 2000
+              })
+              this.user = {};
+              this.isOff = true;
+              this.resetPassword = false;
+            } else {
+              this.$notify({
+                title: '提示',
+                message: res.message,
+                type: 'warning',
+                duration: 2000
+              })
+            }
+          })
+        }else {
+         return
+        }
+      })
+    },
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
+      } else {
+        this.passwordType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
     }
   }
 }

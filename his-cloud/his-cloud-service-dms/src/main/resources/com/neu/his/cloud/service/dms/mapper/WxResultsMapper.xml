@@ -4,12 +4,14 @@
   <resultMap id="BaseResultMap" type="com.neu.his.cloud.service.dms.model.WxResults">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="patient_id" jdbcType="BIGINT" property="patientId" />
+    <result column="type" jdbcType="BIGINT" property="type" />
     <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
     <result column="openid" jdbcType="VARCHAR" property="openid" />
     <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
     <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
     <result column="total_fee" jdbcType="VARCHAR" property="totalFee" />
     <result column="time_end" jdbcType="TIMESTAMP" property="timeEnd" />
+    <result column="state" jdbcType="BIGINT" property="state" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.neu.his.cloud.service.dms.model.WxResults">
     <result column="results" jdbcType="LONGVARCHAR" property="results" />
@@ -73,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, patient_id, transaction_id, openid, mch_id, out_trade_no, total_fee, time_end
+    id, patient_id, type, transaction_id, openid, mch_id, out_trade_no, total_fee, time_end, 
+    state
   </sql>
   <sql id="Blob_Column_List">
     results
@@ -130,12 +133,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into wx_results (patient_id, transaction_id, openid, 
-      mch_id, out_trade_no, total_fee, 
-      time_end, results)
-    values (#{patientId,jdbcType=BIGINT}, #{transactionId,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
-      #{mchId,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalFee,jdbcType=VARCHAR}, 
-      #{timeEnd,jdbcType=TIMESTAMP}, #{results,jdbcType=LONGVARCHAR})
+    insert into wx_results (patient_id, type, transaction_id, 
+      openid, mch_id, out_trade_no, 
+      total_fee, time_end, state, 
+      results)
+    values (#{patientId,jdbcType=BIGINT}, #{type,jdbcType=BIGINT}, #{transactionId,jdbcType=VARCHAR}, 
+      #{openid,jdbcType=VARCHAR}, #{mchId,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{totalFee,jdbcType=VARCHAR}, #{timeEnd,jdbcType=TIMESTAMP}, #{state,jdbcType=BIGINT}, 
+      #{results,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.WxResults">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -145,6 +150,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="patientId != null">
         patient_id,
+      </if>
+      <if test="type != null">
+        type,
       </if>
       <if test="transactionId != null">
         transaction_id,
@@ -164,6 +172,9 @@
       <if test="timeEnd != null">
         time_end,
       </if>
+      <if test="state != null">
+        state,
+      </if>
       <if test="results != null">
         results,
       </if>
@@ -171,6 +182,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="patientId != null">
         #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=BIGINT},
       </if>
       <if test="transactionId != null">
         #{transactionId,jdbcType=VARCHAR},
@@ -189,6 +203,9 @@
       </if>
       <if test="timeEnd != null">
         #{timeEnd,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=BIGINT},
       </if>
       <if test="results != null">
         #{results,jdbcType=LONGVARCHAR},
@@ -210,6 +227,9 @@
       <if test="record.patientId != null">
         patient_id = #{record.patientId,jdbcType=BIGINT},
       </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=BIGINT},
+      </if>
       <if test="record.transactionId != null">
         transaction_id = #{record.transactionId,jdbcType=VARCHAR},
       </if>
@@ -228,6 +248,9 @@
       <if test="record.timeEnd != null">
         time_end = #{record.timeEnd,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=BIGINT},
+      </if>
       <if test="record.results != null">
         results = #{record.results,jdbcType=LONGVARCHAR},
       </if>
@@ -240,12 +263,14 @@
     update wx_results
     set id = #{record.id,jdbcType=BIGINT},
       patient_id = #{record.patientId,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT},
       transaction_id = #{record.transactionId,jdbcType=VARCHAR},
       openid = #{record.openid,jdbcType=VARCHAR},
       mch_id = #{record.mchId,jdbcType=VARCHAR},
       out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
       total_fee = #{record.totalFee,jdbcType=VARCHAR},
       time_end = #{record.timeEnd,jdbcType=TIMESTAMP},
+      state = #{record.state,jdbcType=BIGINT},
       results = #{record.results,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -255,12 +280,14 @@
     update wx_results
     set id = #{record.id,jdbcType=BIGINT},
       patient_id = #{record.patientId,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=BIGINT},
       transaction_id = #{record.transactionId,jdbcType=VARCHAR},
       openid = #{record.openid,jdbcType=VARCHAR},
       mch_id = #{record.mchId,jdbcType=VARCHAR},
       out_trade_no = #{record.outTradeNo,jdbcType=VARCHAR},
       total_fee = #{record.totalFee,jdbcType=VARCHAR},
-      time_end = #{record.timeEnd,jdbcType=TIMESTAMP}
+      time_end = #{record.timeEnd,jdbcType=TIMESTAMP},
+      state = #{record.state,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -270,6 +297,9 @@
     <set>
       <if test="patientId != null">
         patient_id = #{patientId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=BIGINT},
       </if>
       <if test="transactionId != null">
         transaction_id = #{transactionId,jdbcType=VARCHAR},
@@ -289,6 +319,9 @@
       <if test="timeEnd != null">
         time_end = #{timeEnd,jdbcType=TIMESTAMP},
       </if>
+      <if test="state != null">
+        state = #{state,jdbcType=BIGINT},
+      </if>
       <if test="results != null">
         results = #{results,jdbcType=LONGVARCHAR},
       </if>
@@ -298,24 +331,28 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.neu.his.cloud.service.dms.model.WxResults">
     update wx_results
     set patient_id = #{patientId,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT},
       transaction_id = #{transactionId,jdbcType=VARCHAR},
       openid = #{openid,jdbcType=VARCHAR},
       mch_id = #{mchId,jdbcType=VARCHAR},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       total_fee = #{totalFee,jdbcType=VARCHAR},
       time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=BIGINT},
       results = #{results,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.neu.his.cloud.service.dms.model.WxResults">
     update wx_results
     set patient_id = #{patientId,jdbcType=BIGINT},
+      type = #{type,jdbcType=BIGINT},
       transaction_id = #{transactionId,jdbcType=VARCHAR},
       openid = #{openid,jdbcType=VARCHAR},
       mch_id = #{mchId,jdbcType=VARCHAR},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       total_fee = #{totalFee,jdbcType=VARCHAR},
-      time_end = #{timeEnd,jdbcType=TIMESTAMP}
+      time_end = #{timeEnd,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

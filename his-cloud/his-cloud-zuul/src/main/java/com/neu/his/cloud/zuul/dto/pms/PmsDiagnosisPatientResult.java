@@ -1,12 +1,14 @@
 package com.neu.his.cloud.zuul.dto.pms;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Setter
 @Getter
@@ -28,4 +30,10 @@ public class PmsDiagnosisPatientResult  implements Serializable {
     Long registrationId;
     @ApiModelProperty(value = "就诊状态")
     Integer registrationStatus;
+    @ApiModelProperty(value = "看诊日期")
+    Date attendanceDate;
+    @ApiModelProperty(value = "手机号")
+    String phoneNo;
+    @ApiModelProperty(value = "身份证号")
+    String identificationNo;
 }

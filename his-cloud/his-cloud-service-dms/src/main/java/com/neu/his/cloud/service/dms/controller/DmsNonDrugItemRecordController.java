@@ -50,7 +50,7 @@ public class DmsNonDrugItemRecordController {
 //        }
         List<Long> currentIdList = dmsNonDrugItemRecordService.apply(dmsNonDrugItemRecordListParam);
         if(currentIdList == null || currentIdList.size() <= 0){
-            return CommonResult.failed("开立失败");
+            return CommonResult.success(0,"开立失败");
         }else{
             //获取订单超时时间，假设为30s
             long delayTimes = 60 * 1000 *60 *12;
@@ -59,7 +59,7 @@ public class DmsNonDrugItemRecordController {
                 rabbitMQOrderSender.sendMessage(id, 1, delayTimes);
             }
 
-            return CommonResult.success("开立成功");
+            return CommonResult.success(1,"开立成功");
         }
     }
     //作废项目

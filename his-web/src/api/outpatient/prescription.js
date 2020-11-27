@@ -17,6 +17,16 @@ export function listByReg(data) {
   })
 }
 
+export function listByReg1(data) {
+  return request({
+    url: '/DmsMedicinePrescriptionRecord/listByReg',
+    method: 'post',
+    params:{
+      registrationId:data
+    }
+  })
+}
+
 export function listByIds(data) {
   return request({
     url: '/DmsMedicinePrescriptionRecord/listByIds',

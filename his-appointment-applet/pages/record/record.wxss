@@ -1,0 +1,32 @@
+/* pages/record/record.wxss */
+.patient{
+  border: 1px solid #666666;
+  height: auto;
+  margin: 10rpx;
+}
+.myline{
+  height: 30rpx;
+  /* border-bottom:1px solid #EEEEEE; */
+  padding: 20rpx;
+  margin-left: 10rpx;
+  margin-right: 10rpx;
+}
+.left{
+  /* border-bottom:1px solid #EEEEEE; */
+  width: 250rpx;
+  float: left;
+}
+.right{
+  /* border-bottom:1px solid #EEEEEE; */
+  width: 650rpx;
+}
+.cancel-btn {
+  padding-right: 10rpx;
+  padding-bottom: 10rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+.van-button--warning {
+  height: 60rpx !important;
+  padding: 0 60rpx !important;
+}

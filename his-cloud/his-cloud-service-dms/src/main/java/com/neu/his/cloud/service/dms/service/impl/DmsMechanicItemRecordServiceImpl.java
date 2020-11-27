@@ -7,6 +7,7 @@ import com.neu.his.cloud.service.dms.service.DmsMechanicItemRecordService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,12 +38,14 @@ public class DmsMechanicItemRecordServiceImpl implements DmsMechanicItemRecordSe
      * <p>author: 赵煜  修改type判断空指针异常 封装登记医生姓名 登记时间
      */
     @Override
-    public List<DmsMechanicItemRecordResult> listByDept(Long deptId){
+    public List<DmsMechanicItemRecordResult> listByDept(Long deptId,String name){
         DmsNonDrugItemRecordExample example = new DmsNonDrugItemRecordExample();
-        example.createCriteria().andExcuteDeptIdEqualTo(deptId).andStatusBetween(1,3);//2未登记（已缴费） 3已登记
+//        example.createCriteria().andExcuteDeptIdEqualTo(deptId).andStatusBetween(1,3);//2未登记（已缴费） 3已登记
+        example.createCriteria().andStatusBetween(1,3);//2未登记（已缴费） 3已登记
         List<DmsNonDrugItemRecord> recordList = dmsNonDrugItemRecordMapper.selectByExample(example);
 
         List<DmsMechanicItemRecordResult> resultList = new ArrayList<>();
+        List<DmsMechanicItemRecordResult> results = new ArrayList<>();
         for(DmsNonDrugItemRecord record : recordList){
             DmsMechanicItemRecordResult result = new DmsMechanicItemRecordResult();
             BeanUtils.copyProperties(record,result);
@@ -78,16 +81,26 @@ public class DmsMechanicItemRecordServiceImpl implements DmsMechanicItemRecordSe
             }
 
             //封装医生信息
-           SmsStaff smsStaff= smsStaffMapper.selectByPrimaryKey( record.getLogStaffId());
+           SmsStaff smsStaff= smsStaffMapper.selectByPrimaryKey(record.getLogStaffId());
             if(null!=smsStaff)
                result.setLogStaffName(smsStaff.getName());
 
             //封装开立信息
             result.setCreateTime(record.getCreateTime());
+            if (!StringUtils.isEmpty(name)) {
+                if (result.getPatientName().contains(name)) {
+                    results.add(result);
+                }
+            } else {
+                resultList.add(result);
+            }
 
-            resultList.add(result);
         }
-        return resultList;
+        if (StringUtils.isEmpty(name)) {
+            return resultList;
+        }else {
+            return results;
+        }
     }
 
     @Override
@@ -116,6 +129,82 @@ public class DmsMechanicItemRecordServiceImpl implements DmsMechanicItemRecordSe
         record.setResultImgUrlList(resultImgUrlList);
 
         return dmsNonDrugItemRecordMapper.updateByExampleSelective(record,recordExample);
+    }
+
+    /**
+     * 收费员：查看未缴费项
+     *
+     * @param deptId
+     * @param identificationNo
+     * @return
+     */
+    @Override
+    public List<DmsMechanicItemRecordResult> listByDeptChange(Long deptId, String identificationNo) {
+        DmsNonDrugItemRecordExample example = new DmsNonDrugItemRecordExample();
+//        example.createCriteria().andExcuteDeptIdEqualTo(deptId).andStatusBetween(1,3);//2未登记（已缴费） 3已登记
+        example.createCriteria().andStatusBetween(1,5);//2未登记（已缴费） 5已退费
+        example.setOrderByClause("create_time desc");
+        List<DmsNonDrugItemRecord> recordList = dmsNonDrugItemRecordMapper.selectByExample(example);
+
+        List<DmsMechanicItemRecordResult> resultList = new ArrayList<>();
+        List<DmsMechanicItemRecordResult> results = new ArrayList<>();
+        for(DmsNonDrugItemRecord record : recordList){
+            DmsMechanicItemRecordResult result = new DmsMechanicItemRecordResult();
+            BeanUtils.copyProperties(record,result);
+            result.setItemRecordId(record.getId());
+
+            //封装项目信息
+            DmsNonDrug dmsNonDrug = dmsNonDrugMapper.selectByPrimaryKey(record.getNoDrugId());
+            if(dmsNonDrug != null){
+                result.setItemName(dmsNonDrug.getName());
+            }
+
+            if(record.getType()==null){
+                continue;
+            }else if(record.getType() == 0){
+                result.setItemType("检查");
+            }else if(record.getType() == 1){
+                result.setItemType("检验");
+            }else if(record.getType() == 2){
+                result.setItemType("处置");
+            }else{
+                continue;
+            }
+
+            //封装患者信息
+            DmsRegistration dmsRegistration = dmsRegistrationMapper.selectByPrimaryKey(record.getRegistrationId());
+            if(dmsRegistration != null){
+                result.setPatientAgeStr(dmsRegistration.getPatientAgeStr());
+                PmsPatient pmsPatient = pmsPatientMapper.selectByPrimaryKey(dmsRegistration.getPatientId());
+                if(pmsPatient != null){
+                    result.setPatientName(pmsPatient.getName());
+                    result.setPatientId(pmsPatient.getId());
+                    result.setPatientGender(pmsPatient.getGender());
+                    result.setIdentificationNo(pmsPatient.getIdentificationNo());
+                }
+            }
+
+            //封装医生信息
+            SmsStaff smsStaff= smsStaffMapper.selectByPrimaryKey(record.getCreateStaffId());
+            if(null!=smsStaff)
+                result.setLogStaffName(smsStaff.getName());
+
+            //封装开立信息
+            result.setCreateTime(record.getCreateTime());
+            if (!StringUtils.isEmpty(identificationNo)) {
+                if (result.getIdentificationNo().contains(identificationNo)) {
+                    results.add(result);
+                }
+            } else {
+                resultList.add(result);
+            }
+
+        }
+        if (StringUtils.isEmpty(identificationNo)) {
+            return resultList;
+        }else {
+            return results;
+        }
     }
 
 }

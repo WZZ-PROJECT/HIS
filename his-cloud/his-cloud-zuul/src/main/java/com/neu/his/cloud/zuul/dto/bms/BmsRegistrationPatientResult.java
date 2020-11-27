@@ -20,6 +20,8 @@ public class BmsRegistrationPatientResult  implements Serializable {
     Integer patientGender;
     @ApiModelProperty(value = "病人生日")
     Date patientDateOfBirth;
+    @ApiModelProperty(value = "身份证号")
+    String identificationNo;
     @ApiModelProperty(value = "就诊日期")
     Date attendanceDate;
     @ApiModelProperty(value = "挂号日期")

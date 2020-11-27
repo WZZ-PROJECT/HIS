@@ -2,8 +2,10 @@ package com.neu.his.cloud.zuul.controller.bms;
 
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.neu.his.cloud.zuul.common.CommonPage;
 import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.distribution.api.pc.bms.ApiPcBmsInvoiceDistributionService;
+import com.neu.his.cloud.zuul.dto.bms.BmsInvoiceParam;
 import com.neu.his.cloud.zuul.dto.bms.BmsInvoiceResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,12 +49,12 @@ public class BmsInvoiceDistributionController {
 
     @HystrixCommand(fallbackMethod = "queryInvoiceInfoFallbackInfo")
     @ApiOperation(value = "根据时间和收费员Id查询发票信息")
-    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfo(@RequestParam("cashierId") Long cashierId, @RequestParam("startDatetime")String startDatetime, @RequestParam("endDatetime")String endDatetime){
-        return apiPcBmsInvoiceDistributionService.queryInvoiceInfo(cashierId, startDatetime, endDatetime);
+    public CommonResult<CommonPage<BmsInvoiceResult>>  queryInvoiceInfo(@RequestBody BmsInvoiceParam bmsInvoiceParam){
+        return apiPcBmsInvoiceDistributionService.queryInvoiceInfo(bmsInvoiceParam);
     }
-    private CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfoFallbackInfo(Long cashierId,  String startDatetime, String endDatetime){
+    private CommonResult<CommonPage<BmsInvoiceResult>>  queryInvoiceInfoFallbackInfo(BmsInvoiceParam bmsInvoiceParam){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 

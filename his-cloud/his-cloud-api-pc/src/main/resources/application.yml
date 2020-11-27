@@ -1,3 +1,69 @@
+#spring:
+#  application:
+#    name: his-cloud-api-pc
+#  zipkin:
+#    base-url: http://152.136.233.245:9411
+#  boot:
+#    admin:
+#      client:
+#        url: http://152.136.233.245:8084
+#        instance:
+#          service-base-url: http://152.136.233.245:8081
+#  jackson:
+#    time-zone: GMT+8  #市区设置
+#  rabbitmq:
+#    host: 152.136.233.245
+#    port: 5672
+#    virtual-host: his
+#    username: admin
+#    password: admin
+#    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+#  datasource:
+#    url: jdbc:mysql://49.233.254.194:8806/his?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    username: yuncheng
+#    password: YunCheng@123#!
+#    druid:
+#      initial-size: 5 #连接池初始化大小
+#      min-idle: 10 #最小空闲连接数
+#      max-active: 20 #最大连接数
+#      web-stat-filter:
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+#      stat-view-servlet: #访问监控网页的登录用户名和密码
+#        login-username: druid
+#        login-password: druid
+#
+#server:
+#  port: 10009
+#
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    serviceUrl:
+#      defaultZone: http://152.136.233.245:10030/eureka/
+#
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"   #暴露所有的端点我们可以看到更多的服务实例相关信息，
+#    endpoint:
+#      health:
+#        show-details: ALWAYS   #health endpoint是否必须显示全部细节
+#
+#ribbon:
+#  ConnectTimeout: 60000
+#  # 请求处理的超时时间
+#  ReadTimeout: 60000
+#
+#logging:
+#  level:
+#    root: info #日志配置DEBUG,INFO,WARN,ERROR
+#    com.neu.his: debug
+#  file: /log #配置日志文件路径
+#  path: his-cloud-api-pc.log #配置日志生成名称
+
 spring:
   application:
     name: his-cloud-api-pc
@@ -12,23 +78,24 @@ spring:
   jackson:
     time-zone: GMT+8  #市区设置
   rabbitmq:
-    host: localhost
+    host: 152.136.233.245
     port: 5672
+    virtual-host: his
     username: admin
     password: admin
   datasource:
-    url: jdbc:mysql://192.168.0.164:8806/his?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://49.233.254.194:8806/his_dev?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: yuncheng
-    password: yuncheng@123
-    druid:
-      initial-size: 5 #连接池初始化大小
-      min-idle: 10 #最小空闲连接数
-      max-active: 20 #最大连接数
-      web-stat-filter:
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
-      stat-view-servlet: #访问监控网页的登录用户名和密码
-        login-username: druid
-        login-password: druid
+    password: YunCheng@123#!
+#    druid:
+#      initial-size: 5 #连接池初始化大小
+#      min-idle: 10 #最小空闲连接数
+#      max-active: 20 #最大连接数
+#      web-stat-filter:
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+#      stat-view-servlet: #访问监控网页的登录用户名和密码
+#        login-username: druid
+#        login-password: druid
 
 server:
   port: 10009
@@ -41,7 +108,7 @@ eureka:
     #ip-address: 10.25.52.152
 
     #instance-id: ${eureka.instance.ip-address}:${server.port}
-#    hostname: zy
+  #    hostname: zy
   client:
     serviceUrl:
       defaultZone: http://localhost:10030/eureka/
@@ -55,25 +122,25 @@ management:
     endpoint:
       health:
         show-details: ALWAYS   #health endpoint是否必须显示全部细节
-#
-#hystrix:
-#  command:
-#    default:
-#      execution:
-#        timeout:
-#          enabled: true
-#        isolation:
-#          thread:
-#            timeoutInMilliseconds: 9000
-##ribbon的超时时间
-#ribbon:
-#  ReadTimeout: 3000
-#  ConnectTimeout: 3000
 
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 360000
+#ribbon的超时时间
 ribbon:
-  ConnectTimeout: 60000
-  # 请求处理的超时时间
-  ReadTimeout: 60000
+  ReadTimeout: 360000
+  ConnectTimeout: 360000
+
+#ribbon:
+#  ConnectTimeout: 60000
+#  # 请求处理的超时时间
+#  ReadTimeout: 60000
 
 logging:
   level:

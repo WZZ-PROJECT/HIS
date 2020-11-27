@@ -953,6 +953,66 @@ public class DmsMedicineItemRecordExample {
             addCriterion("current_num not between", value1, value2, "currentNum");
             return (Criteria) this;
         }
+
+        public Criteria andInvoiceIsNull() {
+            addCriterion("invoice is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIsNotNull() {
+            addCriterion("invoice is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceEqualTo(Long value) {
+            addCriterion("invoice =", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNotEqualTo(Long value) {
+            addCriterion("invoice <>", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceGreaterThan(Long value) {
+            addCriterion("invoice >", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceGreaterThanOrEqualTo(Long value) {
+            addCriterion("invoice >=", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceLessThan(Long value) {
+            addCriterion("invoice <", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceLessThanOrEqualTo(Long value) {
+            addCriterion("invoice <=", value, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIn(List<Long> values) {
+            addCriterion("invoice in", values, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNotIn(List<Long> values) {
+            addCriterion("invoice not in", values, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceBetween(Long value1, Long value2) {
+            addCriterion("invoice between", value1, value2, "invoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNotBetween(Long value1, Long value2) {
+            addCriterion("invoice not between", value1, value2, "invoice");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

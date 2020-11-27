@@ -2,15 +2,18 @@
   <div>
     <!-- 病历首页 -->
     <el-container>
-      <el-aside :width="mainwidth" style="background:white;" v-show="!this.patientfalg">
+      <!--<div :width="mainwidth">
+        <el-button type="primary" @click="print">打印</el-button>
+      </div>-->
+      <el-aside id="historyRecord1" :width="mainwidth" style="background:white;">
         <el-tag style="margin-bottom:20px">病史内容:</el-tag>
-        <el-form :model="record" label-width="100px">
-          <el-form-item label="主诉"><el-input disabled v-model="priliminaryDise.chiefComplaint" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="主述" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="现病史"><el-input disabled v-model="priliminaryDise.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病史" style="width:80%" ></el-input></el-form-item>
-          <el-form-item label="现病治疗情况"><el-input disabled v-model="priliminaryDise.historyOfTreatment" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病治疗情况" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="既往史"><el-input disabled v-model="priliminaryDise.pastHistory" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="既往史" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="过敏史"><el-input disabled v-model="priliminaryDise.allergies" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="过敏史" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="体格检查"><el-input disabled v-model="priliminaryDise.healthCheckup" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="体格检查" style="width:80%"></el-input></el-form-item>
+        <el-form :model="priliminaryDise" label-width="100px">
+          <el-form-item label="主诉"><el-input disabled v-model="priliminaryDise.chiefComplaint" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="主述" style="width:80%" maxlength="150" show-word-limit></el-input></el-form-item>
+          <el-form-item label="现病史"><el-input disabled v-model="priliminaryDise.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病史" style="width:80%" ></el-input></el-form-item>
+          <el-form-item label="现病治疗情况"><el-input disabled v-model="priliminaryDise.historyOfTreatment" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病治疗情况" style="width:80%"></el-input></el-form-item>
+          <el-form-item label="既往史"><el-input disabled v-model="priliminaryDise.pastHistory" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="既往史" style="width:80%"></el-input></el-form-item>
+          <el-form-item label="过敏史"><el-input disabled v-model="priliminaryDise.allergies" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="过敏史" style="width:80%"></el-input></el-form-item>
+          <el-form-item label="体格检查"><el-input disabled v-model="priliminaryDise.healthCheckup" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="体格检查" style="width:80%"></el-input></el-form-item>
           <el-form-item label="发病时间">
             <el-date-picker disabled
               v-model="priliminaryDise.startDate"
@@ -36,7 +39,7 @@
 </template>
 <script>
   import {getDmsDislist,parseList} from '@/api/diagnosis'
-  import {submitPriliminaryDise,selectEndCaseHistoryByReg} from '@/api/outpatient/dmscase'
+  import {submitPriliminaryDise,selectEndCaseHistory} from '@/api/outpatient/dmscase'
   import {getAllStaffModel} from '@/api/outpatient/dmscasemodel'
   import Pagination from '@/components/Pagination'
   import {selectByType,addfre,delfre} from '@/api/outpatient/frequentuse'
@@ -185,7 +188,7 @@
         this.historyitem = val
       },
       selectEndCaseHistoryByReg(){
-        selectEndCaseHistoryByReg(this.patient.registrationId).then(res=>{
+        selectEndCaseHistory(this.patient.registrationId,3).then(res=>{
           this.history = res.data.dmsCaseHistoryList
           this.priliminaryDise.chiefComplaint=this.history[0].chiefComplaint
           this.priliminaryDise.historyOfPresentIllness=this.history[0].historyOfPresentIllness
@@ -198,7 +201,6 @@
           this.priliminaryDise.priliminaryDiseIdList=this.history[0].priliminaryDiseIdList
           parseList(this.priliminaryDise.priliminaryDiseIdList).then(res=>{
             this.record=res.data
-            console.log(this.record)
           })
           this.history.forEach(item=>{
             item.createTime = parseTime(item.createTime)
@@ -250,7 +252,12 @@
           if(flag)
             this.record.push(val)
           else
-            alert('已存在该诊断！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该诊断！')
           this.dialogTableVisible = false
         })
       },
@@ -271,6 +278,16 @@
           this.mainwidth="80%"
         else
           this.mainwidth="60%"
+      },
+      print(e){
+        const subOutputRankPrint = document.getElementById('historyRecord1')
+        const newContent = subOutputRankPrint.innerHTML
+        const oldContent = document.body.innerHTML
+        document.body.innerHTML = newContent
+        window.print()
+        window.location.reload()
+        document.body.innerHTML = oldContent
+        return false
       }
     }
   }

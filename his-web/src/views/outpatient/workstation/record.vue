@@ -2,18 +2,22 @@
   <div>
     <!-- 病历首页 -->
     <el-container>
-      <el-aside :width="mainwidth" style="background:white;" v-show="!this.patientfalg">
+      <!--<div :width="mainwidth">
+        <el-button type="primary" @click="print">打印</el-button>
+      </div>-->
+      <el-aside id="record1" :width="mainwidth" style="background:white;">
         <el-tag style="margin-bottom:20px">病史内容:</el-tag>
         <el-button type="text" style="margin-left:30px" @click="saveCasePage"><i class="el-icon-upload2" />暂存</el-button>
         <el-button type="text" style="margin-left:30px" @click="getCasePage"><i class="el-icon-download" />取出暂存病历</el-button>
         <el-button style="float:right" @click="controlfast"><i v-show="!isclose" class="el-icon-caret-right" /><i v-show="isclose" class="el-icon-caret-left" />  快捷操作</el-button>
-        <el-form :model="record" label-width="100px">
-          <el-form-item label="主诉"><el-input v-model="priliminaryDise.chiefComplaint" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="主述" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="现病史"><el-input v-model="priliminaryDise.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病史" style="width:80%" ></el-input></el-form-item>
-          <el-form-item label="现病治疗情况"><el-input v-model="priliminaryDise.historyOfTreatment" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病治疗情况" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="既往史"><el-input v-model="priliminaryDise.pastHistory" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="既往史" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="过敏史"><el-input v-model="priliminaryDise.allergies" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="过敏史" style="width:80%"></el-input></el-form-item>
-          <el-form-item label="体格检查"><el-input v-model="priliminaryDise.healthCheckup" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="体格检查" style="width:80%"></el-input></el-form-item>
+       <!-- <el-button type="primary" @click="print">打印</el-button>-->
+        <el-form :model="priliminaryDise" label-width="100px" :rules="rules" >
+          <el-form-item label="主诉" prop="chiefComplaint"><el-input v-model="priliminaryDise.chiefComplaint" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="主述" style="width:80%" ></el-input></el-form-item>
+          <el-form-item label="现病史" prop="historyOfPresentIllness" ><el-input v-model="priliminaryDise.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病史" style="width:80%"  ></el-input></el-form-item>
+          <el-form-item label="现病治疗情况" prop="historyOfTreatment" ><el-input v-model="priliminaryDise.historyOfTreatment" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病治疗情况" style="width:80%"  ></el-input></el-form-item>
+          <el-form-item label="既往史" prop="pastHistory" ><el-input v-model="priliminaryDise.pastHistory" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="既往史" style="width:80%"  ></el-input></el-form-item>
+          <el-form-item label="过敏史" prop="allergies" ><el-input v-model="priliminaryDise.allergies" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="过敏史" style="width:80%" ></el-input></el-form-item>
+          <el-form-item label="体格检查" prop="healthCheckup" ><el-input v-model="priliminaryDise.healthCheckup" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="体格检查" style="width:80%"  ></el-input></el-form-item>
           <el-form-item label="发病时间">
             <el-date-picker
               v-model="priliminaryDise.startDate"
@@ -45,7 +49,7 @@
       </el-aside>
       <transition name="el-zoom-in-left">
         <el-main width="50%" v-show="isclose" style="border-style: dotted;border-width: 0px 0px 0px 1px;border-color:#C0C0C0;margin-top:-12px">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="tabName">
             <el-tab-pane label="病历模板" name="first">
               <el-table stripe :data="models" height="230" @row-click="selectmodel" @row-dblclick="addmodel">
                 <el-table-column label="病历名">
@@ -118,7 +122,8 @@
     <el-dialog title="诊断目录" :visible.sync="dialogTableVisible" top="50px">
       <div style="height:520px">
         <span>搜索诊断</span>
-        <el-input style="width:200px" placeholder="搜索诊断" v-model="disQuery.name" @change="getDis"></el-input>
+        <el-input style="width:200px" placeholder="搜索诊断" v-model="disQuery.name"></el-input>
+        <el-button type="primary" @click="getDis1">搜索</el-button>
         <el-table highlight-current-row @row-click="selectDis" :data="disList " style="margin-top:20px">
           <el-table-column property="icd" label="ICD编码" width="150"></el-table-column>
           <el-table-column property="name" label="名称" width="350"></el-table-column>
@@ -131,18 +136,46 @@
 </template>
 <script>
   import {getDmsDislist,parseList} from '@/api/diagnosis'
-  import {submitPriliminaryDise,selectEndCaseHistoryByReg} from '@/api/outpatient/dmscase'
+  import {submitPriliminaryDise,selectEndCaseHistoryByReg,getnonend,selectMiddleCaseHistoryByReg,selectEndCaseHistory} from '@/api/outpatient/dmscase'
   import {getAllStaffModel} from '@/api/outpatient/dmscasemodel'
   import Pagination from '@/components/Pagination'
   import {selectByType,addfre,delfre} from '@/api/outpatient/frequentuse'
   import {parseTime,deepClone} from '@/utils'
   import {saveCasePage,getCasePage} from '@/api/outpatient/save'
   export default {
-    props:['patient'],
+    props:['patient','activeName'],
     name:'Record',
     components: {Pagination},
     data(){
       return{
+
+        rules: {
+          chiefComplaint: [
+            { required: true, message: '请输入主诉', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+          historyOfPresentIllness: [
+            { required: true, message: '请输入现病史', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+          historyOfTreatment: [
+            { required: true, message: '请输入现病治疗情况', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+          pastHistory: [
+            { required: true, message: '请输入既往史', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+          allergies: [
+            { required: true, message: '请输入过敏史', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+          healthCheckup: [
+            { required: true, message: '请输入体格检验', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ],
+        },
+
         history:[],
         historyitem:{},
         pickerOptions: {
@@ -171,39 +204,27 @@
           }]
         },
         dialogTableVisible:false,
-        activeName:'first',
-        isclose:false,
+        tabName:'first',
+        isclose:true,
         record:[],
         medicineDiseIdList:[],//常用诊断
         priliminaryDise:{
-          chiefComplaint:'',//主述
-          historyOfPresentIllness:'',//现病史
-          historyOfTreatment:'',//现治疗情况
-          pastHistory:'',//既往史
-          allergies:'',//过敏史
-          healthCheckup:'',//体格检查
-          registrationId:'',//
-          priliminaryDiseStrList:'',
-          priliminaryDiseIdList:'',
-          startDate:'',
-          name:'',
-          gender:'',
-          ageStr:''
+          chiefComplaint:"",//主述
+          historyOfPresentIllness:"",//现病史
+          historyOfTreatment:"",//现治疗情况
+          pastHistory:"",//既往史
+          allergies:"",//过敏史
+          healthCheckup:"",//体格检查
+          registrationId:"",//
+          priliminaryDiseStrList:"",
+          priliminaryDiseIdList:"",
+          startDate:"",
+          name:"",
+          gender:"",
+          ageStr:""
         },
         mainwidth:"80%",
         activeNames: ['1'],
-        data2:[
-          {
-            date: '0001',
-            name: '王小虎1',
-            address: '38岁'
-          },
-          {
-            date: '0002',
-            name: '王小虎2',
-            address: '39岁'
-          }
-        ],
         total:0,
         disQuery: {
           catId: '',
@@ -216,7 +237,8 @@
         },
         models:[],
         model:{},
-        disList:[]
+        disList:[],
+
       };
     },
     created(){
@@ -229,6 +251,11 @@
         this.selectEndCaseHistoryByReg()
         this.getCasePage()
       },
+      activeName(n, o) {
+          if ("record" != n) {
+            this.getnonend()
+          }
+      }
     },
     methods:{
       addmodel(val){
@@ -291,7 +318,10 @@
       selecthistory(val){
         this.historyitem = val
       },
+      // 顺序 1
       selectEndCaseHistoryByReg(){
+        this.priliminaryDise = {}
+        this.record = []
         selectEndCaseHistoryByReg(this.patient.registrationId).then(res=>{
           this.history = res.data.dmsCaseHistoryList
           this.history.forEach(item=>{
@@ -306,7 +336,75 @@
         })
       },
       submitPriliminaryDise(){
+        if(this.priliminaryDise.chiefComplaint ===undefined || this.priliminaryDise.chiefComplaint==='' || this.priliminaryDise.chiefComplaint===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入主诉！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+        if(this.priliminaryDise.historyOfPresentIllness ===undefined || this.priliminaryDise.historyOfPresentIllness==="" || this.priliminaryDise.historyOfPresentIllness===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入现病史！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+        if(this.priliminaryDise.historyOfTreatment ===undefined || this.priliminaryDise.historyOfTreatment==="" || this.priliminaryDise.historyOfTreatment===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入现病治疗情况！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+        if(this.priliminaryDise.pastHistory ===undefined || this.priliminaryDise.pastHistory==="" || this.priliminaryDise.pastHistory===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入既往史！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+        if(this.priliminaryDise.allergies ===undefined || this.priliminaryDise.allergies==="" || this.priliminaryDise.allergies===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入过敏史！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+
+        if(this.priliminaryDise.healthCheckup ===undefined || this.priliminaryDise.healthCheckup==="" || this.priliminaryDise.healthCheckup===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请输入体格检查！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
+
+        if(this.priliminaryDise.startDate ===undefined || this.priliminaryDise.startDate==="" || this.priliminaryDise.startDate===null){
+          this.$notify({
+            title: "信息不完整",
+            message: "请选择发病时间！",
+            type: "warning",
+            duration: 2000,
+          });
+          return;
+        }
         this.priliminaryDise.registrationId = this.patient.registrationId
+
+        this.priliminaryDise.priliminaryDiseStrList=''
+        this.priliminaryDise.priliminaryDiseIdList=''
         this.record.forEach(item=>{
           this.priliminaryDise.priliminaryDiseStrList+=(item.name+',')
           this.priliminaryDise.priliminaryDiseIdList+=(item.id+',')
@@ -318,13 +416,56 @@
         this.priliminaryDise.startDate = parseTime(this.priliminaryDise.startDate).substr(0,10)
         this.priliminaryDise.ageStr = this.patient.patientAge
         submitPriliminaryDise(this.priliminaryDise).then(res=>{
-          this.$notify({
-            title: '成功',
-            message: '成功提交初诊病历',
-            type: 'success',
-            duration: 2000
-          })
-          this.$emit('priliminary')
+          if(res.data===1){
+            this.$notify({
+              title: '成功',
+              message: '提交初诊病历成功',
+              type: 'success',
+              duration: 2000
+            })
+          }else {
+            this.$notify({
+              title: '失败',
+              message: '提交初诊病历失败',
+              type: 'warning',
+              duration: 2000
+            })
+          }
+
+          // this.$emit('priliminary')
+        })
+      },
+      submitPriliminaryDise2(){
+        this.priliminaryDise.registrationId = this.patient.registrationId
+
+        this.priliminaryDise.priliminaryDiseStrList=''
+        this.priliminaryDise.priliminaryDiseIdList=''
+        this.record.forEach(item=>{
+          this.priliminaryDise.priliminaryDiseStrList+=(item.name+',')
+          this.priliminaryDise.priliminaryDiseIdList+=(item.id+',')
+        })
+        this.priliminaryDise.priliminaryDiseStrList = this.priliminaryDise.priliminaryDiseStrList.substr(0, this.priliminaryDise.priliminaryDiseStrList.length - 1);
+        this.priliminaryDise.priliminaryDiseIdList = this.priliminaryDise.priliminaryDiseIdList.substr(0, this.priliminaryDise.priliminaryDiseIdList.length - 1);
+        this.priliminaryDise.name = this.patient.patientName
+        this.priliminaryDise.gender = this.patient.patientGender
+        this.priliminaryDise.startDate = parseTime(this.priliminaryDise.startDate).substr(0,10)
+        this.priliminaryDise.ageStr = this.patient.patientAge
+        submitPriliminaryDise(this.priliminaryDise).then(res=>{
+          if(res.data===1){
+            this.$notify({
+              title: '成功',
+              message: '提交初诊病历成功',
+              type: 'success',
+              duration: 2000
+            })
+          }else {
+            this.$notify({
+              title: '失败',
+              message: '提交初诊病历失败',
+              type: 'warning',
+              duration: 2000
+            })
+          }
         })
       },
       deleteDis(row){
@@ -340,16 +481,32 @@
           cancelButtonText: '取消',
           type: 'success'
         }).then(()=>{
-
           let flag = 1
+          this.record.forEach(item=>{
+            if(val.id===item.id){
+              flag=0
+            }
+          })
           if(flag)
             this.record.push(val)
           else
-            alert('已存在该诊断！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该诊断',
+              type: 'warning',
+              duration: 2000
+            })
           this.dialogTableVisible = false
         })
       },
       async getDis(){
+        const res = await getDmsDislist(this.disQuery)
+        this.disList = res.data.list
+        this.total = res.data.total
+      },
+      async getDis1(){
+        this.disQuery.pageSize=10
+        this.disQuery.pageNum=1
         const res = await getDmsDislist(this.disQuery)
         this.disList = res.data.list
         this.total = res.data.total
@@ -366,8 +523,55 @@
           this.mainwidth="80%"
         else
           this.mainwidth="60%"
-      }
-    }
+      },
+      print(e){
+        const subOutputRankPrint = document.getElementById('record1')
+        const newContent = subOutputRankPrint.innerHTML
+        const oldContent = document.body.innerHTML
+        document.body.innerHTML = newContent
+        window.print()
+        window.location.reload()
+        document.body.innerHTML = oldContent
+        return false
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$notify({
+              title: '提示',
+              message: '提交',
+              type: 'warning',
+              duration: 2000
+            })
+          } else {
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      getnonend(){
+
+        selectEndCaseHistory(this.patient.registrationId,null).then(res=>{
+          const list = res.data.dmsCaseHistoryList[0];
+          if(list!=undefined){
+            this.priliminaryDise = list
+            parseList(this.priliminaryDise.priliminaryDiseIdList).then(res=>{
+              if(res.data!=null || res.data!=undefined){
+                this.record = res.data
+              }else {
+                this.record=[]
+              }
+            })
+          }
+
+        })
+      },
+    },
+    // activated() {
+    //   console.log('active')
+    // }
   }
 </script>
 <style>

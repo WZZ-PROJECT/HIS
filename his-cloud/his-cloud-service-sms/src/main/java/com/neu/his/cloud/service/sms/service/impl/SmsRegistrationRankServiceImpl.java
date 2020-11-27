@@ -111,14 +111,14 @@ public class SmsRegistrationRankServiceImpl implements SmsRegistrationRankServic
 
     @Override
     public List<SmsRegistrationRankResult> selectAll(){
-        //先在redis中查询是否存在
-        String status = (String)redisUtil.getObj("registrationRankChangeStatus");
-        if(status != null && Integer.parseInt(status) > 0){
-            List<SmsRegistrationRankResult> resultList = (List<SmsRegistrationRankResult>)redisUtil.getObj("allRegistrationRank");
-            if(CollectionUtil.isEmpty(resultList)){
-                return resultList;
-            }
-        }
+//        //先在redis中查询是否存在
+//        String status = (String)redisUtil.getObj("registrationRankChangeStatus");
+//        if(status != null && Integer.parseInt(status) > 0){
+//            List<SmsRegistrationRankResult> resultList = (List<SmsRegistrationRankResult>)redisUtil.getObj("allRegistrationRank");
+//            if(CollectionUtil.isEmpty(resultList)){
+//                return resultList;
+//            }
+//        }
 
         // 在数据库中查找
         SmsRegistrationRankExample example = new SmsRegistrationRankExample();
@@ -132,9 +132,9 @@ public class SmsRegistrationRankServiceImpl implements SmsRegistrationRankServic
             returnList.add(r);
         }
 
-        //向redis添加
-        redisUtil.setObj("allRegistrationRank",returnList);
-        redisUtil.setObj("registrationRankChangeStatus","0");
+//        //向redis添加
+//        redisUtil.setObj("allRegistrationRank",returnList);
+//        redisUtil.setObj("registrationRankChangeStatus","0");
 
         return returnList;
     }

@@ -2,20 +2,24 @@
   <div>
   <!-- 确诊 -->
   <el-container>
-  <el-aside :width="mainwidth" style="background:white;">
+   <!-- <div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
+  <el-aside id="historyComfirm1" :width="mainwidth" style="background:white;">
     <el-tag style="margin-bottom:20px;margin-left:-20px" type="info">初诊内容:</el-tag>
     <el-form :model="prerecord" disabled style="color:black">
       <el-form-item label="主诉"><el-input readonly v-model="prerecord.chiefComplaint" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="主述" style="width:80%;float:right;"></el-input></el-form-item>
-      <el-form-item label="现病史"><el-input readonly v-model="prerecord.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病史"  style="width:80%;float:right;"></el-input></el-form-item>
-      <el-form-item label="现病治疗情况"><el-input readonly v-model="prerecord.historyOfTreatment" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="现病治疗情况" style="width:80%;float:right"></el-input></el-form-item>
-      <el-form-item label="既往史"><el-input readonly v-model="prerecord.pastHistory" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="既往史" style="width:80%;float:right"></el-input></el-form-item>
-      <el-form-item label="过敏史"><el-input readonly v-model="prerecord.allergies" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="过敏史" style="width:80%;float:right"></el-input></el-form-item>
-      <el-form-item label="体格检查"><el-input readonly v-model="prerecord.healthCheckup" type="textarea" :autosize="{ minRows: 1, maxRows: 3}" placeholder="体格检查" style="width:80%;float:right"></el-input></el-form-item>
+      <el-form-item label="现病史"><el-input readonly v-model="prerecord.historyOfPresentIllness" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病史"  style="width:80%;float:right;"></el-input></el-form-item>
+      <el-form-item label="现病治疗情况"><el-input readonly v-model="prerecord.historyOfTreatment" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="现病治疗情况" style="width:80%;float:right"></el-input></el-form-item>
+      <el-form-item label="既往史"><el-input readonly v-model="prerecord.pastHistory" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="既往史" style="width:80%;float:right"></el-input></el-form-item>
+      <el-form-item label="过敏史"><el-input readonly v-model="prerecord.allergies" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="过敏史" style="width:80%;float:right"></el-input></el-form-item>
+      <el-form-item label="体格检查"><el-input readonly v-model="prerecord.healthCheckup" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="体格检查" style="width:80%;float:right"></el-input></el-form-item>
     </el-form>
     <el-tag style="margin-bottom:20px;margin-left:-20px">检查检验结果:</el-tag>
-    <el-form :model="record">
-      <el-form-item label="检查结果"><el-input disabled v-model="prerecord.checkResult" placeholder="检查结果" style="width:40%"></el-input></el-form-item>
-      <el-form-item label="检验结果"><el-input disabled v-model="prerecord.testResult" placeholder="检验结果" style="width:40%"></el-input></el-form-item>
+    <el-form :model="prerecord">
+      <el-form-item label="检查结果"><el-input disabled v-model="prerecord.checkResult" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="检查结果" style="width:40%"></el-input></el-form-item>
+      <el-form-item label="检验结果"><el-input disabled v-model="prerecord.testResult" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="检验结果" style="width:40%"></el-input></el-form-item>
+      <el-form-item label="医嘱"><el-input disabled v-model="prerecord.testAdvice" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" placeholder="医嘱" style="width:40%;margin-left:3%"></el-input></el-form-item>
     </el-form>
     <div style="margin-left:-20px;margin-bottom:30px">
       <el-tag>评估诊断:</el-tag>
@@ -32,7 +36,7 @@
   </div>
 </template>
 <script>
-import {getnonend,submitdefinite,Clinical} from '@/api/outpatient/dmscase'
+import {getnonend,submitdefinite,Clinical,selectEndCaseHistory} from '@/api/outpatient/dmscase'
 import {getDmsDislist,parseList} from '@/api/diagnosis'
 import Pagination from '@/components/Pagination'
 import {selectByType} from '@/api/outpatient/frequentuse'
@@ -68,7 +72,8 @@ export default {
         healthCheckup:'',
         checkResult:'',
         testResult:'',
-        priliminaryDiseIdList:''
+        priliminaryDiseIdList:'',
+        testAdvice:''
       },
       activeName:'first',
       isclose:true,
@@ -79,7 +84,7 @@ export default {
   created(){
     this.getmedicineDiseIdList()
     this.registrationId=this.patient.registrationId
-    console.log(this.registrationId)
+
   /*  this.Clinical();*/
   },
   watch:{
@@ -138,7 +143,12 @@ export default {
           if(flag) {
             this.record.push(val)
           }else {
-            alert('已存在该诊断！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该诊断！')
           }
         }
           this.dialogTableVisible = false
@@ -157,15 +167,15 @@ export default {
       getnonend(this.patient.registrationId).then(res=>{
 
         this.prerecord = res.data.dmsCaseHistoryList[0]
-        console.log(this.prerecord)
+
         parseList(this.prerecord.priliminaryDiseIdList).then(res=>{
           this.record = res.data
-          console.log(this.record)
+
         })
       })
     },
     Clinical(){
-      Clinical(this.patient.registrationId).then(res=>{
+      selectEndCaseHistory(this.patient.registrationId,3).then(res=>{
         this.prerecord.chiefComplaint=res.data.dmsCaseHistoryList[0].chiefComplaint
         this.prerecord.historyOfPresentIllness=res.data.dmsCaseHistoryList[0].historyOfPresentIllness
         this.prerecord.historyOfTreatment=res.data.dmsCaseHistoryList[0].historyOfTreatment
@@ -174,10 +184,10 @@ export default {
         this.prerecord.healthCheckup=res.data.dmsCaseHistoryList[0].healthCheckup
         this.prerecord.checkResult=res.data.dmsCaseHistoryList[0].checkResult
         this.prerecord.testResult=res.data.dmsCaseHistoryList[0].testResult
-        this.prerecord.priliminaryDiseIdList=res.data.dmsCaseHistoryList[0].priliminaryDiseIdList
-        parseList(this.prerecord.priliminaryDiseIdList).then(pars=>{
+        this.prerecord.definiteDiseStrList=res.data.dmsCaseHistoryList[0].definiteDiseStrList
+        this.prerecord.testAdvice=res.data.dmsCaseHistoryList[0].testAdvice
+        parseList(this.prerecord.definiteDiseStrList).then(pars=>{
           this.records=pars.data
-          console.log(this.records)
         })
       })
     },
@@ -187,6 +197,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="60%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyComfirm1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

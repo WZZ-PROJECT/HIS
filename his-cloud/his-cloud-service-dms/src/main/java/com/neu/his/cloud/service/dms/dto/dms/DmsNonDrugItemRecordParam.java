@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 @Getter
 @ToString
 public class DmsNonDrugItemRecordParam  implements Serializable {
-   @ApiModelProperty(value = "目的")
-   String aim;
+    @ApiModelProperty(value = "目的")
+    String aim;
     @ApiModelProperty(value = "要求")
     String demand;
     @ApiModelProperty(value = "临床印象")

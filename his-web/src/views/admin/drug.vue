@@ -7,16 +7,16 @@
       <el-select v-model="listQuery.typeID" placeholder="药品分类" clearable style="width: 130px" class="filter-item" filterable>
         <el-option v-for="item in [{key:'101',label:'西药'},{key:'102',label:'中成药'},{key:'103',label:'中草药'}]" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索药品
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增药品
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button  :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出药品
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+      <el-button  :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
       </el-button>
     </div>
@@ -36,11 +36,6 @@
       <el-table-column align="center" label="药品规格" width="140">
         <template slot-scope="scope">
           {{ scope.row.format }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="药品单价" width="70">
-        <template slot-scope="scope">
-          {{ scope.row.price }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="包装单位" width="70">
@@ -169,7 +164,8 @@ const defaultDrug = {
   typeID:'',
   mnemonicCode:'',
   stock:'',
-  genericName:''
+  genericName:'',
+  alldrug:[]
 }
 
 export default {
@@ -206,18 +202,17 @@ export default {
         stock:'',
         genericName:'',
         pageNum: 1,
-        pageSize: 20
+        pageSize: 10
       },
       downloadLoading: false,
       rules:{
         code:[
           {required: true, message: '请输入药品编码',trigger: 'blur'},
-          { min: 4, max: 4, message: '长度为4个字符', trigger: 'blur' },
-          { pattern: /^[a-zA-Z][0-9]*$/, message: '一个字母三个数字', trigger: 'blur'  },
+          { min: 1, max: 30, message: '长度为 1 到 30 个字符', trigger: 'blur' },
         ],
         name:[
           {required: true, message: '请输入药品名称',trigger: 'blur'},
-          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' },
+          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
         ],
         unit:[
           {required: true, message: '请输入包装单位',trigger: 'blur'},
@@ -232,11 +227,11 @@ export default {
         ],
         manufacturer:[
           {required: true, message: '请输入生产厂家',trigger: 'blur'},
-          { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' },
+          { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' },
         ],
         format:[
           {required: true, message: '药品规格',trigger: 'blur'},
-          { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' },
+          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
 
         ],
         price:[
@@ -245,9 +240,11 @@ export default {
         ],
         mnemonicCode:[
           {required: true, message: '助记码',trigger: 'blur'},
+          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
         ],
         genericName :[
           {required: true, message: '通用名',trigger: 'blur'},
+          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' },
         ],
         stock :[
           {required: true, message: '库存',trigger: 'blur'},
@@ -256,7 +253,8 @@ export default {
 
 
       },
-      deplistref:[]
+      deplistref:[],
+      alldrug:[]
     }
   },
   computed: {
@@ -282,7 +280,8 @@ export default {
       this.listLoading = false
     },
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
+      this.listQuery.pageSize = 10
       this.listQuery.typeId = this.listQuery.typeID
       this.getdrugList()
     },
@@ -299,7 +298,7 @@ export default {
       this.resetTemp()
       this.drug = deepClone(row)
       this.drug.typeID = deepClone(row.typeId)
-      console.log(this.drug)
+
       this.dialogType = 'edit'
       this.dialogVisible = true
       this.checkStrictly = true
@@ -376,9 +375,18 @@ export default {
       })
       })
     },
-    handleDownload() {
+    /*handleDownload() {
       getAlldrug().then(res=>{
       let alldrug = res.data
+      alldrug.forEach(item=>{
+        if(item.typeId===101){
+          item.typeId='西药'
+        }else if(item.typeId===102){
+          item.typeId='中成药'
+        }else if(item.typeId===103){
+          item.typeId='中草药'
+        }
+      })
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['索引', '药品编码', '药品名称', '药品规格','药品单价','包装单位','生产厂家','药品类型','拼音助记码','通用名','库存']
@@ -392,7 +400,34 @@ export default {
         this.downloadLoading = false
       })
       })
+    },*/
+
+    handleDownload() {
+
+        this.alldrug = deepClone(this.drugList);
+        this.alldrug.forEach(item=>{
+          if(item.typeId===101){
+            item.typeId='西药'
+          }else if(item.typeId===102){
+            item.typeId='中成药'
+          }else if(item.typeId===103){
+            item.typeId='中草药'
+          }
+        })
+        this.downloadLoading = true
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['索引', '药品编码', '药品名称', '药品规格','药品单价','包装单位','生产厂家','药品类型','拼音助记码','通用名','库存']
+          const filterVal = ['id', 'code', 'name', 'format','price','unit','manufacturer','typeId','mnemonicCode','genericName','stock']
+          const data = this.formatJson(filterVal, this.alldrug)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: '药品清单'
+          })
+          this.downloadLoading = false
+        })
     },
+
     async confirmDep(formName){
       this.$refs[formName].validate((valid)=>{
         this.drug.dosageID = this.drug.dosage.id
@@ -417,7 +452,7 @@ export default {
               this.getdrugList()
               this.$notify({
               title: '成功',
-              message: res.message,
+              message: "新增药品成功",
               type: 'success',
               duration: 2000
             })

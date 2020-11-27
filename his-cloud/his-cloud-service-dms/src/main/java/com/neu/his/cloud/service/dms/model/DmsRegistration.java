@@ -5,27 +5,42 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DmsRegistration implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "病人Id")
     private Long patientId;
 
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
     private Integer endAttendance;
 
+    @ApiModelProperty(value = "登记状态 : 1 未看诊 2 待收费 3 诊毕 4 已退号 5:已取消")
     private Integer status;
 
+    @ApiModelProperty(value = "排班号")
     private Long skdId;
 
+    @ApiModelProperty(value = "病历本")
     private Integer needBook;
 
+    @ApiModelProperty(value = "绑定状态 : 0：非专家号 1: 专家号")
     private Integer bindStatus;
 
+    @ApiModelProperty(value = "所属科室ID")
     private Long deptId;
 
+    @ApiModelProperty(value = "看诊日期")
     private Date attendanceDate;
 
     private String patientAgeStr;
+
+    @ApiModelProperty(value = "微信充值记录ID")
+    private Long wxResultsId;
+
+    @ApiModelProperty(value = "挂号级别")
+    private Long registeredlevel;
 
     private static final long serialVersionUID = 1L;
 
@@ -117,6 +132,22 @@ public class DmsRegistration implements Serializable {
         this.patientAgeStr = patientAgeStr;
     }
 
+    public Long getWxResultsId() {
+        return wxResultsId;
+    }
+
+    public void setWxResultsId(Long wxResultsId) {
+        this.wxResultsId = wxResultsId;
+    }
+
+    public Long getRegisteredlevel() {
+        return registeredlevel;
+    }
+
+    public void setRegisteredlevel(Long registeredlevel) {
+        this.registeredlevel = registeredlevel;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -134,6 +165,8 @@ public class DmsRegistration implements Serializable {
         sb.append(", deptId=").append(deptId);
         sb.append(", attendanceDate=").append(attendanceDate);
         sb.append(", patientAgeStr=").append(patientAgeStr);
+        sb.append(", wxResultsId=").append(wxResultsId);
+        sb.append(", registeredlevel=").append(registeredlevel);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

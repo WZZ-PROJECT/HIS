@@ -16,15 +16,21 @@ public interface DmsDiseCatalogMapper {
 
     int insertSelective(DmsDiseCatalog record);
 
+    List<DmsDiseCatalog> selectByExampleWithBLOBs(DmsDiseCatalogExample example);
+
     List<DmsDiseCatalog> selectByExample(DmsDiseCatalogExample example);
 
     DmsDiseCatalog selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") DmsDiseCatalog record, @Param("example") DmsDiseCatalogExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") DmsDiseCatalog record, @Param("example") DmsDiseCatalogExample example);
+
     int updateByExample(@Param("record") DmsDiseCatalog record, @Param("example") DmsDiseCatalogExample example);
 
     int updateByPrimaryKeySelective(DmsDiseCatalog record);
+
+    int updateByPrimaryKeyWithBLOBs(DmsDiseCatalog record);
 
     int updateByPrimaryKey(DmsDiseCatalog record);
 }

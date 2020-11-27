@@ -13,7 +13,7 @@ public interface DmsMechanicItemRecordService {
     /**
      * 描述：根据科室id刷新患者列表
      */
-    List<DmsMechanicItemRecordResult> listByDept(Long deptId);
+    List<DmsMechanicItemRecordResult> listByDept(Long deptId,String name);
 
     /**
      * 描述：医技登记
@@ -25,4 +25,12 @@ public interface DmsMechanicItemRecordService {
      */
     int uploadResult(Long id, Long excuteStaffId, String checkResult, String resultImgUrlList);
 
+
+    /**
+     * 收费员：查看未缴费项
+     * @param deptId
+     * @param identificationNo
+     * @return
+     */
+    List<DmsMechanicItemRecordResult> listByDeptChange(Long deptId, String identificationNo);
 }

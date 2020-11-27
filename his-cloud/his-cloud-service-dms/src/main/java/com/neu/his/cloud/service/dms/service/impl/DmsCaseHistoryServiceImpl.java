@@ -1,14 +1,19 @@
 package com.neu.his.cloud.service.dms.service.impl;
 
+import com.github.pagehelper.util.StringUtil;
+import com.neu.his.cloud.service.dms.dto.dms.AddInformParam;
 import com.neu.his.cloud.service.dms.dto.dms.DmsCaseHistoryParam;
 import com.neu.his.cloud.service.dms.dto.dms.DmsCaseHistoryResult;
 import com.neu.his.cloud.service.dms.mapper.*;
 import com.neu.his.cloud.service.dms.model.*;
 import com.neu.his.cloud.service.dms.service.DmsCaseHistoryService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +40,10 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
     DmsDrugMapper dmsDrugMapper;
     @Autowired
     PmsPatientMapper pmsPatientMapper;
+
+    @Autowired
+    FamiliarInformMapper familiarInformMapper;
+
 
     //chiefComplaint
     //historyOfPresentIllness
@@ -78,10 +87,30 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
         dmsCaseHistory.setAgeStr(dmsCaseHistoryParam.getAgeStr());
         dmsCaseHistory.setStatus(1);
         dmsCaseHistory.setRegistrationId(dmsCaseHistoryParam.getRegistrationId());
+        dmsCaseHistory.setDefiniteDiseStrList(dmsCaseHistoryParam.getPriliminaryDiseIdList());
         System.err.println("getRegistrationId:"+dmsCaseHistoryParam.getRegistrationId());
         dmsCaseHistory.setPatientId(dmsRegistrationMapper.selectByPrimaryKey(dmsCaseHistoryParam.getRegistrationId()).getPatientId());//必须设置
         dmsCaseHistory.setCreateTime(new Date());
-        dmsCaseHistoryMapper.insertSelective(dmsCaseHistory);
+
+        DmsCaseHistoryExample dmsCaseHistoryExample=new DmsCaseHistoryExample();
+        dmsCaseHistoryExample.createCriteria().andRegistrationIdEqualTo(dmsCaseHistoryParam.getRegistrationId());
+        List<DmsCaseHistory> dmsCaseHistories = dmsCaseHistoryMapper.selectByExample(dmsCaseHistoryExample);
+        if(!CollectionUtils.isEmpty(dmsCaseHistories)){
+            dmsCaseHistory.setId(dmsCaseHistories.get(0).getId());
+            if (StringUtils.isEmpty(dmsCaseHistoryParam.getCheckResult())) {
+                dmsCaseHistory.setCheckResult(null);
+            }
+            if (StringUtils.isEmpty(dmsCaseHistoryParam.getTestResult())) {
+                dmsCaseHistory.setTestResult(null);
+            }
+            if (StringUtils.isEmpty(dmsCaseHistoryParam.getTestAdvice())) {
+                dmsCaseHistory.setTestAdvice(null);
+            }
+            dmsCaseHistoryMapper.updateByPrimaryKeySelective(dmsCaseHistory);
+
+        } else {
+            dmsCaseHistoryMapper.insertSelective(dmsCaseHistory);
+        }
         return 1;
     }
     //根据registrationId查询1 初诊结束 2确诊结束 3 诊毕
@@ -103,6 +132,32 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
 //        System.err.println("dmsCaseHistoryList.size():"+dmsCaseHistoryList.size());
         DmsCaseHistoryResult dmsCaseHistoryResult = new DmsCaseHistoryResult();
         dmsCaseHistoryResult.setDmsCaseHistoryList(dmsCaseHistoryList);
+        return dmsCaseHistoryResult;
+    }
+
+    /**
+     * 描述：根据门诊号查询历史病历
+     *
+     * @param registrationId
+     * @param status
+     */
+    @Override
+    public DmsCaseHistoryResult selectCaseHistory(Long registrationId, Integer status) {
+        DmsCaseHistoryExample dmsCaseHistoryExample = new DmsCaseHistoryExample();
+        if (registrationId != null) {
+            dmsCaseHistoryExample.createCriteria().andRegistrationIdEqualTo(registrationId);
+        }
+        if (!StringUtils.isEmpty(status)) {
+            dmsCaseHistoryExample.createCriteria().andStatusEqualTo(status);
+        }
+        dmsCaseHistoryExample.setOrderByClause("create_time desc");//按创建时间降序
+        List<DmsCaseHistory> dmsCaseHistoryList = dmsCaseHistoryMapper.selectByExample(dmsCaseHistoryExample);
+        DmsCaseHistoryResult dmsCaseHistoryResult = new DmsCaseHistoryResult();
+        if (!CollectionUtils.isEmpty(dmsCaseHistoryList)) {
+            dmsCaseHistoryResult.setDmsCaseHistoryList(dmsCaseHistoryList);
+        }else {
+              dmsCaseHistoryResult.setDmsCaseHistoryList(new ArrayList<>());
+        }
         return dmsCaseHistoryResult;
     }
     //通过门诊号更新记录
@@ -128,12 +183,26 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
         dmsCaseHistory.setTestResult(dmsCaseHistoryParam.getTestResult());
         dmsCaseHistory.setDefiniteDiseStrList(dmsCaseHistoryParam.getDefiniteDiseStrList());
         //解析checkIdList为checkStrList
-        String checkStrList = resolveNonDrugItemRecord(dmsCaseHistoryParam.getRegistrationId() , 0);
+        String checkStrList =null;
+        if(!StringUtils.isEmpty(dmsCaseHistoryParam.getRegistrationId())){
+            checkStrList = resolveNonDrugItemRecord(dmsCaseHistoryParam.getRegistrationId() , 0);
+        }
         dmsCaseHistory.setCheckStrList(checkStrList);
         //解析testIdList为testStrList
-        String testStrList = resolveNonDrugItemRecord(dmsCaseHistoryParam.getRegistrationId() , 1);
-        dmsCaseHistory.setTestStrList(testStrList);
+        String testStrList=null;
+        if(!StringUtils.isEmpty(dmsCaseHistoryParam.getRegistrationId())){
+            checkStrList = resolveNonDrugItemRecord(dmsCaseHistoryParam.getRegistrationId() , 0);
+        }
+        dmsCaseHistory.setTestStrList(checkStrList);
         dmsCaseHistory.setStatus(2);//确诊结束
+        dmsCaseHistory.setTestAdvice(dmsCaseHistoryParam.getTestAdvice());
+        dmsCaseHistory.setChiefComplaint(dmsCaseHistoryParam.getChiefComplaint());
+        dmsCaseHistory.setPriliminaryDiseIdList(dmsCaseHistoryParam.getDefiniteDiseStrList());
+        dmsCaseHistory.setHistoryOfPresentIllness(dmsCaseHistoryParam.getHistoryOfPresentIllness());
+        dmsCaseHistory.setHistoryOfTreatment(dmsCaseHistoryParam.getHistoryOfTreatment());
+        dmsCaseHistory.setPastHistory(dmsCaseHistoryParam.getPastHistory());
+        dmsCaseHistory.setAllergies(dmsCaseHistoryParam.getAllergies());
+        dmsCaseHistory.setHealthCheckup(dmsCaseHistoryParam.getHealthCheckup());
         dmsCaseHistoryMapper.updateByExampleSelective(dmsCaseHistory,dmsCaseHistoryExample);
         return 1;
     }
@@ -192,18 +261,20 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
         for (DmsNonDrugItemRecord dmsNonDrugItemRecord: dmsNonDrugItemRecordList) {
             Long nonDrugId = dmsNonDrugItemRecord.getNoDrugId();
             DmsNonDrug dmsNonDrug = dmsNonDrugMapper.selectByPrimaryKey(nonDrugId);
-            String nonDrugName = dmsNonDrug.getName();
-            String oneRecord = "";
-            if (type == 0 || type ==1){//检查，检验
-                String chechParts = dmsNonDrugItemRecord.getCheckParts();
-                String result = dmsNonDrugItemRecord.getCheckResult();
-                String resultImgUrlList = dmsNonDrugItemRecord.getResultImgUrlList();
-                oneRecord = nonDrugName + "<>" + chechParts + "<>" + result + "<>" + resultImgUrlList + "><";
+            if(!StringUtils.isEmpty(dmsNonDrug)){
+                String nonDrugName = dmsNonDrug.getName();
+                String oneRecord = "";
+                if (type == 0 || type ==1){//检查，检验
+                    String chechParts = dmsNonDrugItemRecord.getCheckParts();
+                    String result = dmsNonDrugItemRecord.getCheckResult();
+                    String resultImgUrlList = dmsNonDrugItemRecord.getResultImgUrlList();
+                    oneRecord = nonDrugName + "<>" + chechParts + "<>" + result + "<>" + resultImgUrlList + "><";
+                }
+                else if (type == 2){//处置
+                    oneRecord = nonDrugName + "><";
+                }
+                nonDrugStrList = nonDrugStrList + oneRecord;
             }
-            else if (type == 2){//处置
-                oneRecord = nonDrugName + "><";
-            }
-            nonDrugStrList = nonDrugStrList + oneRecord;
         }
         return nonDrugStrList;
     }
@@ -292,5 +363,108 @@ public class DmsCaseHistoryServiceImpl implements DmsCaseHistoryService {
             dmsCaseHistoryResult.setDmsCaseHistoryList(dmsCaseHistories);
         }
         return dmsCaseHistoryResult;
+    }
+
+
+    @Override
+    public int insertFamiliarInform(AddInformParam addInformParam) {
+        FamiliarInform familiarInform=new FamiliarInform();
+        if(!StringUtils.isEmpty(addInformParam.getName())){
+            familiarInform.setName(addInformParam.getName());
+        }
+        if(!StringUtils.isEmpty(addInformParam.getContent())){
+            familiarInform.setContent(addInformParam.getContent());
+        }
+        int i = familiarInformMapper.insertSelective(familiarInform);
+        if(i>0){
+            Long id = familiarInform.getId();
+            DmsCaseHistoryExample dmsCaseHistoryExample=new DmsCaseHistoryExample();
+            dmsCaseHistoryExample.createCriteria().andRegistrationIdEqualTo(addInformParam.getRegistrationId());
+            List<DmsCaseHistory> dmsCaseHistories = dmsCaseHistoryMapper.selectByExample(dmsCaseHistoryExample);
+            if(!CollectionUtils.isEmpty(dmsCaseHistories)){
+                DmsCaseHistory dmsCaseHistory = dmsCaseHistories.get(0);
+                dmsCaseHistory.setFamiliarInform(dmsCaseHistory.getFamiliarInform()+","+id);
+                dmsCaseHistoryMapper.updateByPrimaryKeySelective(dmsCaseHistory);
+            }
+        }
+        return i;
+    }
+
+    @Override
+    public int deleteFamiliarInform(AddInformParam addInformParam) {
+        //获得知情告知删除的ID
+        if(!StringUtils.isEmpty(addInformParam.getId())){
+            int i = familiarInformMapper.deleteByPrimaryKey(addInformParam.getId());
+            //知情告知删除成功
+            if(i>0){
+                //查看病历表
+                DmsCaseHistoryExample dmsCaseHistoryExample=new DmsCaseHistoryExample();
+                dmsCaseHistoryExample.createCriteria().andRegistrationIdEqualTo(addInformParam.getRegistrationId());
+                List<DmsCaseHistory> dmsCaseHistories = dmsCaseHistoryMapper.selectByExample(dmsCaseHistoryExample);
+                if(!CollectionUtils.isEmpty(dmsCaseHistories)){
+                    //获得病历
+                    DmsCaseHistory dmsCaseHistory = dmsCaseHistories.get(0);
+                    String familiarInform = dmsCaseHistory.getFamiliarInform();
+                    String[] split = familiarInform.split(",");
+                    String s1=null;
+                    //修改病例的知情告知内容
+                    for (String s : split) {
+                        if(!addInformParam.getId().toString().equals(s) && !"null".equals(s)){
+                            s1=s1+","+s;
+                        }
+                    }
+                    //修改知情告知
+                    dmsCaseHistory.setFamiliarInform(s1);
+                    int i1 = dmsCaseHistoryMapper.updateByPrimaryKeySelective(dmsCaseHistory);
+                    return i1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int updateFamiliarInform(AddInformParam addInformParam) {
+        FamiliarInform familiarInform=new FamiliarInform();
+        if(!StringUtils.isEmpty(addInformParam.getId())){
+            familiarInform.setId(addInformParam.getId());
+        }
+
+        if(!StringUtils.isEmpty(addInformParam.getName())){
+            familiarInform.setName(addInformParam.getName());
+        }
+
+        if(!StringUtils.isEmpty(addInformParam.getContent())){
+            familiarInform.setContent(addInformParam.getContent());
+        }
+        return familiarInformMapper.updateByPrimaryKeySelective(familiarInform);
+    }
+
+    @Override
+    public List<FamiliarInform> selectFamiliarInform(AddInformParam addInformParam) {
+        if(addInformParam.getRegistrationId()!=null){
+            List<FamiliarInform> list=new ArrayList<>();
+            //查询知情告知的Id
+            DmsCaseHistoryExample dmsCaseHistoryExample=new DmsCaseHistoryExample();
+            dmsCaseHistoryExample.createCriteria().andRegistrationIdEqualTo(addInformParam.getRegistrationId());
+            List<DmsCaseHistory> dmsCaseHistories = dmsCaseHistoryMapper.selectByExample(dmsCaseHistoryExample);
+            if(!CollectionUtils.isEmpty(dmsCaseHistories)){
+                DmsCaseHistory dmsCaseHistory = dmsCaseHistories.get(0);
+                String familiarInforms = dmsCaseHistory.getFamiliarInform();
+                if(!StringUtils.isEmpty(familiarInforms)){
+                    String[] split = familiarInforms.split(",");
+                    for (String s : split) {
+                        if(!"null".equals(s)){
+                            FamiliarInform familiarInform = familiarInformMapper.selectByPrimaryKey(Long.parseLong(s));
+                            if(!StringUtils.isEmpty(familiarInform)){
+                                list.add(familiarInform);
+                            }
+                        }
+                    }
+                }
+                return list;
+            }
+        }
+        return null;
     }
 }

@@ -166,6 +166,66 @@ public class BmsRollbackExample {
             return (Criteria) this;
         }
 
+        public Criteria andRefundBillIdIsNull() {
+            addCriterion("refund_bill_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdIsNotNull() {
+            addCriterion("refund_bill_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdEqualTo(Long value) {
+            addCriterion("refund_bill_id =", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdNotEqualTo(Long value) {
+            addCriterion("refund_bill_id <>", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdGreaterThan(Long value) {
+            addCriterion("refund_bill_id >", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("refund_bill_id >=", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdLessThan(Long value) {
+            addCriterion("refund_bill_id <", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdLessThanOrEqualTo(Long value) {
+            addCriterion("refund_bill_id <=", value, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdIn(List<Long> values) {
+            addCriterion("refund_bill_id in", values, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdNotIn(List<Long> values) {
+            addCriterion("refund_bill_id not in", values, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdBetween(Long value1, Long value2) {
+            addCriterion("refund_bill_id between", value1, value2, "refundBillId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefundBillIdNotBetween(Long value1, Long value2) {
+            addCriterion("refund_bill_id not between", value1, value2, "refundBillId");
+            return (Criteria) this;
+        }
+
         public Criteria andAccountCodeIsNull() {
             addCriterion("account_code is null");
             return (Criteria) this;

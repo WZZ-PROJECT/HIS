@@ -1,13 +1,18 @@
 package com.neu.his.cloud.service.bms.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.map.MapUtil;
 import com.neu.his.cloud.service.bms.WxPay.MyWXPay;
+import com.neu.his.cloud.service.bms.WxPay.WXPay;
 import com.neu.his.cloud.service.bms.dto.bms.*;
 import com.neu.his.cloud.service.bms.dto.dms.WXDmsRegistrationParam;
 import com.neu.his.cloud.service.bms.mapper.*;
 import com.neu.his.cloud.service.bms.model.*;
 import com.neu.his.cloud.service.bms.service.BmsFeeService;
 import com.neu.his.cloud.service.bms.util.DateUtil;
+import com.neu.his.cloud.service.bms.util.InvoiceNo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -55,12 +60,20 @@ public class BmsFeeServiceImpl implements BmsFeeService {
     DmsMedicinePrescriptionRecordMapper dmsMedicinePrescriptionRecordMapper;
     @Autowired
     DmsHerbalPrescriptionRecordMapper dmsHerbalPrescriptionRecordMapper;
-
     @Autowired
     WxResultsMapper wxResultsMapper;
 
     @Autowired
     BmsAccountMapper accountMapper;
+
+    @Autowired
+    BmsRefundBillMapper bmsRefundBillMapper;
+
+    @Autowired
+    BmsRollbackMapper bmsRollbackMapper;
+
+    @Autowired
+    BmsAccountMapper bmsAccountMapper;
     //查询当日挂号人
     //1.传入病历号和挂号日期
     //2.1.如果病历号为空和挂号日期为空，则显示今天的挂号记录按时间倒序
@@ -98,6 +111,7 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                     bmsRegistrationPatientResult.setPatientDateOfBirth(pmsPatient.getDateOfBirth());
                     bmsRegistrationPatientResult.setPatientGender(pmsPatient.getGender());
                     bmsRegistrationPatientResult.setMedicalRecordNo(pmsPatient.getMedicalRecordNo());
+                    bmsRegistrationPatientResult.setIdentificationNo(pmsPatient.getIdentificationNo());
                     //挂号级别name,看诊医生名
                     SmsSkd smsSkd = smsSkdMapper.selectByPrimaryKey(dmsRegistration.getSkdId());
 
@@ -185,6 +199,7 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                     bmsRegistrationPatientResult.setPatientDateOfBirth(pmsPatient.getDateOfBirth());
                     bmsRegistrationPatientResult.setPatientGender(pmsPatient.getGender());
                     bmsRegistrationPatientResult.setMedicalRecordNo(pmsPatient.getMedicalRecordNo());
+                    bmsRegistrationPatientResult.setIdentificationNo(pmsPatient.getIdentificationNo());
                     //挂号级别name
                     SmsSkd smsSkd = smsSkdMapper.selectByPrimaryKey(dmsRegistration.getSkdId());
                     SmsStaff smsStaff =null;
@@ -457,7 +472,11 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                             //插入发票
                             BmsInvoiceRecord bmsInvoiceRecord = new BmsInvoiceRecord();
                             bmsInvoiceRecord.setCreateTime(new Date());
-                            bmsInvoiceRecord.setInvoiceNo(bmsChargeParamList.get(0).getInvoiceNo());
+                            if (StringUtils.isEmpty(bmsChargeParamList.get(0).getInvoiceNo())) {
+                                bmsInvoiceRecord.setInvoiceNo(InvoiceNo.getInvoiceNo());
+                            }else {
+                                bmsInvoiceRecord.setInvoiceNo(bmsChargeParamList.get(0).getInvoiceNo());
+                            }
                             bmsInvoiceRecord.setBillId(billId);
                             bmsInvoiceRecord.setAmount(totalAmount);
                             bmsInvoiceRecord.setOperatorId(bmsChargeParamList.get(0).getOperatorId());
@@ -635,8 +654,10 @@ public class BmsFeeServiceImpl implements BmsFeeService {
     //3.2.如果为药品，则根据项目记录（成药、草药）id和type修改处方项（refund变为0，status变为2已发药），更新处方记录中的amount
     //4.新增一条冲红发票记录（金额为原发票总钱负值，与原发票关联），原发票状态改为3
     //5.插入新发票（重新拼串，并更新amount为原amount总退款金额）
+    @Transactional(propagation= Propagation.REQUIRED)
     @Override
     public int refundCharge(List<BmsRefundChargeParam> bmsRefundChargeParamList) {
+        int success= 0;
         if (!bmsRefundChargeParamList.isEmpty()){
             BigDecimal totalRefundAmount = new BigDecimal(0);//存要退的总金额
             List<BmsInvoiceItemList> refundList = new ArrayList<>();//存退了哪些项目
@@ -728,87 +749,99 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                         }
                     }
                 }
-            }
-            Long invoiceNo = bmsRefundChargeParamList.get(0).getInvoiceNo();//原发票号
-            Long redInvoiceNo = bmsRefundChargeParamList.get(0).getRedInvoiceNo();//冲红发票号
-            Long newInvoiceNo = bmsRefundChargeParamList.get(0).getNewInvoiceNo();//新发票号
-            Long operatorId = bmsRefundChargeParamList.get(0).getOperatorId();//操作员id
-            Long settlementCatId = bmsRefundChargeParamList.get(0).getSettlementCatId();//结算类型
-            //for (Long invoiceNO : sortByInvoiceOfAmount.keySet()){
-            BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
-            bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(invoiceNo);
-            List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
-            if (!bmsInvoiceRecordList.isEmpty()){
-                Date date = new Date();
-
-                BmsInvoiceRecord bmsInvoiceRecord = bmsInvoiceRecordList.get(0);
-
-                //新增一条冲红发票记录（金额为原发票总钱负值，与原发票关联）
-                BigDecimal oldAmount = bmsInvoiceRecord.getAmount();//原发票的金额
-                BmsInvoiceRecord redBmsInvoiceRecord = new BmsInvoiceRecord();
-                redBmsInvoiceRecord.setAmount(oldAmount.multiply(new BigDecimal(-1)));
-                redBmsInvoiceRecord.setAssociateId(bmsInvoiceRecord.getId());
-                redBmsInvoiceRecord.setInvoiceNo(redInvoiceNo);
-                redBmsInvoiceRecord.setCreateTime(date);
-                redBmsInvoiceRecord.setOperatorId(operatorId);
-                redBmsInvoiceRecord.setBillId(bmsInvoiceRecord.getBillId());
-                redBmsInvoiceRecord.setType(2);//2冲红
-                bmsInvoiceRecordMapper.insertSelective(redBmsInvoiceRecord);
-
-                //插入新发票（重新拼串，并更新amount为原amount总退款金额）
-                BigDecimal newAmount = oldAmount.subtract(totalRefundAmount);//新发票的金额
-
-                BmsInvoiceRecord newBmsInvoiceRecord = new BmsInvoiceRecord();
-                newBmsInvoiceRecord.setAmount(newAmount);
-                newBmsInvoiceRecord.setInvoiceNo(newInvoiceNo);
-                newBmsInvoiceRecord.setCreateTime(date);
-                newBmsInvoiceRecord.setBillId(bmsInvoiceRecord.getBillId());
-                newBmsInvoiceRecord.setOperatorId(operatorId);
-                newBmsInvoiceRecord.setSettlementCatId(settlementCatId);
-                newBmsInvoiceRecord.setType(1);
-                //新发票的itemList
-                String oldItemList = bmsInvoiceRecord.getItemList();
-                String[][] resolvedItemList = resolveItemList(oldItemList);
-                String newList = "";
-                if (resolvedItemList.length != 0){
-                    for(int x = 0; x < resolvedItemList.length ; x++) {
-                        Long id = Long.valueOf(resolvedItemList[x][0]);
-                        Integer type = Integer.valueOf(resolvedItemList[x][1]);
-                        BigDecimal amount = new BigDecimal(resolvedItemList[x][2]);
-                        //List<BmsInvoiceItemList> refundList = new ArrayList<>();//存退了哪些项目
-                        for (int i = 0;i < refundList.size();i++){
-                            if (refundList.get(i).getId() == id && refundList.get(i).getType() == type){
-                                resolvedItemList[x][2] = refundList.get(i).getAmount().toString();//可能有问题
-                            }
-                        }
-                    }
-                    for (int j = 0;j< resolvedItemList.length;j++){
-                        if (Double.parseDouble(resolvedItemList[j][2]) == 0){
-                            continue;
-                        }else {
-                            newList = newList + resolvedItemList[j][0] + "," + resolvedItemList[j][1] + "," +resolvedItemList[j][2] + "><";
-                        }
-                    }
+                PmsPatient pmsPatient = pmsPatientMapper.selectByPrimaryKey(bmsRefundChargeParam.getPatientId());
+                BmsAccountExample example = new BmsAccountExample();
+                example.createCriteria().andPatientIdEqualTo(pmsPatient.getId());
+                List<BmsAccount> bmsAccounts = bmsAccountMapper.selectByExample(example);
+                bmsAccounts.get(0).setBlance(bmsAccounts.get(0).getBlance().add(bmsRefundChargeParam.getRefundAmount()));
+                int i = bmsAccountMapper.updateByPrimaryKey(bmsAccounts.get(0));
+                if (i > 0) {
+                    success += i;
                 }
-
-
-                //原发票type改为3,原发票与新发票关联
-                bmsInvoiceRecordExample.clear();
-                bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(invoiceNo);
-                List<BmsInvoiceRecord> bmsInvoiceRecordList1 = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
-                if (!bmsInvoiceRecordList1.isEmpty()){
-                    Long newInvoiceId = bmsInvoiceRecordList1.get(0).getId();
-                    bmsInvoiceRecord.setType(3);//3被冲红
-                    bmsInvoiceRecord.setAssociateId(newInvoiceId);
-                    bmsInvoiceRecordMapper.updateByPrimaryKeySelective(bmsInvoiceRecord);
-
-                    newBmsInvoiceRecord.setSettleRecordId(bmsInvoiceRecordList1.get(0).getSettleRecordId());
-                }
-
-                newBmsInvoiceRecord.setItemList(newList);
-                bmsInvoiceRecordMapper.insertSelective(newBmsInvoiceRecord);
             }
-            return 1;
+
+//            Long invoiceNo = bmsRefundChargeParamList.get(0).getInvoiceNo();//原发票号
+//            Long redInvoiceNo = bmsRefundChargeParamList.get(0).getRedInvoiceNo();//冲红发票号
+//            Long newInvoiceNo = bmsRefundChargeParamList.get(0).getNewInvoiceNo();//新发票号
+//            Long operatorId = bmsRefundChargeParamList.get(0).getOperatorId();//操作员id
+//            Long settlementCatId = bmsRefundChargeParamList.get(0).getSettlementCatId();//结算类型
+//            //for (Long invoiceNO : sortByInvoiceOfAmount.keySet()){
+//            BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
+//            bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(invoiceNo);
+//            List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
+//            if (!bmsInvoiceRecordList.isEmpty()){
+//                Date date = new Date();
+//
+//                BmsInvoiceRecord bmsInvoiceRecord = bmsInvoiceRecordList.get(0);
+//
+//                //新增一条冲红发票记录（金额为原发票总钱负值，与原发票关联）
+//                BigDecimal oldAmount = bmsInvoiceRecord.getAmount();//原发票的金额
+//                BmsInvoiceRecord redBmsInvoiceRecord = new BmsInvoiceRecord();
+//                redBmsInvoiceRecord.setAmount(oldAmount.multiply(new BigDecimal(-1)));
+//                redBmsInvoiceRecord.setAssociateId(bmsInvoiceRecord.getId());
+//                redBmsInvoiceRecord.setInvoiceNo(redInvoiceNo);
+//                redBmsInvoiceRecord.setCreateTime(date);
+//                redBmsInvoiceRecord.setOperatorId(operatorId);
+//                redBmsInvoiceRecord.setBillId(bmsInvoiceRecord.getBillId());
+//                redBmsInvoiceRecord.setType(2);//2冲红
+//                bmsInvoiceRecordMapper.insertSelective(redBmsInvoiceRecord);
+//
+//                //插入新发票（重新拼串，并更新amount为原amount总退款金额）
+//                BigDecimal newAmount = oldAmount.subtract(totalRefundAmount);//新发票的金额
+//
+//                BmsInvoiceRecord newBmsInvoiceRecord = new BmsInvoiceRecord();
+//                newBmsInvoiceRecord.setAmount(newAmount);
+//                newBmsInvoiceRecord.setInvoiceNo(newInvoiceNo);
+//                newBmsInvoiceRecord.setCreateTime(date);
+//                newBmsInvoiceRecord.setBillId(bmsInvoiceRecord.getBillId());
+//                newBmsInvoiceRecord.setOperatorId(operatorId);
+//                newBmsInvoiceRecord.setSettlementCatId(settlementCatId);
+//                newBmsInvoiceRecord.setType(1);
+//                //新发票的itemList
+//                String oldItemList = bmsInvoiceRecord.getItemList();
+//                String[][] resolvedItemList = resolveItemList(oldItemList);
+//                String newList = "";
+//                if (resolvedItemList.length != 0){
+//                    for(int x = 0; x < resolvedItemList.length ; x++) {
+//                        Long id = Long.valueOf(resolvedItemList[x][0]);
+//                        Integer type = Integer.valueOf(resolvedItemList[x][1]);
+//                        BigDecimal amount = new BigDecimal(resolvedItemList[x][2]);
+//                        //List<BmsInvoiceItemList> refundList = new ArrayList<>();//存退了哪些项目
+//                        for (int i = 0;i < refundList.size();i++){
+//                            if (refundList.get(i).getId() == id && refundList.get(i).getType() == type){
+//                                resolvedItemList[x][2] = refundList.get(i).getAmount().toString();//可能有问题
+//                            }
+//                        }
+//                    }
+//                    for (int j = 0;j< resolvedItemList.length;j++){
+//                        if (Double.parseDouble(resolvedItemList[j][2]) == 0){
+//                            continue;
+//                        }else {
+//                            newList = newList + resolvedItemList[j][0] + "," + resolvedItemList[j][1] + "," +resolvedItemList[j][2] + "><";
+//                        }
+//                    }
+//                }
+//
+//
+//                //原发票type改为3,原发票与新发票关联
+//                bmsInvoiceRecordExample.clear();
+//                bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(invoiceNo);
+//                List<BmsInvoiceRecord> bmsInvoiceRecordList1 = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
+//                if (!bmsInvoiceRecordList1.isEmpty()){
+//                    Long newInvoiceId = bmsInvoiceRecordList1.get(0).getId();
+//                    bmsInvoiceRecord.setType(3);//3被冲红
+//                    bmsInvoiceRecord.setAssociateId(newInvoiceId);
+//                    bmsInvoiceRecordMapper.updateByPrimaryKeySelective(bmsInvoiceRecord);
+//
+//                    newBmsInvoiceRecord.setSettleRecordId(bmsInvoiceRecordList1.get(0).getSettleRecordId());
+//                }
+//
+//                newBmsInvoiceRecord.setItemList(newList);
+//                bmsInvoiceRecordMapper.insertSelective(newBmsInvoiceRecord);
+//            }
+          if (success > 0) {
+              return 1;
+          }
         }
         return 0;
     }
@@ -818,43 +851,97 @@ public class BmsFeeServiceImpl implements BmsFeeService {
     //3.根据挂号id查找账单，根据账单id和status为1找到发票
     //3.新增一条冲红发票记录（原发票amount负值，与原发票关联）,把状态改为3（被冲红）
     //5.根据挂号id，判断是否为专家号，如果为专家号，则修改skd,相关医生的限额+1
+    @Transactional
     @Override
-    public int refundRegistrationCharge(BmsRefundRegChargeParam bmsRefundRegChargeParam) {
+    public int refundRegistrationCharge(BmsRefundRegChargeParam bmsRefundRegChargeParam) throws Exception {
+        long result = 24 * 60 * 60 * 1000;
         DmsRegistration dmsRegistration = dmsRegistrationMapper.selectByPrimaryKey(bmsRefundRegChargeParam.getRegistrationId());
-        if (dmsRegistration.getStatus() == 1){//1（待诊）
+        PmsPatient pmsPatient = pmsPatientMapper.selectByPrimaryKey(dmsRegistration.getPatientId());
+        if (StringUtils.isEmpty(pmsPatient)) {
+            return 0;
+        }
+        if (dmsRegistration.getAttendanceDate().getTime()-new Date().getTime() < 0) {
+            return 2;
+        }
+        BmsAccountExample bmsAccountExample=new BmsAccountExample();
+        bmsAccountExample.createCriteria().andPatientIdEqualTo(pmsPatient.getId());
+        List<BmsAccount> bmsAccounts = bmsAccountMapper.selectByExample(bmsAccountExample);
+        WxResults wxResults = wxResultsMapper.selectByPrimaryKey(dmsRegistration.getWxResultsId());
+        // 当看诊时间和当前时间比较大于24小时可以退号退费 小于24小时则无法退费只能退号
+        if (dmsRegistration.getAttendanceDate().getTime()-new Date().getTime() > result) {
+            if (dmsRegistration.getStatus() == 1){//1（待诊）
+                Map<String, String> map = new HashMap<>();
+                if (wxResults.getType()== -1 && wxResults.getState() == 0) {
+                    String v = String.valueOf(new BigDecimal(wxResults.getTotalFee()).multiply(BigDecimal.valueOf(100)).intValue());
+                    map = MyWXPay.refund(wxResults.getTransactionId(), v,v);
+                    if (MapUtil.isNotEmpty(map)) {
+                        BmsAccount bmsAccount = bmsAccounts.get(0);
+                        /*bmsAccount.setSummery(bmsAccounts.get(0).getSummery().subtract(new BigDecimal(wxResults.getTotalFee())));*/
+                        bmsAccount.setUpdateUser(bmsRefundRegChargeParam.getOperatorId());
+                        bmsAccount.setUpdateTime(new Date());
+                        /*bmsAccount.setId(bmsAccounts.get(0).getId());*/
+                        bmsAccountMapper.updateByPrimaryKey(bmsAccount);
+                    }else {
+                        return 0;
+                    }
+                }else if (wxResults.getType() == 7 && wxResults.getState() == 0) {
+                    BmsAccount bmsAccount = bmsAccounts.get(0);
+                    bmsAccount.setBlance(bmsAccounts.get(0).getBlance().add(new BigDecimal(wxResults.getTotalFee())));
+                    bmsAccount.setUpdateUser(bmsRefundRegChargeParam.getOperatorId());
+                    bmsAccount.setUpdateTime(new Date());
+                    /*bmsAccount.setId(bmsAccounts.get(0).getId());*/
+                    bmsAccountMapper.updateByPrimaryKey(bmsAccount);
+                }
+                //插入总记录一条
+                BmsRefundBill bmsRefundBill=new BmsRefundBill();
+                bmsRefundBill.setPatientId(dmsRegistration.getPatientId());
+                bmsRefundBill.setRefundTime(new DateTime());
+                bmsRefundBill.setAmount(new BigDecimal(wxResults.getTotalFee()));
+                bmsRefundBillMapper.insertSelective(bmsRefundBill);
+                //插入退款记录
+                BmsRollback bmsRollback=new BmsRollback();
+                bmsRollback.setRefundBillId(bmsRefundBill.getId());
+                bmsRollback.setAccountCode(bmsAccounts.get(0).getAccountCode());
+                bmsRollback.setRbAmount(new BigDecimal(wxResults.getTotalFee()));
+                bmsRollback.setRbTime(new Date());
+                bmsRollback.setRbState(4);
+                bmsRollback.setRbType(Integer.parseInt(wxResults.getType().toString()));
+                // 微信
+                if (MapUtil.isNotEmpty(map)) {
+                    bmsRollback.setOutTradeId(map.get("out_refund_no_0"));
+                    bmsRollback.setRosult(map.get("results"));
+                }
+                bmsRollback.setCreateTime(new Date());
+                bmsRollback.setCreateUser(bmsRefundRegChargeParam.getOperatorId());
+                bmsRollbackMapper.insert(bmsRollback);
+                //修改这个订单为已退费状态
+                WxResults state = new WxResults();
+                state.setId(wxResults.getId());
+                state.setState(1L);
+                wxResultsMapper.updateByPrimaryKeySelective(state);
+                dmsRegistration.setStatus(4);//4（已退号）
+                dmsRegistrationMapper.updateByPrimaryKeySelective(dmsRegistration);
+            }
+        }else {
+            //修改这个订单为已退费状态
+            WxResults state = new WxResults();
+            state.setId(wxResults.getId());
+            state.setState(1L);
+            wxResultsMapper.updateByPrimaryKeySelective(state);
             dmsRegistration.setStatus(4);//4（已退号）
             dmsRegistrationMapper.updateByPrimaryKeySelective(dmsRegistration);
         }
-        BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
-        bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(bmsRefundRegChargeParam.getOldInvoiceNo());
-        List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
-        if (!bmsInvoiceRecordList.isEmpty()){
-            BmsInvoiceRecord bmsInvoiceRecord = bmsInvoiceRecordList.get(0);
-            //更新原发票
-            bmsInvoiceRecord.setType(3);
-            bmsInvoiceRecordMapper.updateByPrimaryKeySelective(bmsInvoiceRecord);
 
-            //插入冲红发票
-            BigDecimal oldAmount = bmsInvoiceRecord.getAmount();
-            BigDecimal newAmount = oldAmount.multiply(new BigDecimal(-1));
-            BmsInvoiceRecord redBmsInvoiceRecord = new BmsInvoiceRecord();
-            redBmsInvoiceRecord.setInvoiceNo(bmsRefundRegChargeParam.getRedInvoiceNo());
-            redBmsInvoiceRecord.setAssociateId(bmsInvoiceRecord.getId());
-            redBmsInvoiceRecord.setAmount(newAmount);
-            redBmsInvoiceRecord.setCreateTime(new Date());
-            redBmsInvoiceRecord.setType(2);
-            redBmsInvoiceRecord.setOperatorId(bmsRefundRegChargeParam.getOperatorId());
-            redBmsInvoiceRecord.setBillId(bmsInvoiceRecord.getBillId());
-            bmsInvoiceRecordMapper.insertSelective(redBmsInvoiceRecord);
-            //根据挂号id，判断是否为专家号，如果为专家号，则修改skd,相关医生的限额+1
-            SmsSkd smsSkd = smsSkdMapper.selectByPrimaryKey(dmsRegistration.getSkdId());
-            SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
-            SmsRegistrationRank registrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
-            if (registrationRank.getCode() == "specialist"){
-                smsSkd.setRemain(smsSkd.getRemain()+1);
-                smsSkdMapper.updateByPrimaryKey(smsSkd);
-            }
-        }
+        //根据挂号id，判断是否为专家号，如果为专家号，则修改skd,相关医生的限额+1
+        SmsSkd smsSkd = smsSkdMapper.selectByPrimaryKey(dmsRegistration.getSkdId());
+       /* SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
+        SmsRegistrationRank registrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
+        if (registrationRank.getCode() == "specialist"){*/
+       if (!StringUtils.isEmpty(smsSkd)) {
+           smsSkd.setRemain(smsSkd.getRemain()+1);
+           smsSkdMapper.updateByPrimaryKey(smsSkd);
+       }
+       /* }*/
         return 1;
     }
 
@@ -1008,7 +1095,7 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                     bmsChargeResult.setId(dmsNonDrugItemRecord.getId());//是药品id或非药品id还是成药记录项id、草药记录项id、非药品记录项id（后者）
                     bmsChargeResult.setAmount(dmsNonDrugItemRecord.getAmount());
                     bmsChargeResult.setCreateTime(simpleDateFormat.format(dmsNonDrugItemRecord.getCreateTime()));
-                    bmsChargeResult.setStatus(1);
+                    bmsChargeResult.setStatus(dmsNonDrugItemRecord.getStatus());
                     //缴费项名称
                     DmsNonDrug dmsNonDrug = dmsNonDrugMapper.selectByPrimaryKey(dmsNonDrugItemRecord.getNoDrugId());
                     bmsChargeResult.setName(dmsNonDrug.getName());
@@ -1041,6 +1128,7 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                     bmsResult.setCreateTime(simpleDateFormat.format(dmsMedicinePrescriptionRecord.getCreateTime()));
                     bmsResult.setName(dmsMedicinePrescriptionRecord.getName());
                     bmsResult.setAmount(dmsMedicinePrescriptionRecord.getAmount());
+                    bmsResult.setStatus(dmsMedicinePrescriptionRecord.getStatus());
                     bmsResult.setType(5);
                     bmsResultList.add(bmsResult);
                 }
@@ -1060,6 +1148,7 @@ public class BmsFeeServiceImpl implements BmsFeeService {
                     bmsResult.setName(dmsHerbalPrescriptionRecord.getName());
                     bmsResult.setAmount(dmsHerbalPrescriptionRecord.getAmount());
                     bmsResult.setType(4);
+                    bmsResult.setStatus(dmsHerbalPrescriptionRecord.getStatus());
                     bmsResultList.add(bmsResult);
                 }
             }
@@ -1067,6 +1156,18 @@ public class BmsFeeServiceImpl implements BmsFeeService {
         return bmsResultList;
     }
 
+    @Override
+    public String queryById(String cardId) {
+        if(!StringUtils.isEmpty(cardId)){
+            PmsPatientExample pmsPatientExample=new PmsPatientExample();
+            pmsPatientExample.createCriteria().andIdentificationNoEqualTo(cardId);
+            List<PmsPatient> pmsPatients = pmsPatientMapper.selectByExample(pmsPatientExample);
+            if(!CollectionUtils.isEmpty(pmsPatients) && pmsPatients.size()>0){
+                return pmsPatients.get(0).getMedicalRecordNo();
+            }
+        }
+        return null;
+    }
 }
 
 

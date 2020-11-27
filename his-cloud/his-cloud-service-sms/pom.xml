@@ -185,8 +185,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.neu.his.cloud.service.sms.ServiceSmsApplication</mainClass>
-<!--                    <mainClass>com.neu.his.cloud.service.pms.util.Generator</mainClass>-->
+                    <!--<mainClass>com.neu.his.cloud.service.sms.ServiceSmsApplication</mainClass>-->
+                    <mainClass>com.neu.his.cloud.service.pms.util.Generator</mainClass>
                 </configuration>
             </plugin>
         </plugins>

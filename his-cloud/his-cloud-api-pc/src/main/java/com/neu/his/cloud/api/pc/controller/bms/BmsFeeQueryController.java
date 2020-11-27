@@ -28,4 +28,11 @@ public class BmsFeeQueryController {
        return  bmsFeeQueryService.listFeeByRegistrationId(registrationId);
     }
 
+    @ApiOperation("打发票")
+    @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult  updateInvoice(@RequestBody List<BmsDoctorPatientFeeResult> list){
+        return  bmsFeeQueryService.updateInvoice(list);
+    }
+
 }

@@ -2,55 +2,44 @@ package com.neu.his.cloud.service.pms.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class PmsPatient implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "病人名称")
     private String name;
 
+    @ApiModelProperty(value = "出生日期")
     private Date dateOfBirth;
 
+    @ApiModelProperty(value = "身份证号码")
     private String identificationNo;
 
+    @ApiModelProperty(value = "家庭住址")
     private String homeAddress;
 
+    @ApiModelProperty(value = "联系方式")
     private String phoneNo;
 
+    @ApiModelProperty(value = "性别")
     private Integer gender;
 
+    @ApiModelProperty(value = "医疗记录编号")
     private String medicalRecordNo;
 
-    private String picture;
+    @ApiModelProperty(value = "医保卡")
+    private String card;
 
+    @ApiModelProperty(value = "微信唯一码")
     private String openId;
 
-    private BigDecimal blance;
+    @ApiModelProperty(value = "头像")
+    private String picture;
 
-    public BigDecimal getBlance() {
-        return blance;
-    }
-
-    public void setBlance(BigDecimal blance) {
-        this.blance = blance;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
+    @ApiModelProperty(value = "推荐人微信openid")
+    private String recommendOpenId;
 
     private static final long serialVersionUID = 1L;
 
@@ -118,6 +107,38 @@ public class PmsPatient implements Serializable {
         this.medicalRecordNo = medicalRecordNo;
     }
 
+    public String getCard() {
+        return card;
+    }
+
+    public void setCard(String card) {
+        this.card = card;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getRecommendOpenId() {
+        return recommendOpenId;
+    }
+
+    public void setRecommendOpenId(String recommendOpenId) {
+        this.recommendOpenId = recommendOpenId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -131,9 +152,11 @@ public class PmsPatient implements Serializable {
         sb.append(", homeAddress=").append(homeAddress);
         sb.append(", phoneNo=").append(phoneNo);
         sb.append(", gender=").append(gender);
-        sb.append(", picture=").append(picture);
-        sb.append(", gender=").append(gender);
+        sb.append(", medicalRecordNo=").append(medicalRecordNo);
+        sb.append(", card=").append(card);
         sb.append(", openId=").append(openId);
+        sb.append(", picture=").append(picture);
+        sb.append(", recommendOpenId=").append(recommendOpenId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

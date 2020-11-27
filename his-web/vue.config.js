@@ -39,7 +39,9 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         //target服务器ip
-        target: `http://localhost:10023/`,
+        // target: 'http://his.cgjiankang.com/prod-api/',
+        target: 'https://localhost:10022/',
+        timeout: 6*60*1000,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

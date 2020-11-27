@@ -56,8 +56,9 @@
         <el-tag class="painfo" color="white" style="width:15%;font-family:'微软雅黑'">姓名: <span style="color:black;">{{patient.patientName}}</span></el-tag>
         <el-tag class="painfo" color="white" style="width:25%;font-family:'微软雅黑'">就诊号: <span style="color:black">{{patient.medicalRecordNo}}</span></el-tag>
         <el-button type="success" plain style="float:right;" @click="sendDrug"><svg-icon icon-class="skill" />发药</el-button>
+        <el-button type="success" plain style="float:right;margin-right: 13px" @click="charge"><svg-icon icon-class="skill" />缴费</el-button>
       </aside>
-      <el-table height="600px" border stripe highlight-current-row :data="druglist" style="margin-left:10px" :span-method="objectSpanMethod" @selection-change="changedep">
+      <el-table height="600px" border stripe highlight-current-row :data="druglist" style="margin-left:10px"  @selection-change="changedep">
         <el-table-column type="selection" width="55" @selection-change="changedep"></el-table-column>
         <el-table-column align="center" label="处方号" width="100px">
           <template slot-scope="scope">
@@ -100,7 +101,10 @@
           </template>
         </el-table-column>
         <el-table-column align="center">
-          <el-tag type="primary">未取药</el-tag>
+          <template slot-scope="scope">
+            <el-tag v-show="scope.row.status===2" type="primary">未发药</el-tag>
+            <el-tag v-show="scope.row.status===1" type="primary">未缴费</el-tag>
+          </template>
         </el-table-column>
       </el-table>
 
@@ -166,6 +170,7 @@
 import {listPatient,releaseDrug,refundDrug} from '@/api/drugstore'
 import {parseTime,formatTime,deepClone} from '@/utils'
 import {listByIds} from '@/api/outpatient/cprescription'
+import {charge} from '@/api/regist'
   export default{
     data(){
       return{
@@ -243,6 +248,19 @@ import {listByIds} from '@/api/outpatient/cprescription'
           this.$notify({
             title: '提示',
             message: "请选择一条数据！",
+            type: 'warning',
+            duration: 2000
+          })
+          return;
+        }
+        let status =[]
+        this.sendrefs.forEach(item =>{
+          status.push(item.status)
+        })
+        if (status.join(',').includes(1)) {
+          this.$notify({
+            title: '提示',
+            message: "存在未缴费项目！",
             type: 'warning',
             duration: 2000
           })
@@ -376,6 +394,8 @@ import {listByIds} from '@/api/outpatient/cprescription'
               drug.id = temp
               drug.doctorname = temp3
               drug.cname = temp2
+              drug.type = item.type
+              drug.status = item.status
               this.druglist.push(deepClone(drug))
             })
           })
@@ -416,6 +436,81 @@ import {listByIds} from '@/api/outpatient/cprescription'
         cancelButtonText: '取消',
         type: 'warning'
       })
+      },
+      // 缴费
+      charge(){
+        if (this.sendrefs.length===0){
+          this.$notify({
+            title: '提示',
+            message: "请选择一条数据！",
+            type: 'warning',
+            duration: 2000
+          })
+          return;
+        }
+        let status = []
+        this.sendrefs.forEach(item =>{
+          status.push(item.status)
+        })
+        if (status.join(',').includes(2)) {
+          this.$notify({
+            title: '提示',
+            message: "存在已缴费项目！",
+            type: 'warning',
+            duration: 2000
+          })
+          return;
+        }
+        let data = [];
+        let drugNames = []
+        let price = 0
+        this.sendrefs.forEach(item=>{
+          let drug = {}
+          drugNames.push(item.drugName)
+          price += item.price * item.sequence
+          drug.chargeItemId = item.prescriptionId
+          drug.amount = item.price * item.sequence
+          drug.invoiceNo = this.orderCode()
+          drug.type = item.type
+          drug.operatorId = this.$store.getters.id
+          data.push(drug);
+        });
+        this.$confirm(' 确定为项目 '+drugNames.join(',')+'  缴纳费用  '+ price +'  元吗?',  '成药项目', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          charge(data).then(res=>{
+            if (res.data === 2) {
+              this.$notify({
+                title: '缴费失败',
+                message: '余额不足,请充值',
+                type: 'warning',
+                duration: 2000
+              })
+              return
+            }
+            this.$notify({
+              title: '成功',
+              message: '缴费成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.handleGive(this.patient)
+            this.getMechlist()
+          })
+        })
+      },
+      // 生成发票号
+      orderCode() {
+        let orderCode = '';
+        for (let i = 0; i < 6; i++) //6位随机数，用以加在时间戳后面。
+        {
+          orderCode += Math.floor(Math.random() * 10);
+        }
+        orderCode = new Date().getTime() + orderCode;  //时间戳，用来生成订单号。
+
+        return orderCode;
       }
   }
 }

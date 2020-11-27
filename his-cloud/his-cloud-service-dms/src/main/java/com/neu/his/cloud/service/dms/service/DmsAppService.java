@@ -1,7 +1,9 @@
 package com.neu.his.cloud.service.dms.service;
 
 import com.neu.his.cloud.service.dms.dto.dms.*;
+import com.neu.his.cloud.service.dms.model.InformationMaintenance;
 import com.neu.his.cloud.service.dms.model.SmsStaff;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -49,7 +51,7 @@ public interface DmsAppService {
     /**
      * 描述：查询科室Id查询可预约挂号医生信息
      */
-    List<DmsNowDoctorRegistrationResult> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
+    DmsNowDoctorRegistrationResults listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
                                                                    @RequestParam("thedate") String thedate);
 
     /**
@@ -61,5 +63,15 @@ public interface DmsAppService {
      *  根据预约id，取消预约接口，更改预约信息状态
      */
     List<BookingInformationResult> listPatientConventionUpdate(@RequestParam("Id") Long Id);
+
+    /**
+     *  查看信息
+     */
+    List<InformationMaintenance> selectMaintenanceParam();
+
+    /**
+     *  修改信息
+     */
+    int updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance);
 
 }

@@ -7,7 +7,7 @@
           <el-option v-for="item in alldepart" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
         <el-button class="filter-item" size="small" type="danger" icon="el-icon-delete" @click="delrule">删除</el-button>
-        <el-button class="filter-item" size="small" type="primary" @click="jumpadd();editbutton=false"><i class="el-icon-edit-outline" />新增排班规则</el-button>
+        <el-button class="filter-item" size="small" type="primary" @click="jumpadd();addState = true;editbutton=false"><i class="el-icon-edit-outline" />新增排班规则</el-button>
       </div>
       <el-table v-loading="listLoading" :data="ruleList" style="width: 100%;margin-top:30px;"  stripe @selection-change="changerule">
         <el-table-column type="selection" width="55" @selection-change="changerule"></el-table-column>
@@ -50,7 +50,7 @@
 
   <!-- 新增或修改排班规则 -->
     <div v-if="showdetail" class="app-container" style="text-align:center">
-      <div class="demo-input-suffix">
+      <div class="demo-input-suffix" v-if="addState">
         <el-form :model="addRule" inline>
           <el-form-item label="科室选择:">
             <el-select placeholder="科室选择" v-model="addRule.deptId" clearable style="width: 130px" class="filter-item" filterable @change="getDepDoctor">
@@ -140,24 +140,25 @@
             <el-checkbox v-model="scope.row.checked14"></el-checkbox>
           </template>
         </el-table-column>
-        <el-table-column label="排班限额" align="center" width="100px">
+        <el-table-column label="排班限额" align="center" width="200px">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.limit" placeholder="" required></el-input>
+            <!--<el-input v-model="scope.row.limit"></el-input>-->
+            <el-input-number size="mini" v-model="scope.row.limit"></el-input-number>
           </template>
         </el-table-column>
       </el-table>
       <div>
-        <el-form :model="addRule" inline style="margin-top:20px">
-          <el-form-item label="规则名称">
+        <el-form :model="addRule" ref="addRule" inline style="margin-top:20px" :rules="rules">
+          <el-form-item label="规则名称" prop="ruleName">
             <el-input placeholder="规则名称" v-model="addRule.ruleName" class="filter-item" @keyup.enter.native="handleFilter" />
           </el-form-item>
-          <el-form-item label="规则描述">
+          <el-form-item label="规则描述" prop="description">
             <el-input placeholder="规则描述" v-model="addRule.description" class="filter-item" @keyup.enter.native="handleFilter" />
           </el-form-item>
           <el-button class="filter-item" type="danger" icon="el-icon-download" @click="jumpback">
             取消
           </el-button>
-          <el-button v-if="!editbutton" class="filter-item" type="primary" icon="el-icon-download" @click="createRule">
+          <el-button v-if="!editbutton" class="filter-item" type="primary" icon="el-icon-download" @click="createRule('addRule')">
             新增排班规则
           </el-button>
           <el-button v-if="editbutton" class="filter-item" type="primary" icon="el-icon-download" @click="updateRule">
@@ -169,10 +170,10 @@
     </div>
     <el-dialog :visible.sync="dialogVisible" width="670px" title="生成排班计划表" @close="getDeplist">
       <div>
+        <!--default-value="2019-06-01"-->
         <span class="demonstration">开始时间:</span>
         <el-date-picker
                 v-model="value1"
-                default-value="2019-06-01"
                 align="right"
                 type="date"
                 placeholder="选择日期"
@@ -210,6 +211,7 @@ export default {
   data() {
     return {
       editbutton:false,
+      addState: false,
       rulelistid:'',
       rulecurrent: [],
       addRule:{},
@@ -243,7 +245,7 @@ export default {
       value2:'',
       allreg:[],
       dialogVisible:false,
-      listLoading: true,
+      listLoading: false,
       total: 0,
       depart:'',
       alldepart:[],
@@ -256,19 +258,27 @@ export default {
       showdetail:false,
       schedule:0,
       scheduleList: [],
-      rulelistref:[]
+      rulelistref:[],
+      rules:{
+        ruleName:[{required: true, message: '请输入规则名称',trigger: 'blur'}],
+        description:[{required: true, message: '请输入规则描述',trigger: 'blur'}]
+      }
     }
   },
   created(){
     this.getAlldep()
     this.getAllreg()
-    this.getDeplist()
   },
   methods: {
+    change(e){
+      this.$forceUpdate()
+    },
     getDepDoctor(){
       let data = {}
       this.scheduleList = []
       data.deptId = this.addRule.deptId
+      data.pageSize = 10000
+      data.pageNum = 1
       getUserList(data).then(res=>{
         res.data.list.forEach(item=>{
           let temp = {}
@@ -279,6 +289,7 @@ export default {
       })
     },
     updateRule(){
+
       if(this.addRule.deptId === null || this.addRule.deptId === undefined) {
         this.$notify({
           title: '提示',
@@ -297,26 +308,49 @@ export default {
         })
         return;
       }
+      if (!this.addRule.ruleName) {
+        this.$notify({
+          title: '提示',
+          message: "请填写规则名称！",
+          type: 'warning',
+          duration: 2000
+        })
+        return;
+      }
+      if (!this.addRule.description) {
+        this.$notify({
+          title: '提示',
+          message: "请填写规则描述！",
+          type: 'warning',
+          duration: 2000
+        })
+        return;
+      }
+      let docArr = [];
       this.rulecurrent.forEach(element => {
         let daysOfWeek=''
-        if(element.checked1){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked2){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked3){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked4){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked5){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked6){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked7){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked8){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked9){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked10){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked11){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked12){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked13){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked14){daysOfWeek+='1'}else{daysOfWeek+='0'}
+        let num = 0;
+        if(element.checked1){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked2){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked3){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked4){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked5){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked6){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked7){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked8){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked9){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked10){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked11){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked12){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked13){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+        if(element.checked14){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
         element.daysOfWeek = daysOfWeek
-        element.status=1
+        element.status = 1
         element.staffId = element.staffId
         element.skLimit = element.limit
+        if (!element.limit || element.limit != num) {
+          docArr.push(element.staffName)
+        }
       });
       let data = {}
       data.smsSkdRuleItemParamList = this.rulecurrent
@@ -341,6 +375,7 @@ export default {
       this.rulelistid = id
       let res = await getRuleDetail(id)
       this.addRule = res.data
+
       this.scheduleList = res.data.smsSkdRuleItemResultList
       let i =0
       this.scheduleList.forEach(item=>{
@@ -363,77 +398,127 @@ export default {
       this.getRuleList()
       this.showdetail=true;
     },
-    createRule(){
-      if(this.addRule.deptId === null || this.addRule.deptId === undefined) {
-        this.$notify({
-          title: '提示',
-          message: "保存排班规则前请选择对应科室！",
-          type: 'warning',
-          duration: 2000
-        })
-        return;
-      }
-      if(this.rulecurrent.length === 0) {
-        this.$notify({
-          title: '提示',
-          message: "请选择医生！",
-          type: 'warning',
-          duration: 2000
-        })
-        return;
-      }
-     /*
-      console.log(this.rulecurrent.limit)
-      if(this.rulecurrent.limit===undefined){
-        this.$notify({
-          title: '提示',
-          message: "请输入排班限额！",
-          type: 'warning',
-          duration: 2000
-        })
-        return;
-      }*/
+    createRule(addRule){
+      let sch = []
+      this.rulecurrent.forEach(limit =>{
+        if (limit.limit === undefined || limit.limit === '') {
+          sch.push(limit.staffName)
+        }
+      })
 
-      this.rulecurrent.forEach(element => {
-        let daysOfWeek=''
-        if(element.checked1){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked2){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked3){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked4){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked5){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked6){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked7){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked8){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked9){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked10){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked11){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked12){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked13){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        if(element.checked14){daysOfWeek+='1'}else{daysOfWeek+='0'}
-        element.daysOfWeek = daysOfWeek
-        element.status=1
-        element.staffId = element.id
-        element.skLimit = element.limit
-      });
-      let data = {}
-      data.smsSkdRuleItemParamList = this.rulecurrent
-      data.deptId = this.addRule.deptId
-      data.description = this.addRule.description
-      data.operatorId = this.$store.getters.id
-      data.status = 1
-      data.ruleName = this.addRule.ruleName
-      createRule(data).then(res=>{
-        this.getRuleList()
-        this.showdetail=false
+      if (sch.join(',') !== "") {
         this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
+          title: '提示',
+          message: "请填写排班限额！",
+          type: 'warning',
           duration: 2000
         })
+        return;
+      }
+      this.$refs[addRule].validate((valid)=>{
+        if (valid) {
+          // "addRule.ruleName" class="filter-item" @keyup.enter.native="handleFilter" />
+          //     </el-form-item>
+          //     <el-form-item label="规则描述">
+          //       <el-input placeholder="规则描述" v-model="addRule.description
+          if(this.addRule.deptId === null || this.addRule.deptId === undefined) {
+            this.$notify({
+              title: '提示',
+              message: "保存排班规则前请选择对应科室！",
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          if(this.rulecurrent.length === 0) {
+            this.$notify({
+              title: '提示',
+              message: "请选择医生！",
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          if (!this.addRule.ruleName) {
+            this.$notify({
+              title: '提示',
+              message: "请填写规则名称！",
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          if (!this.addRule.description) {
+            this.$notify({
+              title: '提示',
+              message: "请填写规则描述！",
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          /*
+           console.log(this.rulecurrent.limit)
+           if(this.rulecurrent.limit===undefined){
+             this.$notify({
+               title: '提示',
+               message: "请输入排班限额！",
+               type: 'warning',
+               duration: 2000
+             })
+             return;
+           }*/
+          let docArr = [];
+          this.rulecurrent.forEach(element => {
+            let daysOfWeek=''
+            let num = 0;
+            if(element.checked1){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked2){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked3){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked4){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked5){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked6){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked7){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked8){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked9){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked10){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked11){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked12){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked13){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            if(element.checked14){daysOfWeek+='1';num += 1}else{daysOfWeek+='0'}
+            element.daysOfWeek = daysOfWeek
+            element.status = 1
+            element.staffId = element.id
+            element.skLimit = element.limit
+            if (!element.limit || element.limit != num) {
+              docArr.push(element.staffName)
+            }
+          });
+          let data = {}
+          data.smsSkdRuleItemParamList = this.rulecurrent
+          data.deptId = this.addRule.deptId
+          data.description = this.addRule.description
+          data.operatorId = this.$store.getters.id
+          data.status = 1
+          data.ruleName = this.addRule.ruleName
+          createRule(data).then(res=>{
+            this.getRuleList()
+            this.showdetail=false
+            this.addState = false;
+            this.$notify({
+              title: '成功',
+              message: res.message,
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }else {
+          return
+        }
       })
     },
     selectrule(val){
+
       this.rulecurrent = val
     },
     async getAllreg(){
@@ -443,15 +528,36 @@ export default {
     generateSkd(){
       let data = {}
       data.ruleIds=this.ruleid
+      if (!this.value1) {
+        this.$confirm('请选择排班表开始时间', '提示', {
+          type: 'warning'
+        });
+        return;
+      }
+      if (!this.value2) {
+        this.$confirm('请选择排班表结束时间', '提示', {
+          type: 'warning'
+        });
+        return;
+      }
       data.startDate = parseTime(this.value1).substr(0,10)
       data.endDate = parseTime(this.value2).substr(0,10)
       generateSkd(data).then(res=>{
-        this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
-          duration: 2000
-        })
+        if(res.data===1){
+          this.$notify({
+            title: '提示',
+            message: res.message,
+            type: 'success',
+            duration: 2000
+          })
+        }else {
+          this.$notify({
+            title: '提示',
+            message: res.message,
+            type: 'warning',
+            duration: 2000
+          })
+        }
       })
       this.dialogVisible = false
     },
@@ -459,9 +565,16 @@ export default {
       this.rulelistref=val
     },
     delrule(){
-      if(this.rulelistref.length===0)
-        alert('请先选中要删除的规则')
-      this.$confirm('确认删除选中的排班规则?', '警告', {
+      if(this.rulelistref.length===0) {
+        this.$notify({
+          title: '提示',
+          message: '请先选中要删除的规则',
+          type: 'warning',
+          duration: 3500
+        })
+        return
+      }
+      this.$confirm('确认删除选中的排班规则?', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -483,7 +596,7 @@ export default {
       })
     },
     confirmdate(){
-      console.log(this.value2)
+
     },
     async getAlldep(){
       const res = await getAllDep()
@@ -499,7 +612,7 @@ export default {
     getRuleList(){
       if(this.depart!==''){
         this.ruleList = []
-        debugger
+        this.rulecurrent=[];
         this.listQuery.deptId=this.depart
         getRulelist(this.listQuery).then(res=>{
           if(res.data === undefined || res.data === null) {
@@ -512,6 +625,9 @@ export default {
           })
           this.total=res.data.total
         })
+      }else {
+        this.ruleList=[]
+        this.total=0
       }
     },
     jumpadd(){
@@ -529,20 +645,39 @@ export default {
     },
 
     getCurrentRow(val){
-      console.log(val)
+
     },
     choose(){
       this.schedule = !this.schedule;
     },
     jumpback(){
       this.showdetail=!this.showdetail
+      this.addState = false;
     },
     empty(){
-      this.addRule={};
-      this.ruleList=[];
-      this.rulecurrent=[];
-      this.rulelistid ='';
-      this.scheduleList = [];
+      this.$confirm('确认清空', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        this.addRule.deptId = '';
+      })
+      // this.showdetail = false;
+      // this.ruleList=[];
+      // this.rulecurrent=[];
+      // this.rulelistid ='';
+      // this.scheduleList = [];
+    },
+    handleClearDept() {
+      this.$confirm('确认清空所选科室', '警告', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        this.depart = '';
+        this.ruleList=[]
+        this.total=0
+      })
     }
   }
 }

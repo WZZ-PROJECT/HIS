@@ -13,6 +13,8 @@
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="attendance_date" jdbcType="TIMESTAMP" property="attendanceDate" />
     <result column="patient_age_str" jdbcType="VARCHAR" property="patientAgeStr" />
+    <result column="wx_results_id" jdbcType="BIGINT" property="wxResultsId" />
+    <result column="registeredLevel" jdbcType="BIGINT" property="registeredlevel" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -74,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, patient_id, create_time, end_attendance, status, skd_id, need_book, bind_status, 
-    dept_id, attendance_date, patient_age_str
+    dept_id, attendance_date, patient_age_str, wx_results_id, registeredLevel
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.DmsRegistrationExample" resultMap="BaseResultMap">
     select
@@ -113,11 +115,13 @@
     insert into dms_registration (patient_id, create_time, end_attendance, 
       status, skd_id, need_book, 
       bind_status, dept_id, attendance_date, 
-      patient_age_str)
+      patient_age_str, wx_results_id, registeredLevel
+      )
     values (#{patientId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{endAttendance,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{skdId,jdbcType=BIGINT}, #{needBook,jdbcType=INTEGER}, 
       #{bindStatus,jdbcType=INTEGER}, #{deptId,jdbcType=BIGINT}, #{attendanceDate,jdbcType=TIMESTAMP}, 
-      #{patientAgeStr,jdbcType=VARCHAR})
+      #{patientAgeStr,jdbcType=VARCHAR}, #{wxResultsId,jdbcType=BIGINT}, #{registeredlevel,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.DmsRegistration">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -155,6 +159,12 @@
       <if test="patientAgeStr != null">
         patient_age_str,
       </if>
+      <if test="wxResultsId != null">
+        wx_results_id,
+      </if>
+      <if test="registeredlevel != null">
+        registeredLevel,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="patientId != null">
@@ -186,6 +196,12 @@
       </if>
       <if test="patientAgeStr != null">
         #{patientAgeStr,jdbcType=VARCHAR},
+      </if>
+      <if test="wxResultsId != null">
+        #{wxResultsId,jdbcType=BIGINT},
+      </if>
+      <if test="registeredlevel != null">
+        #{registeredlevel,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -231,6 +247,12 @@
       <if test="record.patientAgeStr != null">
         patient_age_str = #{record.patientAgeStr,jdbcType=VARCHAR},
       </if>
+      <if test="record.wxResultsId != null">
+        wx_results_id = #{record.wxResultsId,jdbcType=BIGINT},
+      </if>
+      <if test="record.registeredlevel != null">
+        registeredLevel = #{record.registeredlevel,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -248,7 +270,9 @@
       bind_status = #{record.bindStatus,jdbcType=INTEGER},
       dept_id = #{record.deptId,jdbcType=BIGINT},
       attendance_date = #{record.attendanceDate,jdbcType=TIMESTAMP},
-      patient_age_str = #{record.patientAgeStr,jdbcType=VARCHAR}
+      patient_age_str = #{record.patientAgeStr,jdbcType=VARCHAR},
+      wx_results_id = #{record.wxResultsId,jdbcType=BIGINT},
+      registeredLevel = #{record.registeredlevel,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -286,6 +310,12 @@
       <if test="patientAgeStr != null">
         patient_age_str = #{patientAgeStr,jdbcType=VARCHAR},
       </if>
+      <if test="wxResultsId != null">
+        wx_results_id = #{wxResultsId,jdbcType=BIGINT},
+      </if>
+      <if test="registeredlevel != null">
+        registeredLevel = #{registeredlevel,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -300,7 +330,9 @@
       bind_status = #{bindStatus,jdbcType=INTEGER},
       dept_id = #{deptId,jdbcType=BIGINT},
       attendance_date = #{attendanceDate,jdbcType=TIMESTAMP},
-      patient_age_str = #{patientAgeStr,jdbcType=VARCHAR}
+      patient_age_str = #{patientAgeStr,jdbcType=VARCHAR},
+      wx_results_id = #{wxResultsId,jdbcType=BIGINT},
+      registeredLevel = #{registeredlevel,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

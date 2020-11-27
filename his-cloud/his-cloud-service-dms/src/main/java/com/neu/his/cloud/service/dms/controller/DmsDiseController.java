@@ -31,12 +31,13 @@ public class DmsDiseController {
         CommonResult commonResult;
         int count = dmsDiseService.create(dmsDiseParam);
         if (count == 1) {
-            commonResult = CommonResult.success(count);
+            commonResult = CommonResult.success(count,"新增成功");
         } else {
-            commonResult = CommonResult.failed();
+            commonResult = CommonResult.success(0,"新增失败");
         }
         return commonResult;
     }
+
 
     @ApiOperation(value = "根据ids删除诊断")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)

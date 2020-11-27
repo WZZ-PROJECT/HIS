@@ -29,6 +29,6 @@ public class PmsPatientParam {
     private String openId;
     @ApiModelProperty(value = "图片")
     private String picture;
-
-
+    @ApiModelProperty(value = "推荐人微信openid")
+    private String recommend_open_id;
 }

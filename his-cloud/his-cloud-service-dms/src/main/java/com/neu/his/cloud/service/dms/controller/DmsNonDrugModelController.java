@@ -78,7 +78,8 @@ public class DmsNonDrugModelController {
     @ResponseBody
     public CommonResult<CommonPage<DmsNonDrugModelResult>> list(@RequestBody DmsNonDrugModelParam queryParam,
                                                                 @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam(value = "isAdmin") Integer isAdmin){
+                                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                                @RequestParam(value = "isAdmin") Integer isAdmin){
         Page page = PageHelper.startPage(pageNum, pageSize);
         List<DmsNonDrugModelResult> list = dmsNonDrugModelService.selectModel(isAdmin,queryParam, pageSize, pageNum);
         Long pageTotal=page.getTotal();

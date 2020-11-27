@@ -5,6 +5,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.dto.dms.DmsCaseHistoryParam;
 import com.neu.his.cloud.zuul.dto.dms.DmsCaseHistoryResult;
+import com.neu.his.cloud.zuul.dto.sms.AddInformParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,36 @@ public interface ApiPcDmsCaseHistoryDistributionService {
     @RequestMapping(value = "/caseHistory/selectClinicalCaseHistoryByReg/{registrationId}", method = RequestMethod.GET)
     CommonResult<DmsCaseHistoryResult> selectClinicalCaseHistoryByReg(@PathVariable("registrationId") Long registrationId);
 
-    @ApiOperation(value = "根据病人Id查询历史病历")
     @RequestMapping(value = "/caseHistory/queryCaseHistory", method = RequestMethod.GET)
-    @ResponseBody
     CommonResult<DmsCaseHistoryResult> queryCaseHistory(@RequestParam("patientId") long patientId);
+
+
+    //知情告知增加
+    @RequestMapping(value = "/caseHistory/insertFamiliarInform", method = RequestMethod.POST)
+    CommonResult insertFamiliarInform(@RequestBody AddInformParam addInformParam);
+
+    //知情告知删除
+    @RequestMapping(value = "/caseHistory/deleteFamiliarInform", method = RequestMethod.POST)
+    CommonResult deleteFamiliarInform(@RequestBody AddInformParam addInformParam);
+
+    //知情告知修改
+    @RequestMapping(value = "/caseHistory/updateFamiliarInform", method = RequestMethod.POST)
+    CommonResult updateFamiliarInform(@RequestBody AddInformParam addInformParam);
+
+    //知情告知查询
+    @RequestMapping(value = "/caseHistory/selectFamiliarInform", method = RequestMethod.POST)
+    CommonResult selectFamiliarInform(@RequestBody AddInformParam addInformParam);
+
+    /**
+     * 描述：根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）
+     * <p>author:赵煜
+     */
+    @ApiOperation(value = "根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）")
+    @RequestMapping(value = "/caseHistory/selectEndCaseHistory/{registrationId}", method = RequestMethod.GET)
+    @ResponseBody
+    CommonResult<DmsCaseHistoryResult> selectEndCaseHistory(@PathVariable("registrationId") Long registrationId,@RequestParam(value = "status",required =
+            false)Integer status);
+
+
 
 }

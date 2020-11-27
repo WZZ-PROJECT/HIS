@@ -11,6 +11,7 @@ import com.neu.his.cloud.service.bms.service.BmsDailySettlementService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
 
         BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
 
-        bmsInvoiceRecordExample.createCriteria().andOperatorIdEqualTo(cashierId).andCreateTimeBetween(startDatetime,endDatetime);
+        bmsInvoiceRecordExample.createCriteria().andCreateTimeBetween(startDatetime,endDatetime);
         bmsInvoiceRecordExample.setOrderByClause("create_time asc");
         List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
 
@@ -181,9 +182,12 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
                                 else if (typeOfOneItem == 5){//成药
                                     medicineAmount = medicineAmount.add(amountOfOneItem);
                                 }
+                                else if (typeOfOneItem == 9){//退费
+                                    otherAmount = otherAmount.add(amountOfOneItem);
+                                }
                             }
                             amount = amount.add(bmsInvoiceRecordList.get(i).getAmount());//总金额
-                            if (bmsInvoiceRecordList.get(i).getSettlementCatId() == 1){//现金
+                            if (bmsInvoiceRecordList.get(i).getSettlementCatId() == 1 && bmsInvoiceRecordList.get(i).getItemList().contains(",10,")){//现金
                                 cashAmount = cashAmount.add(bmsInvoiceRecordList.get(i).getAmount());
                             }
                             else if (bmsInvoiceRecordList.get(i).getSettlementCatId() == 2){//银行卡
@@ -200,9 +204,6 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
                             }
                             else if (bmsInvoiceRecordList.get(i).getSettlementCatId() == 6){//微信
                                 wechatAmount = wechatAmount.add(bmsInvoiceRecordList.get(i).getAmount());
-                            }
-                            else if (bmsInvoiceRecordList.get(i).getSettlementCatId() == 7){//其他
-                                otherAmount = otherAmount.add(bmsInvoiceRecordList.get(i).getAmount());
                             }
                         }
                     }
@@ -243,7 +244,7 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
     public List<BmsSettleListItemResult> listDailySettleListRecord(Long cashierId, Date startDatetime, Date endDatetime) {
         List<BmsSettleListItemResult> bmsSettleListItemResultList = new ArrayList<>();
         BmsOperatorSettleRecordExample bmsOperatorSettleRecordExample = new BmsOperatorSettleRecordExample();
-        bmsOperatorSettleRecordExample.createCriteria().andCashierIdEqualTo(cashierId).andCreateDatetimeBetween(startDatetime,endDatetime);
+        bmsOperatorSettleRecordExample.createCriteria().andCreateDatetimeBetween(startDatetime,endDatetime);
         List<BmsOperatorSettleRecord> bmsOperatorSettleRecordList = bmsOperatorSettleRecordMapper.selectByExample(bmsOperatorSettleRecordExample);
         if (!bmsOperatorSettleRecordList.isEmpty()){
             SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(cashierId);
@@ -267,8 +268,11 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
         BmsOperatorSettleRecord bmsOperatorSettleRecord = bmsOperatorSettleRecordMapper.selectByPrimaryKey(id);
         BmsDailySettleRecordResult bmsDailySettleRecordResult = new BmsDailySettleRecordResult();
         if (bmsOperatorSettleRecord != null){
-
             BeanUtils.copyProperties(bmsOperatorSettleRecord,bmsDailySettleRecordResult);
+            if (!StringUtils.isEmpty(bmsDailySettleRecordResult.getCashierId())) {
+                SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(bmsDailySettleRecordResult.getCashierId());
+                bmsDailySettleRecordResult.setCashierName(smsStaff.getName());
+            }
             return bmsDailySettleRecordResult;
         }
         return null;
@@ -288,7 +292,7 @@ public class BmsDailySettlementServiceImpl implements BmsDailySettlementService 
         Long bmsOperatorSettleRecordId = bmsOperatorSettleRecord.getId();//插入的日结记录id
         //遍历相关发票，设置发票所属日结记录id，并修改freeze_status为1
         BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
-        bmsInvoiceRecordExample.createCriteria().andOperatorIdEqualTo(cashierId).andCreateTimeBetween(startDatetime,endDatetime);
+        bmsInvoiceRecordExample.createCriteria().andCreateTimeBetween(startDatetime,endDatetime);
         bmsInvoiceRecordExample.setOrderByClause("create_time asc");
         List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
         if (!bmsInvoiceRecordList.isEmpty()){

@@ -37,6 +37,29 @@ const roles = [
       ]
     }]
   }
+  // {
+  //   key: '003',
+  //   name: '门诊医生',
+  //   description: '门诊医生权限',
+  //   routes: [{
+  //     path: '/historyRecords',
+  //     redirect: '/historyRecords/index',
+  //     children: [
+  //       {
+  //         path: 'index',
+  //         name: 'historyRecords',
+  //         meta: {
+  //           title: '历史病历',
+  //           icon: 'list',
+  //           noCache: true
+  //         },
+  //       }
+  //     ]
+  //   }]
+  // },
+
+
+
 ]
 
 export default [

@@ -2,11 +2,11 @@ spring:
   application:
     name: his-cloud-eureka
   zipkin:
-    base-url: http://localhost:10014
+    base-url: http://192.168.0.164:10014
   boot:
     admin:
       client:
-        url: http:/localhost:10013
+        url: http://192.168.0.164:10013
 
 server:
   port: 10030
@@ -23,7 +23,7 @@ management:
 eureka:
   instance:
     prefer-ip-address: true
-    hostname: localhost
+    hostname: 192.168.0.164
   server:
     enable-self-preservation: false
   client:

@@ -11,7 +11,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:10030/eureka/
+      defaultZone: http://192.168.0.164:10030/eureka/
 
 management:
   metrics:

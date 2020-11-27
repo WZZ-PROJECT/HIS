@@ -23,6 +23,7 @@
     <result column="log_staff_id" jdbcType="BIGINT" property="logStaffId" />
     <result column="excute_time" jdbcType="TIMESTAMP" property="excuteTime" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="invoice" jdbcType="BIGINT" property="invoice" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -83,10 +84,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, registration_id, status, aim, demand, log_status, check_result, result_img_url_list, 
-    clinical_impression, clinical_diagnosis, create_time, excute_staff_id, log_datetime, 
-    no_drug_id, check_parts, type, excute_dept_id, create_staff_id, log_staff_id, excute_time, 
-    amount
+    id, registration_id, status, aim, demand, log_status, check_result, result_img_url_list,
+    clinical_impression, clinical_diagnosis, create_time, excute_staff_id, log_datetime,
+    no_drug_id, check_parts, type, excute_dept_id, create_staff_id, log_staff_id, excute_time,
+    amount,invoice
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.DmsNonDrugItemRecordExample" resultMap="BaseResultMap">
     select
@@ -103,7 +104,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from dms_non_drug_item_record
     where id = #{id,jdbcType=BIGINT}
@@ -122,20 +123,20 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into dms_non_drug_item_record (registration_id, status, aim, 
-      demand, log_status, check_result, 
-      result_img_url_list, clinical_impression, clinical_diagnosis, 
-      create_time, excute_staff_id, log_datetime, 
-      no_drug_id, check_parts, type, 
-      excute_dept_id, create_staff_id, log_staff_id, 
-      excute_time, amount)
-    values (#{registrationId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{aim,jdbcType=VARCHAR}, 
-      #{demand,jdbcType=VARCHAR}, #{logStatus,jdbcType=INTEGER}, #{checkResult,jdbcType=VARCHAR}, 
-      #{resultImgUrlList,jdbcType=VARCHAR}, #{clinicalImpression,jdbcType=VARCHAR}, #{clinicalDiagnosis,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{excuteStaffId,jdbcType=BIGINT}, #{logDatetime,jdbcType=TIMESTAMP}, 
-      #{noDrugId,jdbcType=BIGINT}, #{checkParts,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{excuteDeptId,jdbcType=BIGINT}, #{createStaffId,jdbcType=BIGINT}, #{logStaffId,jdbcType=BIGINT}, 
-      #{excuteTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL})
+    insert into dms_non_drug_item_record (registration_id, status, aim,
+      demand, log_status, check_result,
+      result_img_url_list, clinical_impression, clinical_diagnosis,
+      create_time, excute_staff_id, log_datetime,
+      no_drug_id, check_parts, type,
+      excute_dept_id, create_staff_id, log_staff_id,
+      excute_time, amount,invoice)
+    values (#{registrationId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{aim,jdbcType=VARCHAR},
+      #{demand,jdbcType=VARCHAR}, #{logStatus,jdbcType=INTEGER}, #{checkResult,jdbcType=VARCHAR},
+      #{resultImgUrlList,jdbcType=VARCHAR}, #{clinicalImpression,jdbcType=VARCHAR}, #{clinicalDiagnosis,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{excuteStaffId,jdbcType=BIGINT}, #{logDatetime,jdbcType=TIMESTAMP},
+      #{noDrugId,jdbcType=BIGINT}, #{checkParts,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+      #{excuteDeptId,jdbcType=BIGINT}, #{createStaffId,jdbcType=BIGINT}, #{logStaffId,jdbcType=BIGINT},
+      #{excuteTime,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL} , #{invoice,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.DmsNonDrugItemRecord">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -203,6 +204,10 @@
       <if test="amount != null">
         amount,
       </if>
+
+      <if test="invoice != null">
+        invoice,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="registrationId != null">
@@ -264,6 +269,10 @@
       </if>
       <if test="amount != null">
         #{amount,jdbcType=DECIMAL},
+      </if>
+
+      <if test="invoice != null">
+        #{invoice,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -339,6 +348,9 @@
       <if test="record.amount != null">
         amount = #{record.amount,jdbcType=DECIMAL},
       </if>
+      <if test="record.invoice != null">
+        invoice = #{record.invoice,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -366,7 +378,9 @@
       create_staff_id = #{record.createStaffId,jdbcType=BIGINT},
       log_staff_id = #{record.logStaffId,jdbcType=BIGINT},
       excute_time = #{record.excuteTime,jdbcType=TIMESTAMP},
-      amount = #{record.amount,jdbcType=DECIMAL}
+      amount = #{record.amount,jdbcType=DECIMAL},
+      invoice = #{record.invoice,jdbcType=BIGINT}
+
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -434,6 +448,9 @@
       <if test="amount != null">
         amount = #{amount,jdbcType=DECIMAL},
       </if>
+      <if test="invoice != null">
+        invoice = #{invoice,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -459,6 +476,7 @@
       log_staff_id = #{logStaffId,jdbcType=BIGINT},
       excute_time = #{excuteTime,jdbcType=TIMESTAMP},
       amount = #{amount,jdbcType=DECIMAL}
+      invoice = #{invoice,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

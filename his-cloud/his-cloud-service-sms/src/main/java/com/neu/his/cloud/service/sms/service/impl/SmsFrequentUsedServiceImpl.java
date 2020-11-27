@@ -3,6 +3,8 @@ package com.neu.his.cloud.service.sms.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.neu.his.cloud.service.sms.dto.dms.DmsDrugResult;
 import com.neu.his.cloud.service.sms.dto.dms.DmsNonDrugResult;
+import com.neu.his.cloud.service.sms.dto.sms.AddInformParam;
+import com.neu.his.cloud.service.sms.dto.sms.InformParam;
 import com.neu.his.cloud.service.sms.dto.sms.SmsFrequentUsedResult;
 import com.neu.his.cloud.service.sms.mapper.*;
 import com.neu.his.cloud.service.sms.model.*;
@@ -10,6 +12,7 @@ import com.neu.his.cloud.service.sms.service.SmsFrequentUsedService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,6 +39,8 @@ public class SmsFrequentUsedServiceImpl implements SmsFrequentUsedService {
     @Autowired
     private DmsDosageMapper dmsDosageMapper;
 
+    @Autowired
+    private FamiliarInformTemplateMapper familiarInformTemplateMapper;
 
     @Override
     public int addFrequent(Long staffId,int addType,Long addId){
@@ -392,4 +397,54 @@ public class SmsFrequentUsedServiceImpl implements SmsFrequentUsedService {
         return idSet;
     }
 
+    //添加模板
+    @Override
+    public int addInform(AddInformParam addInformParam) {
+        FamiliarInformTemplate familiarInformTemplate=new FamiliarInformTemplate();
+        if(!StringUtils.isEmpty(addInformParam.getName())){
+            familiarInformTemplate.setName(addInformParam.getName());
+        }
+
+        if(!StringUtils.isEmpty(addInformParam.getContent())){
+            familiarInformTemplate.setContent(addInformParam.getContent());
+        }
+        return familiarInformTemplateMapper.insertSelective(familiarInformTemplate);
+    }
+
+    //删除模板
+    @Override
+    public int deleteInform(Long frequentId) {
+        return familiarInformTemplateMapper.deleteByPrimaryKey(frequentId);
+    }
+
+    //修改模板
+    @Override
+    public int updateInform(AddInformParam addInformParam) {
+        FamiliarInformTemplate familiarInformTemplate=new FamiliarInformTemplate();
+        if(!StringUtils.isEmpty(addInformParam.getId())){
+            familiarInformTemplate.setId(addInformParam.getId());
+        }
+        if(!StringUtils.isEmpty(addInformParam.getName())){
+            familiarInformTemplate.setName(addInformParam.getName());
+        }
+        if(!StringUtils.isEmpty(addInformParam.getContent())){
+            familiarInformTemplate.setContent(addInformParam.getContent());
+        }
+        return familiarInformTemplateMapper.updateByPrimaryKeySelective(familiarInformTemplate);
+    }
+    //查询模板
+    @Override
+    public List<FamiliarInformTemplate> selectInform(InformParam informParam) {
+        FamiliarInformTemplateExample familiarInformTemplateExample=new FamiliarInformTemplateExample();
+        FamiliarInformTemplateExample.Criteria criteria = familiarInformTemplateExample.createCriteria();
+        if(!StringUtils.isEmpty(informParam.getName())){
+            criteria.andNameLike("%"+informParam.getName()+"%");
+        }
+
+        if(!StringUtils.isEmpty(informParam.getContent())){
+            criteria.andContentLike("%"+informParam.getContent()+"%");
+        }
+
+        return familiarInformTemplateMapper.selectByExample(familiarInformTemplateExample);
+    }
 }

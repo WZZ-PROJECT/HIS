@@ -4,11 +4,12 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 public class DmsDiseCatalog implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
-    private String name;
-
     private Integer status;
+
+    private String name;
 
     private static final long serialVersionUID = 1L;
 
@@ -20,20 +21,20 @@ public class DmsDiseCatalog implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Integer getStatus() {
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -43,8 +44,8 @@ public class DmsDiseCatalog implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
         sb.append(", status=").append(status);
+        sb.append(", name=").append(name);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

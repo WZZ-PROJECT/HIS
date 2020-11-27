@@ -3,6 +3,7 @@
 <mapper namespace="com.neu.his.cloud.service.dms.mapper.BmsRollbackMapper">
   <resultMap id="BaseResultMap" type="com.neu.his.cloud.service.dms.model.BmsRollback">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="refund_bill_id" jdbcType="BIGINT" property="refundBillId" />
     <result column="account_code" jdbcType="VARCHAR" property="accountCode" />
     <result column="rb_amount" jdbcType="DECIMAL" property="rbAmount" />
     <result column="rb_state" jdbcType="INTEGER" property="rbState" />
@@ -76,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, account_code, rb_amount, rb_state, app_time, rb_time, rb_type, out_trade_id, 
-    rosult, create_user, create_time, update_user, update_time, is_deleted
+    id, refund_bill_id, account_code, rb_amount, rb_state, app_time, rb_time, rb_type, 
+    out_trade_id, rosult, create_user, create_time, update_user, update_time, is_deleted
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.BmsRollbackExample" resultMap="BaseResultMap">
     select
@@ -113,16 +114,16 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into bms_rollback (account_code, rb_amount, rb_state, 
-      app_time, rb_time, rb_type, 
-      out_trade_id, rosult, create_user, 
-      create_time, update_user, update_time, 
-      is_deleted)
-    values (#{accountCode,jdbcType=VARCHAR}, #{rbAmount,jdbcType=DECIMAL}, #{rbState,jdbcType=INTEGER}, 
-      #{appTime,jdbcType=TIMESTAMP}, #{rbTime,jdbcType=TIMESTAMP}, #{rbType,jdbcType=INTEGER}, 
-      #{outTradeId,jdbcType=VARCHAR}, #{rosult,jdbcType=VARCHAR}, #{createUser,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{isDeleted,jdbcType=INTEGER})
+    insert into bms_rollback (refund_bill_id, account_code, rb_amount, 
+      rb_state, app_time, rb_time, 
+      rb_type, out_trade_id, rosult, 
+      create_user, create_time, update_user, 
+      update_time, is_deleted)
+    values (#{refundBillId,jdbcType=BIGINT}, #{accountCode,jdbcType=VARCHAR}, #{rbAmount,jdbcType=DECIMAL}, 
+      #{rbState,jdbcType=INTEGER}, #{appTime,jdbcType=TIMESTAMP}, #{rbTime,jdbcType=TIMESTAMP}, 
+      #{rbType,jdbcType=INTEGER}, #{outTradeId,jdbcType=VARCHAR}, #{rosult,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.BmsRollback">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -130,6 +131,9 @@
     </selectKey>
     insert into bms_rollback
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="refundBillId != null">
+        refund_bill_id,
+      </if>
       <if test="accountCode != null">
         account_code,
       </if>
@@ -171,6 +175,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="refundBillId != null">
+        #{refundBillId,jdbcType=BIGINT},
+      </if>
       <if test="accountCode != null">
         #{accountCode,jdbcType=VARCHAR},
       </if>
@@ -224,6 +231,9 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.refundBillId != null">
+        refund_bill_id = #{record.refundBillId,jdbcType=BIGINT},
+      </if>
       <if test="record.accountCode != null">
         account_code = #{record.accountCode,jdbcType=VARCHAR},
       </if>
@@ -271,6 +281,7 @@
   <update id="updateByExample" parameterType="map">
     update bms_rollback
     set id = #{record.id,jdbcType=BIGINT},
+      refund_bill_id = #{record.refundBillId,jdbcType=BIGINT},
       account_code = #{record.accountCode,jdbcType=VARCHAR},
       rb_amount = #{record.rbAmount,jdbcType=DECIMAL},
       rb_state = #{record.rbState,jdbcType=INTEGER},
@@ -291,6 +302,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.neu.his.cloud.service.dms.model.BmsRollback">
     update bms_rollback
     <set>
+      <if test="refundBillId != null">
+        refund_bill_id = #{refundBillId,jdbcType=BIGINT},
+      </if>
       <if test="accountCode != null">
         account_code = #{accountCode,jdbcType=VARCHAR},
       </if>
@@ -335,7 +349,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.neu.his.cloud.service.dms.model.BmsRollback">
     update bms_rollback
-    set account_code = #{accountCode,jdbcType=VARCHAR},
+    set refund_bill_id = #{refundBillId,jdbcType=BIGINT},
+      account_code = #{accountCode,jdbcType=VARCHAR},
       rb_amount = #{rbAmount,jdbcType=DECIMAL},
       rb_state = #{rbState,jdbcType=INTEGER},
       app_time = #{appTime,jdbcType=TIMESTAMP},

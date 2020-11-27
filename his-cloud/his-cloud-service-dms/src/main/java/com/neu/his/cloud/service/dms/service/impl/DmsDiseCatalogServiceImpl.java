@@ -83,7 +83,7 @@ public class DmsDiseCatalogServiceImpl implements DmsDiseCatalogService {
         DmsDiseCatalogExample example = new DmsDiseCatalogExample();
         DmsDiseCatalogExample.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(dmsDiseCatalogParam.getName())){
-            criteria.andNameEqualTo(dmsDiseCatalogParam.getName());
+            criteria.andNameLike("%"+dmsDiseCatalogParam.getName()+"%");
         }
         if(!StringUtils.isEmpty(dmsDiseCatalogParam.getStatus())){
             criteria.andStatusEqualTo(dmsDiseCatalogParam.getStatus());

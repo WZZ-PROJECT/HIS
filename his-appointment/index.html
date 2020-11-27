@@ -1,12 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <!-- <title>his-appointment</title> -->
-  </head>
-  <body>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+  <title>济南槐荫慈光诊所</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+  <!-- <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
+    <script>
+      var vConsole = new VConsole();
+      console.log('Hello world');
+    </script> -->
+  <script>
+    (function () {
+      if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') {
+        handleFontSize();
+      } else {
+        if (document.addEventListener) {
+          document.addEventListener('WeixinJSBridgeReady', handleFontSize, false);
+        } else if (document.attachEvent) {
+          document.attachEvent('WeixinJSBridgeReady', handleFontSize);
+          document.attachEvent('onWeixinJSBridgeReady', handleFontSize);
+        }
+      }
+
+      function handleFontSize() {
+        // 设置网页字体为默认大小
+        WeixinJSBridge.invoke('setFontSizeCallback', {
+          'fontSize': 0
+        });
+        // 重写设置网页字体大小的事件
+        WeixinJSBridge.on('menu:setfont', function () {
+          WeixinJSBridge.invoke('setFontSizeCallback', {
+            'fontSize': 0
+          });
+        });
+      }
+    })();
+
+  </script>
+</body>
+
 </html>

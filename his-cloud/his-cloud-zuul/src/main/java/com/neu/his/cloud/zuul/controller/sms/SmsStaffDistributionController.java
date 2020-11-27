@@ -70,12 +70,10 @@ public class SmsStaffDistributionController {
     @ApiOperation("模糊查询用户、且分页")
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam,
-                                                         @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-       return apiPcSmsStaffDistributionService.list(queryParam,pageSize,pageNum);
+    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam){
+       return apiPcSmsStaffDistributionService.list(queryParam);
     }
-    private CommonResult<CommonPage<SmsStaffResult>> listFallbackInfo(SmsStaffParam queryParam,Integer pageSize, Integer pageNum){
+    private CommonResult<CommonPage<SmsStaffResult>> listFallbackInfo(SmsStaffParam queryParam){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 

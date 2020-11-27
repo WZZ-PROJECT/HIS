@@ -1,0 +1,30 @@
+/* pages/payFee/payFee.wxss */
+.patient{
+  border: 1px solid #666666;
+  height: auto;
+  margin: 10rpx;
+  padding-bottom: 30rpx;
+}
+.myline{
+  height: 48rpx;
+  /* border-bottom:1px solid #EEEEEE; */
+  padding: 20rpx;
+  margin-left: 10rpx;
+  margin-right: 10rpx;
+}
+.elli-item {
+  display: flex;
+}
+.elli-item .item-name {
+  width: 0;
+  flex: 1;
+}
+.left{
+  /* border-bottom:1px solid #EEEEEE; */
+  width: 250rpx;
+  float: left;
+}
+.right{
+  /* border-bottom:1px solid #EEEEEE; */
+  width: 650rpx;
+}

@@ -1,5 +1,6 @@
 package com.neu.his.cloud.service.dms.dto.dms;
 
+import com.neu.his.cloud.service.dms.model.SmsStaff;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -31,8 +33,12 @@ public class DmsNowDoctorRegistrationResult implements Serializable {
 
     @ApiModelProperty("挂号费用")
     private BigDecimal amount;
+
     @ApiModelProperty("医生特长")
     private String advantages;
+
+    @ApiModelProperty("医生介绍")
+    private String description;
 
     @ApiModelProperty("午别")
     private Integer noon;
@@ -42,4 +48,5 @@ public class DmsNowDoctorRegistrationResult implements Serializable {
 
     @ApiModelProperty("skdId")
     private Long skdId;
+
 }

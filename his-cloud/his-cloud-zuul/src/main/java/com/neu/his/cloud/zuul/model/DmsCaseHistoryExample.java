@@ -595,52 +595,52 @@ public class DmsCaseHistoryExample {
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdEqualTo(Long value) {
+        public Criteria andRegistrationIdEqualTo(Integer value) {
             addCriterion("registration_id =", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotEqualTo(Long value) {
+        public Criteria andRegistrationIdNotEqualTo(Integer value) {
             addCriterion("registration_id <>", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdGreaterThan(Long value) {
+        public Criteria andRegistrationIdGreaterThan(Integer value) {
             addCriterion("registration_id >", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andRegistrationIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("registration_id >=", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdLessThan(Long value) {
+        public Criteria andRegistrationIdLessThan(Integer value) {
             addCriterion("registration_id <", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdLessThanOrEqualTo(Long value) {
+        public Criteria andRegistrationIdLessThanOrEqualTo(Integer value) {
             addCriterion("registration_id <=", value, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdIn(List<Long> values) {
+        public Criteria andRegistrationIdIn(List<Integer> values) {
             addCriterion("registration_id in", values, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotIn(List<Long> values) {
+        public Criteria andRegistrationIdNotIn(List<Integer> values) {
             addCriterion("registration_id not in", values, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdBetween(Long value1, Long value2) {
+        public Criteria andRegistrationIdBetween(Integer value1, Integer value2) {
             addCriterion("registration_id between", value1, value2, "registrationId");
             return (Criteria) this;
         }
 
-        public Criteria andRegistrationIdNotBetween(Long value1, Long value2) {
+        public Criteria andRegistrationIdNotBetween(Integer value1, Integer value2) {
             addCriterion("registration_id not between", value1, value2, "registrationId");
             return (Criteria) this;
         }
@@ -1325,52 +1325,52 @@ public class DmsCaseHistoryExample {
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdEqualTo(Long value) {
+        public Criteria andPatientIdEqualTo(Integer value) {
             addCriterion("patient_id =", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdNotEqualTo(Long value) {
+        public Criteria andPatientIdNotEqualTo(Integer value) {
             addCriterion("patient_id <>", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdGreaterThan(Long value) {
+        public Criteria andPatientIdGreaterThan(Integer value) {
             addCriterion("patient_id >", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andPatientIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("patient_id >=", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdLessThan(Long value) {
+        public Criteria andPatientIdLessThan(Integer value) {
             addCriterion("patient_id <", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdLessThanOrEqualTo(Long value) {
+        public Criteria andPatientIdLessThanOrEqualTo(Integer value) {
             addCriterion("patient_id <=", value, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdIn(List<Long> values) {
+        public Criteria andPatientIdIn(List<Integer> values) {
             addCriterion("patient_id in", values, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdNotIn(List<Long> values) {
+        public Criteria andPatientIdNotIn(List<Integer> values) {
             addCriterion("patient_id not in", values, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdBetween(Long value1, Long value2) {
+        public Criteria andPatientIdBetween(Integer value1, Integer value2) {
             addCriterion("patient_id between", value1, value2, "patientId");
             return (Criteria) this;
         }
 
-        public Criteria andPatientIdNotBetween(Long value1, Long value2) {
+        public Criteria andPatientIdNotBetween(Integer value1, Integer value2) {
             addCriterion("patient_id not between", value1, value2, "patientId");
             return (Criteria) this;
         }
@@ -1782,6 +1782,146 @@ public class DmsCaseHistoryExample {
 
         public Criteria andTestResultNotBetween(String value1, String value2) {
             addCriterion("test_result not between", value1, value2, "testResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceIsNull() {
+            addCriterion("testAdvice is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceIsNotNull() {
+            addCriterion("testAdvice is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceEqualTo(String value) {
+            addCriterion("testAdvice =", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceNotEqualTo(String value) {
+            addCriterion("testAdvice <>", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceGreaterThan(String value) {
+            addCriterion("testAdvice >", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceGreaterThanOrEqualTo(String value) {
+            addCriterion("testAdvice >=", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceLessThan(String value) {
+            addCriterion("testAdvice <", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceLessThanOrEqualTo(String value) {
+            addCriterion("testAdvice <=", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceLike(String value) {
+            addCriterion("testAdvice like", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceNotLike(String value) {
+            addCriterion("testAdvice not like", value, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceIn(List<String> values) {
+            addCriterion("testAdvice in", values, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceNotIn(List<String> values) {
+            addCriterion("testAdvice not in", values, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceBetween(String value1, String value2) {
+            addCriterion("testAdvice between", value1, value2, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andTestadviceNotBetween(String value1, String value2) {
+            addCriterion("testAdvice not between", value1, value2, "testadvice");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformIsNull() {
+            addCriterion("familiarInform is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformIsNotNull() {
+            addCriterion("familiarInform is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformEqualTo(String value) {
+            addCriterion("familiarInform =", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformNotEqualTo(String value) {
+            addCriterion("familiarInform <>", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformGreaterThan(String value) {
+            addCriterion("familiarInform >", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformGreaterThanOrEqualTo(String value) {
+            addCriterion("familiarInform >=", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformLessThan(String value) {
+            addCriterion("familiarInform <", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformLessThanOrEqualTo(String value) {
+            addCriterion("familiarInform <=", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformLike(String value) {
+            addCriterion("familiarInform like", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformNotLike(String value) {
+            addCriterion("familiarInform not like", value, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformIn(List<String> values) {
+            addCriterion("familiarInform in", values, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformNotIn(List<String> values) {
+            addCriterion("familiarInform not in", values, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformBetween(String value1, String value2) {
+            addCriterion("familiarInform between", value1, value2, "familiarinform");
+            return (Criteria) this;
+        }
+
+        public Criteria andFamiliarinformNotBetween(String value1, String value2) {
+            addCriterion("familiarInform not between", value1, value2, "familiarinform");
             return (Criteria) this;
         }
     }

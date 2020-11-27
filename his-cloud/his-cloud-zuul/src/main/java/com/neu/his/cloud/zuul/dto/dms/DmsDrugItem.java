@@ -46,4 +46,16 @@ public class DmsDrugItem implements Serializable {
     private Long num;
 
     private Long drugId;
+
+    private String footnote;  //脚注
+
+    private String frequency;
+
+    private String medicalAdvice; //医嘱
+
+    private Long usageNum;
+
+    private String usageNumUnit;
+
+    private Long days;
 }

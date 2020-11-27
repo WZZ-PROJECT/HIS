@@ -1,0 +1,35 @@
+/* pages/prestore/prestore.wxss */
+.number{
+  margin-top: 40%;
+  margin-left: 150rpx;
+}
+.number input{
+  border: 1px solid #E0E0E0;
+  height: 60rpx;
+  width: 300rpx;
+}
+.left{
+  float: left;
+  margin-top: 10rpx;
+}
+.right{
+  float: right;
+  margin-right: 100rpx;
+}
+.right input{
+  float: left;
+ }
+.right text{
+ float: right;
+ margin-left: 10rpx;
+ margin-top: 10rpx;
+}
+.form-content {
+  margin-top: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.form-input input {
+  width: 300rpx;
+}

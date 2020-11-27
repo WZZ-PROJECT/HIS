@@ -37,4 +37,6 @@ public class DmsNonDrugResult  implements Serializable {
     private Integer status;
     @ApiModelProperty(value = "执行科室名")
     private String  deptName;
+    @ApiModelProperty(value = "地点")
+    private String place;
 }

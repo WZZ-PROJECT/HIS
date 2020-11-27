@@ -25,4 +25,8 @@ public interface BmsFeeQueryService {
      * 描述：根据处方单号和type（草药4，成药5）查小项
      */
     List<AppDrugItemResult> listFeeItem(Long prescriptionId, int type);
+    /**
+     * 描述：打发票
+     */
+    int updateInvoice(List<BmsDoctorPatientFeeResult> list);
 }

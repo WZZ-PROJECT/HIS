@@ -48,7 +48,7 @@ public class DmsDrugModelController {
     @ApiOperation(value = "更新药品模版")
     @RequestMapping(value = "/updateModel", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam, BindingResult result){
+    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam){
         return dmsDrugModelService.updateModel(modelId,dmsDrugModelParam);
     }
 

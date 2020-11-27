@@ -27,6 +27,16 @@ public class DmsRegistration implements Serializable {
 
     private String patientAgeStr;
 
+    private Long wxResultsId;
+
+    public Long getWxResultsId() {
+        return wxResultsId;
+    }
+
+    public void setWxResultsId(Long wxResultsId) {
+        this.wxResultsId = wxResultsId;
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {

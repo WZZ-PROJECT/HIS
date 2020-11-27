@@ -116,6 +116,12 @@
         </dependency>
         <!--pagehelper End-->
 
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+
         <!-- MyBatis 生成器 Begin-->
         <dependency>
             <groupId>org.mybatis.generator</groupId>

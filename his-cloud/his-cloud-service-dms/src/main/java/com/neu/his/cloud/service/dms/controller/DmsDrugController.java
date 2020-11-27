@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -120,8 +121,11 @@ public class DmsDrugController {
     @RequestMapping(value = "/selectById", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<DmsDrugResult> selectById(@RequestParam("id") Long id){
-        DmsDrugResult dmsDrugResult = dmsDrugService.selectById(id);
-        return CommonResult.success(dmsDrugResult);
+        if(!StringUtils.isEmpty(id)){
+            DmsDrugResult dmsDrugResult = dmsDrugService.selectById(id);
+            return CommonResult.success(dmsDrugResult);
+        }
+        return null;
     }
 
 }

@@ -143,7 +143,7 @@ public class SmsStaffServiceImpl implements SmsStaffService {
     }
 
     @Override
-    public List<SmsStaffResult> select(SmsStaffParam smsStaffQueryParam, Integer pageSize, Integer pageNum){
+    public List<SmsStaffResult> select(SmsStaffParam smsStaffQueryParam){
         SmsStaffExample example = new SmsStaffExample();
         SmsStaffExample.Criteria criteria = example.createCriteria();
         //如果没有指明state，返回不为0的
@@ -157,22 +157,22 @@ public class SmsStaffServiceImpl implements SmsStaffService {
         if(!StringUtils.isEmpty(smsStaffQueryParam.getName())){
             criteria.andNameEqualTo("%" + smsStaffQueryParam.getName() + "%");
         }
-        if(smsStaffQueryParam.getDeptId() != null){
+        if(!StringUtils.isEmpty(smsStaffQueryParam.getDeptId())){
             criteria.andDeptIdEqualTo(smsStaffQueryParam.getDeptId());
         }
-        if(smsStaffQueryParam.getGender() != null){
+        if(!StringUtils.isEmpty(smsStaffQueryParam.getGender())){
             criteria.andGenderEqualTo(smsStaffQueryParam.getGender());
         }
-        if(smsStaffQueryParam.getSkdFlag() != null){
+        if(!StringUtils.isEmpty(smsStaffQueryParam.getSkdFlag())){
             criteria.andSkdFlagEqualTo(smsStaffQueryParam.getSkdFlag());
         }
         if(!StringUtils.isEmpty(smsStaffQueryParam.getTitle())){
             criteria.andTitleEqualTo("%" + smsStaffQueryParam.getTitle() + "%");
         }
-        if(smsStaffQueryParam.getRoleId() != null){
+        if(!StringUtils.isEmpty(smsStaffQueryParam.getRoleId())){
             criteria.andRoleIdEqualTo(smsStaffQueryParam.getRoleId());
         }
-        if(smsStaffQueryParam.getRegistrationRankId() != null){
+        if(!StringUtils.isEmpty(smsStaffQueryParam.getRegistrationRankId())){
             criteria.andRegistrationRankIdEqualTo(smsStaffQueryParam.getRegistrationRankId());
         }
         //返回数据包装成Result
@@ -180,6 +180,7 @@ public class SmsStaffServiceImpl implements SmsStaffService {
 
 
         example.setOrderByClause("id desc");
+        example.setOrderByClause("create_time desc");
         List<SmsStaff> results = smsStaffMapper.selectByExample(example);
         List<SmsStaffResult> returnList = new ArrayList<>();
         for (SmsStaff s : results) {

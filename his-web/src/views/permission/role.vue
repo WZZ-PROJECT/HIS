@@ -1,12 +1,14 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAddRole">新增用户</el-button>
-    <el-select placeholder="科室选择" v-model="listQuery.deptId" clearable style="width: 130px" class="filter-item" filterable @change="select">
+    <el-select placeholder="科室选择" v-model="listQuery.deptId" clearable style="width: 130px" class="filter-item">
       <el-option v-for="item in alldepart" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
-    <el-select v-model="listQuery.roleId" placeholder="用户角色" clearable style="width: 130px" class="filter-item" @change="select">
+    <el-select v-model="listQuery.roleId" placeholder="用户角色" clearable style="width: 130px" class="filter-item">
       <el-option v-for="item in [{key:1,label:'管理员'},{key:2,label:'门诊医生'},{key:3,label:'医技医生'},{key:4,label:'药房医生'},{key:5,label:'收费员'},{key:6,label:'对账员'},{key:7,label:'超级管理员'}]" :key="item.key" :label="item.label" :value="item.key" />
     </el-select>
+    <el-button class="filter-item" type="primary" icon="el-icon-search" @click="select()">
+    </el-button>
     <el-table :data="userlist" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="用户编号" width="120">
         <template slot-scope="scope">
@@ -25,7 +27,7 @@
       </el-table-column>
       <el-table-column align="center" label="角色" width="150">
         <template slot-scope="scope">
-          {{ scope.row.role.name }}
+          {{ scope.row.role.description }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="科室" width="150">
@@ -74,10 +76,13 @@
         <el-form-item label="登录密码" v-if="dialogType==='add'" prop="password">
           <el-input v-model="user.password" placeholder=""></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-select v-model="user.role" placeholder="请选择用户角色" filterable  clearable style="width: 130px" class="filter-item">
+        <el-form-item label="角色" prop="role" >
+          <el-select v-model="user.role" placeholder="请选择用户角色" filterable  clearable style="width: 130px" class="filter-item" @change="showamount()" >
             <el-option v-for="item in [{key:1,label:'管理员'},{key:2,label:'门诊医生'},{key:3,label:'医技医生'},{key:4,label:'药房医生'},{key:5,label:'收费员'},{key:6,label:'对账员'},{key:7,label:'超级管理员'}]" :key="item.key" :label="item.label" :value="item.key" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="医生费用" v-show="showAmount">
+          <el-input v-model="user.amount"></el-input>
         </el-form-item>
         <el-form-item label="科室" prop="dept">
           <el-select placeholder="科室选择" v-model="user.dept" clearable style="width: 130px" class="filter-item" filterable @change="getRuleList">
@@ -124,6 +129,7 @@
         user:{
           id:'',
           username:'',
+          password:'',
           name:'',
           role:'',
           dept:'',
@@ -132,33 +138,36 @@
           title:'',
           advantages:'',
           description:'',
-          status:''
+          status:'',
+          amount:''
         },
         total:0,
         userlist:[],
         listQuery:{
-          deptId:'',
-          gender:'',
-          username:'',
-          roleId:'',
+          deptId:null,
+          gender:null,
+          username:null,
+          roleId:null,
           pageSize:10,
           pageNum:1
         },
         imageUrl: '',
         dialogType:'',
         dialogVisible:false,
+        showAmount:false,
         rules:{
           picture:[
             {required: true, message: '请上传头像',trigger: 'blur'}
           ],
-          username:[{required: true, message: '请输入用户名称',trigger: 'blur'}],
-          password:[{required: true, message: '请输入密码',trigger: 'blur'}, { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }],
+          username:[{required: true, message: '请输入用户名',trigger: 'blur'}],
+          password:[{required: true, message: '请输入登录密码',trigger: 'blur'}, { min: 4, max: 16, message: '长度在 4 到 16 个字符', trigger: 'blur' }],
           name:[{required: true, message: '请输入真实姓名',trigger: 'blur'}],
           role:[{required: true, message: '请选择角色',trigger: 'blur'}],
           dept:[{required: true, message: '请选择科室',trigger: 'blur'}],
           advantages:[{required: true, message: '请输入医生擅长',trigger: 'blur'}],
           title:[{required: true, message: '请输入备注',trigger: 'blur'}],
-          description:[{required: true, message: '请输入医生介绍',trigger: 'blur'}]
+          description:[{required: true, message: '请输入医生介绍',trigger: 'blur'}],
+          amount:[{required: true, message: '请输入医生费用',trigger: 'blur'}]
         }
       }
     },
@@ -168,7 +177,6 @@
       },
     },
     created(){
-      this.select()
       this.getAlldep()
       policy().then(res=>{
         this.dataObj = res.data
@@ -179,10 +187,10 @@
         const res = await getAllDep()
         this.alldepart=res.data
       },
-      getRuleList (){
+       getRuleList (){
         if(this.depart!==''){
           this.ruleList = []
-          this.listQuery.deptId=this.depart
+          this.listQuery.deptId=this.user.dept
           getRulelist(this.listQuery).then(res=>{
             this.ruleList=res.data.list
             this.ruleList.forEach(item=>{
@@ -190,6 +198,13 @@
             })
             this.total=res.data.total
           })
+        }
+      },
+      showamount(){
+        if (this.user.role === 2) {
+          this.showAmount = true;
+        }else {
+          this.showAmount = false;
         }
       },
       confirmUser(user){
@@ -201,15 +216,24 @@
                 this.user.registrationRankId = 1
                 this.user.gender = 0
                 create(this.user).then(res=>{
-                  this.$notify({
-                    title: '成功',
-                    message: '成功新增用户',
-                    type: 'success',
-                    duration: 2000
-                  })
-                  this.select()
+                  if(res.data===1){
+                    this.$notify({
+                      title: '提示',
+                      message: '新增用户成功',
+                      type: 'success',
+                      duration: 2000
+                    })
+                    this.select()
+                    this.dialogVisible = false
+                  }else {
+                    this.$notify({
+                      title: '提示',
+                      message: '该用户已存在',
+                      type: 'warning',
+                      duration: 2000
+                    })
+                  }
                 })
-                this.dialogVisible = false
             }
             else{
               this.user.deptId = this.user.dept
@@ -231,10 +255,15 @@
          })
       },
       select(){
-        select(this.listQuery).then(res=>{
+        if (this.check() === false) {
+          return
+        }
+        let data = {
+          ...this.listQuery
+        }
+        select(data).then(res=>{
           this.userlist = res.data.list
           this.total = res.data.total
-          console.log(this.userlist)
           this.userlist.forEach(item=>{
             item.createTime = parseTime(item.createTime)
           })
@@ -246,10 +275,12 @@
         this.user.name = ''
         this.user.role = ''
         this.user.username = ''
+        this.user.password=''
         this.user.dept = ''
         this.user.title = ''
         this.user.advantages = ''
         this.user.description = ''
+        this.user.amount = ''
         this.dialogType = 'add'
         this.dialogVisible = true
       },
@@ -257,6 +288,7 @@
         this.dialogType = 'edit'
         this.user.id = row.id
         this.user.username = JSON.parse(JSON.stringify(row.username))
+        this.user.password=row.password
         this.user.name =JSON.parse(JSON.stringify(row.name))
         this.user.role = row.role.id
         this.user.dept = row.dept.id
@@ -265,11 +297,14 @@
         this.user.title = row.title
         this.user.advantages = row.advantages
         this.user.description = row.description
+        if (this.user.role === 2) {
+          this.user.amount = row.amount
+        }
+        this.showamount()
         this.dialogVisible = true
-        console.log(this.user)
       },
       handleDelete(row){
-        this.$confirm('确定为 '+row.dept.name+' 的 '+row.name+' 用户吗?', {
+        this.$confirm('确定删除 '+row.dept.name+' 的 '+row.name+' 用户吗?', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -306,6 +341,17 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      check () {
+        if (this.listQuery.deptId === null || this.listQuery.deptId === '') {
+          this.$notify({
+            title: '警告',
+            message: '请选择科室',
+            type: 'warning',
+            duration: 2000
+          })
+          return false
+        }
       }
     }
   }

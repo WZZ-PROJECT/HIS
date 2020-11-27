@@ -58,6 +58,7 @@ public class DmsHerbalPrescriptionRecordServiceImpl implements DmsHerbalPrescrip
             dmsHerbalItemRecord.setStatus(1);
             dmsHerbalItemRecord.setPrescriptionId(currentId);
             dmsHerbalItemRecord.setCurrentNum(dmsHerbalItemRecord.getTotalNum());
+            dmsHerbalItemRecord.setInvoice(0L);
             insertCount += dmsHerbalItemRecordMapper.insert(dmsHerbalItemRecord);
         }
         return currentId;

@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Setter
 @Getter
@@ -26,4 +29,11 @@ public class PmsDiagnosisPatientResult {
     Long registrationId;
     @ApiModelProperty(value = "就诊状态")
     Integer registrationStatus;
+    @ApiModelProperty(value = "看诊日期")
+    Date attendanceDate;
+    @ApiModelProperty(value = "手机号")
+    String phoneNo;
+    @ApiModelProperty(value = "身份证号")
+    String identificationNo;
+
 }

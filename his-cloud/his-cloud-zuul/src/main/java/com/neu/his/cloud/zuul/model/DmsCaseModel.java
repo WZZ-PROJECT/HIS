@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 public class DmsCaseModel implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private String chiefComplaint;

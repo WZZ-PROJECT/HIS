@@ -4,17 +4,20 @@
     <el-form inline>
       <el-form-item label="排班日期">
         <el-date-picker
-          type="datetime"
           v-model="starttime"
+          type="date"
           placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
-      <el-input v-model="listQuery.staffName" placeholder="值班医生名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select placeholder="挂号科室" filterable  v-model="listQuery.deptId" style="width:180px">
+      <el-select placeholder="值班医生名称" clearable  v-model="listQuery.staffId" style="width:180px">
+        <el-option v-for="item in staff" :key="item.id" :label="item.name" :value="item.id" />
+      </el-select>
+      <el-select placeholder="挂号科室" clearable  v-model="listQuery.deptId" style="width:180px">
         <el-option v-for="item in alldept" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       </el-button>
+      <el-button @click="handleReset">清空</el-button>
     </el-form>
     <div style="padding: 5px 5px 5px 5px; margin-top:20px">
       <el-table  :data="schedule" border>
@@ -41,10 +44,12 @@ import {parseTime} from '@/utils'
 import checkPermission from '@/utils/permission' // 权限判断函数
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getAllDep} from '@/api/department'
+import { getUserListAll} from '@/api/user'
 export default {
   components: {Pagination},
   data(){
     return{
+      staff:[],
       schedule:[],
       alldept:[],
       total: 0,
@@ -61,12 +66,29 @@ export default {
   },
   created(){
     this.querySkd(),
+    this.queryAllStaff()
     this.getAllDep()
   },
   methods:{
     handleFilter() {
-      this.listQuery.startDate = parseTime(this.starttime)
+      if(this.starttime === null || this.starttime === '') {
+        this.listQuery.startDate = ''
+      } else {
+        this.listQuery.startDate = parseTime(this.starttime)
+      }
+      this.listQuery.pageNum = 1
+      this.listQuery.pageSize = 10
       this.querySkd()
+    },
+    queryAllStaff() {
+      getUserListAll().then(res=>{
+        this.staff = res.data
+      })
+    },
+    handleReset() {
+      this.starttime = '';
+      this.listQuery.staffName = '';
+      this.listQuery.deptId = '';
     },
     getAllDep(){
       getAllDep().then(res=>{

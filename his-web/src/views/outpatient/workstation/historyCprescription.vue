@@ -2,14 +2,16 @@
   <!-- 草药处方 -->
   <div>
   <el-container>
+   <!-- <div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
   <el-aside :width="mainwidth" style="background:white;padding:0 10px 0 0">
     <el-table
+      id="historyCprescription1"
     ref="multipleTable"
     :data="prescriptionList"
     tooltip-effect="dark"
     style="width: 100%"
-    cell-style="text-align:center"
-    header-cell-style="text-align:center"
     @selection-change="handleSelectionChange">
     <el-table-column
     align="center"
@@ -117,7 +119,7 @@ export default {
       this.prescriptionList.push(val)
     },
     selectmodel(val){
-      console.log(val)
+
       this.model = deepClone(val)
       this.model.amount = Math.floor((this.model.amount+0.5)*100)/100
       this.modelvisivle = true
@@ -322,6 +324,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="65%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyCprescription1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

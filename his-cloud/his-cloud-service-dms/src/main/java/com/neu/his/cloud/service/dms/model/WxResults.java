@@ -8,8 +8,11 @@ public class WxResults implements Serializable {
     @ApiModelProperty(value = "主键")
     private Long id;
 
-    @ApiModelProperty(value = "病人Id ")
+    @ApiModelProperty(value = "病人Id")
     private Long patientId;
+
+    @ApiModelProperty(value = "1.现金  2.银行卡  3.微信 ")
+    private Long type;
 
     @ApiModelProperty(value = "微信支付订单号 ")
     private String transactionId;
@@ -28,6 +31,9 @@ public class WxResults implements Serializable {
 
     @ApiModelProperty(value = "支付完成时间")
     private Date timeEnd;
+
+    @ApiModelProperty(value = "状态  0：未退款  1：已退款")
+    private Long state;
 
     @ApiModelProperty(value = "结果")
     private String results;
@@ -48,6 +54,14 @@ public class WxResults implements Serializable {
 
     public void setPatientId(Long patientId) {
         this.patientId = patientId;
+    }
+
+    public Long getType() {
+        return type;
+    }
+
+    public void setType(Long type) {
+        this.type = type;
     }
 
     public String getTransactionId() {
@@ -98,6 +112,14 @@ public class WxResults implements Serializable {
         this.timeEnd = timeEnd;
     }
 
+    public Long getState() {
+        return state;
+    }
+
+    public void setState(Long state) {
+        this.state = state;
+    }
+
     public String getResults() {
         return results;
     }
@@ -114,12 +136,14 @@ public class WxResults implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", patientId=").append(patientId);
+        sb.append(", type=").append(type);
         sb.append(", transactionId=").append(transactionId);
         sb.append(", openid=").append(openid);
         sb.append(", mchId=").append(mchId);
         sb.append(", outTradeNo=").append(outTradeNo);
         sb.append(", totalFee=").append(totalFee);
         sb.append(", timeEnd=").append(timeEnd);
+        sb.append(", state=").append(state);
         sb.append(", results=").append(results);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

@@ -2,14 +2,15 @@
   <!-- 成药处方 -->
   <div>
   <el-container>
-  <el-aside :width="mainwidth" style="background:white;padding:0 10px 0 0">
+    <!--<div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
+  <el-aside id="historyPrescription1" :width="mainwidth" style="background:white;padding:0 10px 0 0">
     <el-table
     ref="multipleTable"
     :data="prescriptionList"
     tooltip-effect="dark"
     style="width: 100%"
-    cell-style="text-align:center"
-    header-cell-style="text-align:center"
     @selection-change="handleSelectionChange">
 
     <el-table-column
@@ -207,7 +208,6 @@ export default {
       this.prescriptionList.push(val)
     },
     selectmodel(val){
-      console.log(val)
       this.model = deepClone(val)
       this.model.amount = Math.floor((this.model.amount+0.5)*100)/100
       this.modelvisivle = true
@@ -260,8 +260,6 @@ export default {
       data.registrationId = this.patient.registrationId
       data.type = 4
       getDrugPrescription(data).then(res=>{
-
-        console.log(res.data)
         this.prescriptionList.push(JSON.stringify(res.data))
       })
     },
@@ -403,6 +401,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="65%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyPrescription1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

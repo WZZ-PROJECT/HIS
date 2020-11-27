@@ -4,16 +4,21 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 public class SmsDept implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "科室编码")
     private String code;
 
     private Integer catId;
 
+    @ApiModelProperty(value = "科室名称")
     private String name;
 
+    @ApiModelProperty(value = "科室类型")
     private Integer type;
 
+    @ApiModelProperty(value = "科室状态")
     private Integer status;
 
     private static final long serialVersionUID = 1L;

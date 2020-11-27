@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 public class DmsMedicineItemRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private Long drugId;
@@ -31,6 +32,9 @@ public class DmsMedicineItemRecord implements Serializable {
     private Integer usageNumUnit;
 
     private Long currentNum;
+
+    @ApiModelProperty(value = "打发票")
+    private Long invoice;
 
     private static final long serialVersionUID = 1L;
 
@@ -146,6 +150,14 @@ public class DmsMedicineItemRecord implements Serializable {
         this.currentNum = currentNum;
     }
 
+    public Long getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Long invoice) {
+        this.invoice = invoice;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -166,6 +178,7 @@ public class DmsMedicineItemRecord implements Serializable {
         sb.append(", usageMeans=").append(usageMeans);
         sb.append(", usageNumUnit=").append(usageNumUnit);
         sb.append(", currentNum=").append(currentNum);
+        sb.append(", invoice=").append(invoice);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

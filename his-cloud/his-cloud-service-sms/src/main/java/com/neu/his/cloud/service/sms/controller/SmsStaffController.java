@@ -48,7 +48,6 @@ public class SmsStaffController {
         return CommonResult.success(smsSkdDocResultList);
     }
 
-
 //    /**
 //     * 描述:新增一个用户
 //     * <p>author:赵煜
@@ -99,11 +98,9 @@ public class SmsStaffController {
     @ApiOperation("模糊查询用户、且分页")
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam,
-                                                         @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-        Page page =PageHelper.startPage(pageNum, pageSize);
-        List<SmsStaffResult> list = smsStaffService.select(queryParam,pageSize,pageNum);
+    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam){
+        Page page =PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
+        List<SmsStaffResult> list = smsStaffService.select(queryParam);
         Long pageTotal=page.getTotal();
         return CommonResult.success(CommonPage.restPage(list,pageTotal));
     }

@@ -35,7 +35,7 @@ public interface BmsFeeService {
     /**
      * 描述：挂号退费
      */
-    int refundRegistrationCharge(BmsRefundRegChargeParam bmsRefundRegChargeParam);
+    int refundRegistrationCharge(BmsRefundRegChargeParam bmsRefundRegChargeParam) throws Exception;
     /**
      * 描述：微信付款码支付（检查，检验，开立药物使用的接口）
      */
@@ -49,5 +49,7 @@ public interface BmsFeeService {
      * @return
      */
     List<BmsResult> listCharge(BmsParam bmsParam);
+
+    String queryById(String cardId);
 }
 

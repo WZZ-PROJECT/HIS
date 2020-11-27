@@ -69,7 +69,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/app/**"
                 )
                 .permitAll()
-                .antMatchers("/staff/login", "/staff/register")// 对登录注册要允许匿名访问
+                .antMatchers("/staff/login", "/staff/register","/pmsPatient/patientByOpenId","/dept/selectAll",
+                        "/staff/listNowDoctorRegistration","/staff/selectStaffByName","/staff/listDoctor","/staff/selectStaffById",
+                        "/registration/TimeDifference","/staff/isBandtoWechat","/staff/getOpenId","/staff/wxCallBack",
+                        "/pmsPatient/patientByOpenId")// 对登录注册要允许匿名访问
                 .permitAll()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
@@ -112,6 +115,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             throw new UsernameNotFoundException("用户名或密码错误");
         };
     }
+
+
+
 
     @Bean
     public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){

@@ -13,6 +13,9 @@ import java.math.BigDecimal;
 @ToString
 public class BmsDoctorPatientFeeResult  implements Serializable {
 
+    @ApiModelProperty(value = "id")
+    Long id;
+
     @ApiModelProperty(value = "项目名称")
     String itemName;
     @ApiModelProperty(value = "规格")
@@ -28,4 +31,21 @@ public class BmsDoctorPatientFeeResult  implements Serializable {
     @ApiModelProperty(value = "类型 0 挂号 1检查 2检验 3处置 4草药 5成药")
     Integer type;
 
+    @ApiModelProperty(value = "invoice")
+    Long invoice;
+
+    @ApiModelProperty(value = "地点")
+    String place;
+
+    @ApiModelProperty(value = "用法")
+    String medicalAdvice;
+
+    @ApiModelProperty(value = "频次")
+    String frequency;
+
+    @ApiModelProperty(value = "用量")
+    Long usageNum;
+
+    @ApiModelProperty(value = "单位")
+    Integer usageNumUnit;
 }

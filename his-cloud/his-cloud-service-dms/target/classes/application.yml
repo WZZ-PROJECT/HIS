@@ -10,7 +10,7 @@ spring:
   jackson:
     time-zone: GMT+8  #市区设置
   rabbitmq:
-    host: 192.168.0.164
+    host: localhost
     port: 5672
     virtual-host: his
     username: admin
@@ -20,7 +20,7 @@ spring:
   datasource:
     username: yuncheng
     password: yuncheng@123
-    url: jdbc:mysql://192.168.0.164:8806/his?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:8806/his?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -46,7 +46,7 @@ eureka:
 redis:
   host: localhost # Redis服务器地址
   database: 0 # Redis数据库索引（默认为0）
-  port: 6379 # Redis服务器连接端口
+  port: 8879 # Redis服务器连接端口
   password: # Redis服务器连接密码（默认为空）
   jedis:
     pool:
@@ -76,16 +76,16 @@ logging:
   level:
     root: info #日志配置DEBUG,INFO,WARN,ERROR
     com.neu.his: debug
-  file: /log #配置日志文件路径
+  file: E:/log #配置日志文件路径
   path: his-cloud-service-dms.log #配置日志生成名称
 
 
 aliyun:
   oss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    accessKeyId: LTAI4GEuRodq2mqRe8pigqT2
-    accessKeySecret: DB6pN1VRizFzU62qdza9o80bu8B3pN
-    bucketName: shandongciguang
+    endpoint: hangzhou
+    accessKeyId: adf
+    accessKeySecret: sdf
+    bucketName: sdfds
     policy:
       expire: 300
     maxSize: 10

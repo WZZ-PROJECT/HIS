@@ -82,17 +82,17 @@
     </transition>
     <!-- 编辑模板 -->
     <el-main style="padding:0 0 0 0;"  v-if="isaside">
-      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="edit" @click="updateModel">提交修改</el-button>
-      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="!edit" @click="createModel">新建模板</el-button>
+      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="edit" @click="updateModel('model')">提交修改</el-button>
+      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="!edit" @click="createModel('model')">新建模板</el-button>
       <el-button type="danger" @click="showaside">取消</el-button>
-      <el-form :model="model" label-width="140px" inline>
-        <el-form-item label="模板名称">
+      <el-form :model="model" ref="model" label-width="140px" inline :rules="rules">
+        <el-form-item label="模板名称" prop="name">
           <el-input placeholder="请输入模板名称" v-model="model.name" style="width:300px"></el-input>
         </el-form-item>
-        <el-form-item label="模板简介">
+        <el-form-item label="模板简介" prop="aim">
           <el-input placeholder="模板简介" v-model="model.aim" style="width:300px"></el-input>
         </el-form-item>
-        <el-form-item v-if='edit' label="模板编码">
+        <el-form-item v-if='edit' label="模板编码" prop="code">
           <el-input placeholder="模板编码" v-model="model.code" disabled style="width:300px"></el-input>
         </el-form-item>
         <el-form-item v-if='edit'  label="创建时间">
@@ -118,7 +118,6 @@
       <div style="height:370px">
       <el-transfer
       filterable
-      style="width:1000px"
       :titles="['非药品项目','模板内容']"
       filter-placeholder="项目名搜索"
       v-model="choices"
@@ -140,6 +139,15 @@ export default {
     components: {Pagination},
   data(){
     return{
+      rules: {
+        name: [
+          { required: true, message: '请输入模板名称', trigger: 'blur' },
+        ],
+        aim: [
+          { required: true, message: '请输入现模板介绍', trigger: 'blur' },
+        ],
+
+      },
       chonondruglist:[],
       choices:[],
       dialogVisible:false,
@@ -170,6 +178,12 @@ export default {
         name:'',
         range:'',
         type:''
+      },
+      rules:{
+        name:[
+          {required: true, message: '请输入模板名称',trigger: 'blur'}
+        ],
+        aim:[{required: true, message: '请输入模板简介',trigger: 'blur'}]
       }
     }
   },
@@ -194,38 +208,77 @@ export default {
       })})
 
     },
-    createModel(){
-      let data = deepClone(this.model)
-      data.status = 1
-      data.ownId = this.$store.getters.id
-      data.nonDrugIdList = deepClone(this.choices)
-      data.scope = 0
-      createModel(data).then(res=>{
-        this.getModelList()
-        this.$notify({
-          title: '成功',
-          message: '成功创建模板',
-          type: 'success',
-          duration: 2000
-        })
+    createModel(model){
+      this.$refs[model].validate((valid)=>{
+        if (valid) {
+          let data = deepClone(this.model)
+          data.status = 1
+          data.ownId = this.$store.getters.id
+          data.nonDrugIdList = deepClone(this.choices)
+          if (data.nonDrugIdList.length<=0) {
+            this.$notify({
+              title: '警告',
+              message: '请添加项目',
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          data.scope = 0
+          createModel(data).then(res=>{
+            this.getModelList()
+            this.$notify({
+              title: '成功',
+              message: '成功创建模板',
+              type: 'success',
+              duration: 2000
+            })
+          })
+          this.showaside()
+        }else {
+          return;
+        }
       })
-      this.showaside()
     },
-    updateModel(){
-      let data = deepClone(this.model)
-      data.nonDrugIdList = deepClone(this.choices)
-      updateModel(data).then(res=>{
-        this.getModelList()
-        this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
-          duration: 2000
-        })
+    updateModel(model){
+      this.$refs[model].validate((valid)=>{
+        if (valid) {
+          let data = deepClone(this.model)
+          data.nonDrugIdList = deepClone(this.choices)
+          if (data.nonDrugIdList.length<=0) {
+            this.$notify({
+              title: '警告',
+              message: '请添加项目',
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          updateModel(data).then(res=>{
+            this.getModelList()
+            this.$notify({
+              title: '成功',
+              message: res.message,
+              type: 'success',
+              duration: 2000
+            })
+          })
+          this.showaside()
+        }else {
+          return;
+        }
       })
-      this.showaside()
     },
     confirmItem(){
+      // if (this.nondrugList.length <= 0) {
+      //   this.$notify({
+      //     title: "提示",
+      //     message: "添加模板不能为空",
+      //     type: "warning",
+      //     duration: 3500,
+      //   });
+      //   return;
+      // }
       this.nondrugList = this.alldrugList.filter(item=>{
         if(this.choices.includes(item.id))
           return true
@@ -296,11 +349,16 @@ export default {
         this.edit = 0
     },
     editModel(row){
-      this.choices = deepClone(row.nonDrugIdList)
-      this.nondrugList = this.alldrugList.filter(item=>{
-        if(row.nonDrugIdList.includes(item.id))
-          return true
-      })
+
+
+      if(row.nonDrugIdList!=null && row.nonDrugIdList!=undefined && row.nonDrugIdList!=''){
+        this.choices = deepClone(row.nonDrugIdList)
+        this.nondrugList = this.alldrugList.filter(item=>{
+          if(row.nonDrugIdList.includes(item.id))
+            return true
+        })
+
+      }
       this.model = deepClone(row)
       this.model.createTime = parseTime(this.model.createTime)
       this.showaside('edit')

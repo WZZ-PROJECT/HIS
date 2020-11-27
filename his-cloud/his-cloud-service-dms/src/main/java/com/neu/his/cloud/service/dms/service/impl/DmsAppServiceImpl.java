@@ -1,25 +1,27 @@
 package com.neu.his.cloud.service.dms.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import com.neu.his.cloud.service.dms.dto.dms.*;
 import com.neu.his.cloud.service.dms.mapper.*;
 import com.neu.his.cloud.service.dms.model.*;
 import com.neu.his.cloud.service.dms.service.DmsAppService;
+import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class DmsAppServiceImpl implements DmsAppService {
@@ -47,6 +49,9 @@ public class DmsAppServiceImpl implements DmsAppService {
 
     @Resource
     PmsPatientMapper pmsPatientMapper;
+
+    @Resource
+    InformationMaintenanceMapper informationMaintenanceMapper;
 
     @Override
     public List<SmsStaffRecord> listHistoryDoctor(Long patientId) {
@@ -101,15 +106,16 @@ public class DmsAppServiceImpl implements DmsAppService {
         //拿去医生的信息
         DmsStaffResult dmsStaffResult=new DmsStaffResult();
 
-        //查看是否关注改医生
-        SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
-        smsPatientFollowExample.createCriteria().andStaffIdEqualTo(staffId).andPatientIdEqualTo(patientId);
-        List<SmsPatientFollow> smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
-        if(!CollectionUtils.isEmpty(smsPatientFollows)){
-            SmsPatientFollow smsPatientFollow = smsPatientFollows.get(0);
-            dmsStaffResult.setState(smsPatientFollow.getState());
-        }else {
-            dmsStaffResult.setState(Long.parseLong("0"));
+        dmsStaffResult.setState(Long.parseLong("0"));
+        if(patientId!=-1){
+            //查看是否关注改医生
+            SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
+            smsPatientFollowExample.createCriteria().andStaffIdEqualTo(staffId).andPatientIdEqualTo(patientId);
+            List<SmsPatientFollow> smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
+            if(!CollectionUtils.isEmpty(smsPatientFollows)){
+                SmsPatientFollow smsPatientFollow = smsPatientFollows.get(0);
+                dmsStaffResult.setState(smsPatientFollow.getState());
+            }
         }
         SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(staffId);
         dmsStaffResult.setStaffId(smsStaff.getId());
@@ -144,7 +150,7 @@ public class DmsAppServiceImpl implements DmsAppService {
             smsSkdResult.setWeek(dateToWeek(dateString));
             smsSkdResult.setNoon(smsSkd.getNoon());
             smsSkdResult.setRemain(smsSkd.getRemain()>0?0:1);//1是约满
-            smsSkdResult.setAmount(smsRegistrationRank.getPrice());
+            smsSkdResult.setAmount(smsStaff.getAmount());
             smsSkdResult.setSkdId(smsSkd.getId());
             smsSkdResults.add(smsSkdResult);
         });
@@ -160,32 +166,43 @@ public class DmsAppServiceImpl implements DmsAppService {
      */
     @Override
     public DmsStaffResult selectStaffById(Long id,Long patientId) {
-
         DmsStaffResult result = new DmsStaffResult();
-        SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
-        smsPatientFollowExample.createCriteria().andStaffIdEqualTo(id).andPatientIdEqualTo(patientId);
-
-        //查询医生详情
-        SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(id);
-        //根据deptId查询科室详情
-        SmsDept smsDept = smsDeptMapper.selectByPrimaryKey(smsStaff.getDeptId());
-
-        List<SmsPatientFollow> smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
-        if (CollectionUtils.isEmpty(smsPatientFollows)) {
-            result.setState((long)0);
-        } else {
-            SmsPatientFollow smsPatientFollow = smsPatientFollows.get(0);
-            result.setState(smsPatientFollow.getState());
+        SmsStaff smsStaff =new SmsStaff();
+        List<SmsPatientFollow> smsPatientFollows =new ArrayList<>();
+        if(!StringUtils.isEmpty(id)  && patientId!=-1){
+            SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
+            smsPatientFollowExample.createCriteria().andStaffIdEqualTo(id).andPatientIdEqualTo(patientId);
+            smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
+            //查询医生详情
+            smsStaff = smsStaffMapper.selectByPrimaryKey(id);
+        }else {
+            SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
+            smsPatientFollowExample.createCriteria().andStaffIdEqualTo(id);
+            smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
+            smsStaff = smsStaffMapper.selectByPrimaryKey(id);
         }
-        BeanUtils.copyProperties(smsStaff,result);
-        result.setStaffId(smsStaff.getId());
-        result.setStaffName(smsStaff.getName());
-        result.setDeptId(smsStaff.getDeptId());
-        result.setDeptName(smsDept.getName());
-        result.setPicture(smsStaff.getPicture());
-        result.setDescription(smsStaff.getDescription());
-        result.setAdvantages(smsStaff.getAdvantages());
-        result.setTitle(smsStaff.getTitle());
+
+        //根据deptId查询科室详情
+        if(!StringUtils.isEmpty(smsStaff)){
+            SmsDept smsDept = smsDeptMapper.selectByPrimaryKey(smsStaff.getDeptId());
+
+            if (CollectionUtils.isEmpty(smsPatientFollows)) {
+                result.setState((long)0);
+            } else {
+                SmsPatientFollow smsPatientFollow = smsPatientFollows.get(0);
+                result.setState(smsPatientFollow.getState());
+            }
+            BeanUtils.copyProperties(smsStaff,result);
+            result.setStaffId(smsStaff.getId());
+            result.setStaffName(smsStaff.getName());
+            result.setDeptId(smsStaff.getDeptId());
+            result.setDeptName(smsDept.getName());
+            result.setPicture(smsStaff.getPicture());
+            result.setDescription(smsStaff.getDescription());
+            result.setAdvantages(smsStaff.getAdvantages());
+            result.setTitle(smsStaff.getTitle());
+            return result;
+        }
 
         return result;
     }
@@ -203,7 +220,7 @@ public class DmsAppServiceImpl implements DmsAppService {
         SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(dmsDoctorBillsParam.getStaffId());
         //查询费用
         SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
-        doctorBillsResult.setAmount(smsRegistrationRank.getPrice());
+        doctorBillsResult.setAmount(smsStaff.getAmount());
         PmsPatient pmsPatient = patientMapper.selectByPrimaryKey(dmsDoctorBillsParam.getPatientId());
         doctorBillsResult.setPatientId(pmsPatient.getId());
         doctorBillsResult.setPatientName(pmsPatient.getName());
@@ -221,7 +238,7 @@ public class DmsAppServiceImpl implements DmsAppService {
     public List<DmsStaffResult> selectStaffByName(String name) {
         List<DmsStaffResult> list = new ArrayList<>();
         SmsStaffExample example = new SmsStaffExample();
-        example.createCriteria().andNameLike(name);
+        example.createCriteria().andNameLike("%"+name+"%");
         List<SmsStaff> smsStaffs = smsStaffMapper.selectByExample(example);
         smsStaffs.forEach(result ->{
             DmsStaffResult staffResult = new DmsStaffResult();
@@ -246,6 +263,7 @@ public class DmsAppServiceImpl implements DmsAppService {
      */
     @Override
     public int attentionStaff(DmsDoctorBillsParam dmsDoctorBillsParam) {
+
         SmsPatientFollow smsPatientFollow = new SmsPatientFollow();
         SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(dmsDoctorBillsParam.getStaffId());
         //校验传入医生id可查出医生
@@ -257,7 +275,15 @@ public class DmsAppServiceImpl implements DmsAppService {
         if (StringUtils.isEmpty(pmsPatient)) {
             return 0;
         }
-        //1 ：已关注 0：未关注
+
+        SmsPatientFollowExample smsPatientFollowExample=new SmsPatientFollowExample();
+        smsPatientFollowExample.createCriteria().andStaffIdEqualTo(dmsDoctorBillsParam.getStaffId()).andPatientIdEqualTo(dmsDoctorBillsParam.getPatientId());
+        List<SmsPatientFollow> smsPatientFollows = smsPatientFollowMapper.selectByExample(smsPatientFollowExample);
+        if(!CollectionUtils.isEmpty(smsPatientFollows)){
+            return 2;
+        }
+
+        //1 ：已关注 0：未关注;2：已经关注
         Long state = (long)1;
         smsPatientFollow.setPatientId(dmsDoctorBillsParam.getPatientId());
         smsPatientFollow.setStaffId(dmsDoctorBillsParam.getStaffId());
@@ -284,7 +310,9 @@ public class DmsAppServiceImpl implements DmsAppService {
     }
 
     @Override
-    public List<DmsNowDoctorRegistrationResult> listNowDoctorRegistration(Long deptId,String thedate) {
+    public DmsNowDoctorRegistrationResults listNowDoctorRegistration(Long deptId,String thedate) {
+
+        DmsNowDoctorRegistrationResults dmsNowDoctorRegistrationResults=new DmsNowDoctorRegistrationResults();
 
         List<DmsNowDoctorRegistrationResult> dmsNowDoctorRegistrationResultList=new ArrayList<>();
         //根据deptId获得科室信息
@@ -294,6 +322,7 @@ public class DmsAppServiceImpl implements DmsAppService {
         smsStaffExample.createCriteria().andDeptIdEqualTo(deptId);
         List<SmsStaff> smsStaffList = smsStaffMapper.selectByExample(smsStaffExample);
         if(smsStaffList!=null){
+            dmsNowDoctorRegistrationResults.setStafflist(smsStaffList);
             smsStaffList.stream().forEach(smsStaff -> {
                 Date parse=null;
                 try {
@@ -316,9 +345,10 @@ public class DmsAppServiceImpl implements DmsAppService {
                         dmsNowDoctorRegistrationResult.setPicture(smsStaff.getPicture());
                         dmsNowDoctorRegistrationResult.setAdvantages(smsStaff.getAdvantages());
                         dmsNowDoctorRegistrationResult.setTitle(smsStaff.getTitle());
+                        dmsNowDoctorRegistrationResult.setDescription(smsStaff.getDescription());
                         //封装诊费
                         SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
-                        dmsNowDoctorRegistrationResult.setAmount(smsRegistrationRank.getPrice());
+                        dmsNowDoctorRegistrationResult.setAmount(smsStaff.getAmount());
                         //封装排班信息
                         dmsNowDoctorRegistrationResult.setRemain(smsSkd.getRemain());
                         dmsNowDoctorRegistrationResult.setSkLimit(smsSkd.getSkLimit());
@@ -328,9 +358,10 @@ public class DmsAppServiceImpl implements DmsAppService {
                     });
                 }
             });
+            dmsNowDoctorRegistrationResults.setDmsNowDoctorRegistrationResultList(dmsNowDoctorRegistrationResultList);
         }
 
-        return dmsNowDoctorRegistrationResultList;
+        return dmsNowDoctorRegistrationResults;
     }
 
     // 获得某天最大时间 2017-10-15 23:59:59
@@ -369,28 +400,39 @@ public class DmsAppServiceImpl implements DmsAppService {
 
             BookingInformationResult bookingInformationResult=new BookingInformationResult();
 
+            bookingInformationResult.setCurrentTime(new Date().toString());
+            try {
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String format = simpleDateFormat.format(new DateTime());
+                bookingInformationResult.setCurrentTime(format);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             SmsDept smsDept = smsDeptMapper.selectByPrimaryKey(dmsRegistration.getDeptId());
             SmsSkd smsSkd = smsSkdMapper.selectByPrimaryKey(dmsRegistration.getSkdId());
-            SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
-            SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
+            SmsStaff smsStaff = null;
+            if (!StringUtils.isEmpty(smsSkd)) {
+                 smsStaff= smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
+                SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
 
-            bookingInformationResult.setId(dmsRegistration.getId());
-            bookingInformationResult.setDeptId(smsDept.getId());
-            bookingInformationResult.setDeptName(smsDept.getName());
-            bookingInformationResult.setStaffId(smsStaff.getId());
-            bookingInformationResult.setStaffName(smsStaff.getName());
-            bookingInformationResult.setDescription(smsStaff.getDescription());
-            bookingInformationResult.setPicture(smsStaff.getPicture());
+                bookingInformationResult.setId(dmsRegistration.getId());
+                bookingInformationResult.setDeptId(smsDept.getId());
+                bookingInformationResult.setDeptName(smsDept.getName());
+                bookingInformationResult.setStaffId(smsStaff.getId());
+                bookingInformationResult.setStaffName(smsStaff.getName());
+                bookingInformationResult.setDescription(smsStaff.getDescription());
+                bookingInformationResult.setPicture(smsStaff.getPicture());
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String dateString = formatter.format(dmsRegistration.getAttendanceDate());
-            bookingInformationResult.setDate(dateString);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String dateString = formatter.format(dmsRegistration.getAttendanceDate());
+                bookingInformationResult.setDate(dateString);
 
-            bookingInformationResult.setPatientId(pmsPatient.getId());
-            bookingInformationResult.setPatientName(pmsPatient.getName());
-            bookingInformationResult.setAmount(smsRegistrationRank.getPrice());
-            bookingInformationResult.setStatus(dmsRegistration.getStatus());
-            bookingInformationResultList.add(bookingInformationResult);
+                bookingInformationResult.setPatientId(pmsPatient.getId());
+                bookingInformationResult.setPatientName(pmsPatient.getName());
+                bookingInformationResult.setAmount(smsStaff.getAmount());
+                bookingInformationResult.setStatus(dmsRegistration.getStatus());
+                bookingInformationResultList.add(bookingInformationResult);
+            }
         });
         return bookingInformationResultList;
     }
@@ -405,5 +447,21 @@ public class DmsAppServiceImpl implements DmsAppService {
             return listPatientConvention(pmsPatient.getOpenId());
         }
         return null;
+    }
+
+    @Override
+    public List<InformationMaintenance> selectMaintenanceParam() {
+        InformationMaintenanceExample informationMaintenanceExample=new InformationMaintenanceExample();
+        List<InformationMaintenance> informationMaintenances = informationMaintenanceMapper.selectByExample(informationMaintenanceExample);
+        return informationMaintenances;
+    }
+
+    @Override
+    public int updateMaintenanceParam(InformationMaintenance informationMaintenances) {
+        if(!StringUtils.isEmpty(informationMaintenances.getId())){
+            return informationMaintenanceMapper.updateByPrimaryKeySelective(informationMaintenances);
+        }else {
+            return informationMaintenanceMapper.insert(informationMaintenances);
+        }
     }
 }

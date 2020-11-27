@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class BmsOperatorSettleRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private Date startDatetime;
@@ -14,13 +15,13 @@ public class BmsOperatorSettleRecord implements Serializable {
 
     private Date createDatetime;
 
-    private Long cashierId;
+    private String cashierId;
 
-    private Long invoiceNum;
+    private Integer invoiceNum;
 
-    private Long rushInvoiceNum;
+    private Integer rushInvoiceNum;
 
-    private Long reprintInvoiceNum;
+    private Integer reprintInvoiceNum;
 
     private String startEndInvoiceIdStr;
 
@@ -56,7 +57,7 @@ public class BmsOperatorSettleRecord implements Serializable {
 
     private BigDecimal otherAmount;
 
-    private Long verifyOperatorId;
+    private Integer verifyOperatorId;
 
     private Date verifyDatetime;
 
@@ -96,35 +97,35 @@ public class BmsOperatorSettleRecord implements Serializable {
         this.createDatetime = createDatetime;
     }
 
-    public Long getCashierId() {
+    public String getCashierId() {
         return cashierId;
     }
 
-    public void setCashierId(Long cashierId) {
+    public void setCashierId(String cashierId) {
         this.cashierId = cashierId;
     }
 
-    public Long getInvoiceNum() {
+    public Integer getInvoiceNum() {
         return invoiceNum;
     }
 
-    public void setInvoiceNum(Long invoiceNum) {
+    public void setInvoiceNum(Integer invoiceNum) {
         this.invoiceNum = invoiceNum;
     }
 
-    public Long getRushInvoiceNum() {
+    public Integer getRushInvoiceNum() {
         return rushInvoiceNum;
     }
 
-    public void setRushInvoiceNum(Long rushInvoiceNum) {
+    public void setRushInvoiceNum(Integer rushInvoiceNum) {
         this.rushInvoiceNum = rushInvoiceNum;
     }
 
-    public Long getReprintInvoiceNum() {
+    public Integer getReprintInvoiceNum() {
         return reprintInvoiceNum;
     }
 
-    public void setReprintInvoiceNum(Long reprintInvoiceNum) {
+    public void setReprintInvoiceNum(Integer reprintInvoiceNum) {
         this.reprintInvoiceNum = reprintInvoiceNum;
     }
 
@@ -264,11 +265,11 @@ public class BmsOperatorSettleRecord implements Serializable {
         this.otherAmount = otherAmount;
     }
 
-    public Long getVerifyOperatorId() {
+    public Integer getVerifyOperatorId() {
         return verifyOperatorId;
     }
 
-    public void setVerifyOperatorId(Long verifyOperatorId) {
+    public void setVerifyOperatorId(Integer verifyOperatorId) {
         this.verifyOperatorId = verifyOperatorId;
     }
 

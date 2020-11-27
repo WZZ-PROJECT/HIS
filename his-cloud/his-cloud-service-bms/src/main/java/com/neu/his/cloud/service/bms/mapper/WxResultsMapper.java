@@ -2,10 +2,8 @@ package com.neu.his.cloud.service.bms.mapper;
 
 import com.neu.his.cloud.service.bms.model.WxResults;
 import com.neu.his.cloud.service.bms.model.WxResultsExample;
-
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface WxResultsMapper {
     int countByExample(WxResultsExample example);

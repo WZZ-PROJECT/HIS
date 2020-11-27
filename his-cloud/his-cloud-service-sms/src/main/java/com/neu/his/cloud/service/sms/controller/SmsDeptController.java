@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 
 import com.neu.his.cloud.service.sms.common.CommonPage;
 import com.neu.his.cloud.service.sms.common.CommonResult;
+import com.neu.his.cloud.service.sms.common.IErrorCode;
 import com.neu.his.cloud.service.sms.dto.sms.SmsDeptParam;
 import com.neu.his.cloud.service.sms.dto.sms.SmsDeptResult;
 import com.neu.his.cloud.service.sms.service.SmsDeptService;
@@ -32,7 +33,7 @@ public class SmsDeptController {
         if(count > 0){
             return CommonResult.success(count, "添加科室成功");
         }
-        return CommonResult.failed("添加科室失败，");
+        return CommonResult.success(count,"已存在该科室");
     }
 
     /**
@@ -59,8 +60,11 @@ public class SmsDeptController {
     @ResponseBody
     public CommonResult update(@PathVariable("id") Long id,@RequestBody SmsDeptParam smsDeptParam, BindingResult result){
         int count = smsDeptService.update(id,smsDeptParam);
-        if(id > 0){
+        if(count == 1){
             return CommonResult.success(count,"更新成功");
+        }
+        if(count == 2){
+            return CommonResult.success(count,"科室重名更新失败");
         }
         return CommonResult.failed("更新失败");
     }

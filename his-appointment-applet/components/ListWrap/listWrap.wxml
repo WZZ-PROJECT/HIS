@@ -1,0 +1,13 @@
+<view>
+  <slot></slot>
+  <van-empty
+    wx:if="{{data && data.length === 0}}"
+    description="暂无数据"
+  />
+  <view class="list-wrap-loading">
+    <van-loading wx:if="{{data === null}}" class="page-loading-tip" size="48px"
+      >加载中...</van-loading
+    >
+  </view>
+</view>
+  

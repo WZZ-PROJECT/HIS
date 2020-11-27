@@ -52,9 +52,9 @@ public class DmsHerbalPrescriptionRecordController {
             //发送延迟消息
             rabbitMQOrderSender.sendMessage(currentId, 4, delayTimes);
 
-            return CommonResult.success(currentId, "开立成功");
+            return CommonResult.success(1, "开立成功");
         }
-        return CommonResult.failed("开立失败");
+        return CommonResult.success(0,"开立失败");
     }
 
     /**

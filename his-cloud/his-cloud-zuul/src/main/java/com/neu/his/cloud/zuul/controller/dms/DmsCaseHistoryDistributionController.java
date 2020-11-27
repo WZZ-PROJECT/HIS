@@ -7,6 +7,7 @@ import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.distribution.api.pc.dms.ApiPcDmsCaseHistoryDistributionService;
 import com.neu.his.cloud.zuul.dto.dms.DmsCaseHistoryParam;
 import com.neu.his.cloud.zuul.dto.dms.DmsCaseHistoryResult;
+import com.neu.his.cloud.zuul.dto.sms.AddInformParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class DmsCaseHistoryDistributionController {
     @ApiOperation(value = "提交初诊信息")
     @RequestMapping(value = "/submitPriliminaryDise", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult submitPriliminaryDise(DmsCaseHistoryParam dmsCaseHistoryParam){
-       return apiPcDmsCaseHistoryDistributionService.submitPriliminaryDise(dmsCaseHistoryParam);
+    public CommonResult submitPriliminaryDise(@RequestBody DmsCaseHistoryParam dmsCaseHistoryParam){
+        return apiPcDmsCaseHistoryDistributionService.submitPriliminaryDise(dmsCaseHistoryParam);
     }
 
     private CommonResult submitPriliminaryDiseFallbackInfo(DmsCaseHistoryParam dmsCaseHistoryParam){
@@ -70,9 +71,9 @@ public class DmsCaseHistoryDistributionController {
     @ApiOperation(value = "确诊")
     @RequestMapping(value = "/submitDefiniteDise", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult submitDefiniteDise( DmsCaseHistoryParam dmsCaseHistoryParam){
+    public CommonResult submitDefiniteDise(@RequestBody DmsCaseHistoryParam dmsCaseHistoryParam){
 
-       return  apiPcDmsCaseHistoryDistributionService.submitDefiniteDise(dmsCaseHistoryParam);
+        return  apiPcDmsCaseHistoryDistributionService.submitDefiniteDise(dmsCaseHistoryParam);
     }
     private CommonResult submitDefiniteDiseFallbackInfo(DmsCaseHistoryParam dmsCaseHistoryParam){
         return CommonResult.success(null,"请检查您的网络") ;
@@ -109,6 +110,67 @@ public class DmsCaseHistoryDistributionController {
         return apiPcDmsCaseHistoryDistributionService.queryCaseHistory(patientId);
     }
     private CommonResult<DmsCaseHistoryResult> queryCaseHistoryFallbackInfo(long patientId){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "insertFamiliarInformFallbackInfo")
+    @ApiOperation(value = "知情告知增加")
+    @RequestMapping(value = "/insertFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult insertFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return apiPcDmsCaseHistoryDistributionService.insertFamiliarInform(addInformParam);
+    }
+    private CommonResult insertFamiliarInformFallbackInfo(AddInformParam addInformParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "deleteFamiliarInformFallbackInfo")
+    @ApiOperation(value = "知情告知删除")
+    @RequestMapping(value = "/deleteFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return apiPcDmsCaseHistoryDistributionService.deleteFamiliarInform(addInformParam);
+    }
+    private CommonResult deleteFamiliarInformFallbackInfo(AddInformParam addInformParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "updateFamiliarInformFallbackInfo")
+    @ApiOperation(value = "知情告知修改")
+    @RequestMapping(value = "/updateFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return apiPcDmsCaseHistoryDistributionService.updateFamiliarInform(addInformParam);
+    }
+    private CommonResult updateFamiliarInformFallbackInfo(AddInformParam addInformParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "selectFamiliarInformFallbackInfo")
+    @ApiOperation(value = "知情告知查询")
+    @RequestMapping(value = "/selectFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult selectFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return apiPcDmsCaseHistoryDistributionService.selectFamiliarInform(addInformParam);
+    }
+    private CommonResult selectFamiliarInformFallbackInfo(AddInformParam addInformParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    /**
+     * 描述：根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）
+     * <p>author:赵煜
+     */
+    @HystrixCommand(fallbackMethod = "selectEndCaseHistoryFallbackInfo")
+    @ApiOperation(value = "根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）")
+    @RequestMapping(value = "/selectEndCaseHistory/{registrationId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<DmsCaseHistoryResult> selectEndCaseHistory(@PathVariable("registrationId") Long registrationId,@RequestParam(value = "status",required =
+            false)Integer status){
+        CommonResult<DmsCaseHistoryResult> dmsCaseHistoryResultCommonResult = apiPcDmsCaseHistoryDistributionService.selectEndCaseHistory(registrationId, status);
+        return dmsCaseHistoryResultCommonResult;
+    }
+    private CommonResult<DmsCaseHistoryResult> selectEndCaseHistoryFallbackInfo(Long registrationId,Integer status){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 

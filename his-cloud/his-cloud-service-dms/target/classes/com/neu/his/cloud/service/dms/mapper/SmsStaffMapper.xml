@@ -14,9 +14,6 @@
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="registration_rank_id" jdbcType="BIGINT" property="registrationRankId" />
-    <result column="advantages" jdbcType="VARCHAR" property="advantages" />
-    <result column="description" jdbcType="VARCHAR" property="description" />
-    <result column="picture" jdbcType="VARCHAR" property="picture"/>
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -78,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, username, password, status, create_time, gender, skd_flag, title, name, dept_id, 
-    role_id, registration_rank_id ,advantages,description,picture
+    role_id, registration_rank_id
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.SmsStaffExample" resultMap="BaseResultMap">
     select

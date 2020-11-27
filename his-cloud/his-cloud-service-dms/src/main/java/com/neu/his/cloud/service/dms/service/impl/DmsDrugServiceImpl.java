@@ -16,6 +16,7 @@ import com.neu.his.cloud.service.dms.service.DmsDrugService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -193,13 +194,20 @@ public class DmsDrugServiceImpl implements DmsDrugService {
 
     @Override
     public DmsDrugResult selectById(Long id) {
-        DmsDrug dmsDrug = dmsDrugMapper.selectByPrimaryKey(id);
-        DmsDrugResult dmsDrugResult = new DmsDrugResult();
-        BeanUtils.copyProperties(dmsDrug,dmsDrugResult);
-        //封装剂型
-        DmsDosage dmsDosage = dmsDosageMapper.selectByPrimaryKey(dmsDrug.getDosageId());
-        dmsDrugResult.setDosage(dmsDosage);
-        return dmsDrugResult;
+        if(!StringUtils.isEmpty(id)){
+            DmsDrug dmsDrug = dmsDrugMapper.selectByPrimaryKey(id);
+            DmsDrugResult dmsDrugResult = new DmsDrugResult();
+            if(!StringUtils.isEmpty(dmsDrug)){
+                BeanUtils.copyProperties(dmsDrug,dmsDrugResult);
+                //封装剂型
+                if(!StringUtils.isEmpty(dmsDrug)){
+                    DmsDosage dmsDosage = dmsDosageMapper.selectByPrimaryKey(dmsDrug.getDosageId());
+                    dmsDrugResult.setDosage(dmsDosage);
+                    return dmsDrugResult;
+                }
+            }
+        }
+        return null;
     }
 
 }

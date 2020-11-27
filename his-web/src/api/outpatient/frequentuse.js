@@ -34,3 +34,37 @@ export function delfre(data) {
     },
   })
 }
+
+export function addInform(data) {
+  return request({
+    url: '/frequentUsed/addInform',
+    method: 'post',
+    data
+  })
+}
+
+export function showInformList(data) {
+  return request({
+    url: '/frequentUsed/selectInform',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteInform(data) {
+  return request({
+    url: '/frequentUsed/deleteInform',
+    method: 'post',
+    params: {
+      frequentId:data
+    },
+  })
+}
+
+export function updateInform(data) {
+  return request({
+    url: '/frequentUsed/updateInform',
+    method: 'post',
+    data
+  })
+}

@@ -182,6 +182,13 @@
             <version>1.7.21</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.antkorwin/ioutils -->
+        <dependency>
+            <groupId>com.antkorwin</groupId>
+            <artifactId>ioutils</artifactId>
+            <version>0.6</version>
+        </dependency>
+
 
 
     </dependencies>

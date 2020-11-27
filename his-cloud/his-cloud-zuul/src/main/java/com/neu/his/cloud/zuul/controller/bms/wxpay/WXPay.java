@@ -47,6 +47,8 @@ public class WXPay {
         this.wxPayRequest = new WXPayRequest(config);
     }
 
+    public WXPay(){}
+
     private void checkWXPayConfig() throws Exception {
         if (this.config == null) {
             throw new Exception("config is null");
@@ -371,7 +373,7 @@ public class WXPay {
      * @return API返回数据
      * @throws Exception
      */
-    public Map<String, String> orderQuery(Map<String, String> reqData) throws Exception {
+    public  Map<String, String> orderQuery(Map<String, String> reqData) throws Exception {
         return this.orderQuery(reqData, config.getHttpConnectTimeoutMs(), this.config.getHttpReadTimeoutMs());
     }
 

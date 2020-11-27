@@ -115,9 +115,9 @@ public class SmsSkdController {
     public CommonResult generateSkd(@RequestParam("ruleIds") List<Long> ruleIds, @RequestParam("startDate")@DateTimeFormat(pattern = "yyyy-MM-dd")Date startDate, @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd")Date endDate){
         int count = smsSkdService.generateSkd(ruleIds,startDate,endDate);
         if(count > 0){
-            return CommonResult.success(count,"生成成功");
+            return CommonResult.success(1,"生成成功");
         }
-        return CommonResult.failed("生成失败");
+        return CommonResult.success(0,"生成失败");
     }
 
     /**
@@ -132,6 +132,9 @@ public class SmsSkdController {
         Page page =PageHelper.startPage(queryParam.getPageNum(),queryParam.getPageSize());
         List<SmsSkdResult> smsSkdResultList = smsSkdService.listSkd(queryParam);
         Long pageTotal=page.getTotal();
+        if(smsSkdResultList.size()==0){
+            pageTotal=0L;
+        }
         return CommonResult.success(CommonPage.restPage(smsSkdResultList,pageTotal));
     }
 

@@ -805,6 +805,66 @@ public class DmsNonDrugExample {
             addCriterion("dept_id not between", value1, value2, "deptId");
             return (Criteria) this;
         }
+
+        public Criteria andIsSetmealIsNull() {
+            addCriterion("is_setmeal is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealIsNotNull() {
+            addCriterion("is_setmeal is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealEqualTo(Integer value) {
+            addCriterion("is_setmeal =", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealNotEqualTo(Integer value) {
+            addCriterion("is_setmeal <>", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealGreaterThan(Integer value) {
+            addCriterion("is_setmeal >", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_setmeal >=", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealLessThan(Integer value) {
+            addCriterion("is_setmeal <", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealLessThanOrEqualTo(Integer value) {
+            addCriterion("is_setmeal <=", value, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealIn(List<Integer> values) {
+            addCriterion("is_setmeal in", values, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealNotIn(List<Integer> values) {
+            addCriterion("is_setmeal not in", values, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealBetween(Integer value1, Integer value2) {
+            addCriterion("is_setmeal between", value1, value2, "isSetmeal");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsSetmealNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_setmeal not between", value1, value2, "isSetmeal");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

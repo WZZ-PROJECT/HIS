@@ -66,7 +66,7 @@ public class DmsDrugModelController {
     @ApiOperation(value = "更新模版")
     @RequestMapping(value = "/updateModel", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam, BindingResult result){
+    public CommonResult updateModel(@RequestParam("modelId") Long modelId, @RequestBody DmsDrugModelParam dmsDrugModelParam){
         int count = dmsDrugModelService.updateModel(modelId,dmsDrugModelParam);
         if (count > 0) {
             return CommonResult.success(count);

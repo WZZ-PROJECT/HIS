@@ -1,0 +1,24 @@
+<!--pages/attention/attention.wxml-->
+<list-wrap data="{{resultList}}">
+<view>
+  <view class="attention" wx:for="{{resultList}}" wx:key="index">
+    <view style="border-bottom: 1px solid #666666;margin: 10rpx;"></view>
+    <view class="docter">
+      <view class="top" style="width:100%">
+        <view class="left" data-staffId='{{item.id}}' data-deptId="{{item.dept.id}}" bindtap="handleDoctorDetailClick">
+          <view class="name">{{item.name}}</view>
+          <text decode="{{true}}" space="{{true}}">{{item.dept.name}}&nbsp;&nbsp;&nbsp;{{item.dept.title}}</text>
+          <view style="margin-top:30rpx;color:#F4D164">医生介绍</view>
+          <view class="bottom">{{item.advantages}}</view>
+        </view>
+        <view class="right">
+          <image class="head" mode="cover" src="{{item.picture}}"></image>
+          <button size="mini" style="font-size:11px;" data-gid='{{item.id}}' bindtap="cancel">取消关注</button>
+        </view>
+      </view>
+    </view>
+
+  </view>
+  <web-view wx:if="{{ showDetail }}" src="{{web}}/appointment/patientPage?openId={{openId}}&staffId={{staffId}}&deptId={{deptId}}&appfrom=applet&timestamp={{time}}"></web-view>
+</view>
+</list-wrap>

@@ -19,6 +19,8 @@ public class SmsSkdDocResult  implements Serializable {
     private Long skdId;
     @ApiModelProperty(value = "挂号费")
     private BigDecimal amount;
+    @ApiModelProperty(value = "医生Id")
+    private Long staffId;
 
 
 }

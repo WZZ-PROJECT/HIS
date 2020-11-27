@@ -1,6 +1,8 @@
 package com.neu.his.cloud.api.pc.controller.bms;
 
+import com.neu.his.cloud.api.pc.common.CommonPage;
 import com.neu.his.cloud.api.pc.common.CommonResult;
+import com.neu.his.cloud.api.pc.dto.bms.BmsInvoiceParam;
 import com.neu.his.cloud.api.pc.dto.bms.BmsInvoiceResult;
 import com.neu.his.cloud.api.pc.service.bms.BmsInvoiceService;
 import io.swagger.annotations.Api;
@@ -36,10 +38,10 @@ public class BmsInvoiceController {
     }
 
     @ApiOperation(value = "根据时间和收费员Id查询发票信息")
-    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfo(@RequestParam("cashierId") Long cashierId, @RequestParam("startDatetime")String startDatetime, @RequestParam("endDatetime")String endDatetime){
-        return bmsInvoiceService.queryInvoiceInfo(cashierId, startDatetime, endDatetime);
+    public CommonResult<CommonPage<BmsInvoiceResult>>  queryInvoiceInfo(@RequestBody BmsInvoiceParam bmsInvoiceParam){
+        return bmsInvoiceService.queryInvoiceInfo(bmsInvoiceParam);
     }
 
     @ApiOperation(value = "根据日结记录Id查询发票信息")

@@ -89,7 +89,12 @@ public class SmsSetmealController {
         Page page =PageHelper.startPage(SmsSetmealSkdParam.getPageNum(), SmsSetmealSkdParam.getPageSize());
 
         List<SmsSetMealSkdResult> smsSkdResultList = smsSetmealService.listSetmealSkd(SmsSetmealSkdParam);
+
         Long pageTotal=page.getTotal();
+
+        if(smsSkdResultList.size()==0){
+            pageTotal=0L;
+        }
         return CommonResult.success(CommonPage.restPage(smsSkdResultList,pageTotal));
     }
 

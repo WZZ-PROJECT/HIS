@@ -356,52 +356,62 @@ public class BmsOperatorSettleRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdEqualTo(Long value) {
+        public Criteria andCashierIdEqualTo(String value) {
             addCriterion("cashier_id =", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdNotEqualTo(Long value) {
+        public Criteria andCashierIdNotEqualTo(String value) {
             addCriterion("cashier_id <>", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdGreaterThan(Long value) {
+        public Criteria andCashierIdGreaterThan(String value) {
             addCriterion("cashier_id >", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andCashierIdGreaterThanOrEqualTo(String value) {
             addCriterion("cashier_id >=", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdLessThan(Long value) {
+        public Criteria andCashierIdLessThan(String value) {
             addCriterion("cashier_id <", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdLessThanOrEqualTo(Long value) {
+        public Criteria andCashierIdLessThanOrEqualTo(String value) {
             addCriterion("cashier_id <=", value, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdIn(List<Long> values) {
+        public Criteria andCashierIdLike(String value) {
+            addCriterion("cashier_id like", value, "cashierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCashierIdNotLike(String value) {
+            addCriterion("cashier_id not like", value, "cashierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCashierIdIn(List<String> values) {
             addCriterion("cashier_id in", values, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdNotIn(List<Long> values) {
+        public Criteria andCashierIdNotIn(List<String> values) {
             addCriterion("cashier_id not in", values, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdBetween(Long value1, Long value2) {
+        public Criteria andCashierIdBetween(String value1, String value2) {
             addCriterion("cashier_id between", value1, value2, "cashierId");
             return (Criteria) this;
         }
 
-        public Criteria andCashierIdNotBetween(Long value1, Long value2) {
+        public Criteria andCashierIdNotBetween(String value1, String value2) {
             addCriterion("cashier_id not between", value1, value2, "cashierId");
             return (Criteria) this;
         }
@@ -416,52 +426,52 @@ public class BmsOperatorSettleRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumEqualTo(Long value) {
+        public Criteria andInvoiceNumEqualTo(Integer value) {
             addCriterion("invoice_num =", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumNotEqualTo(Long value) {
+        public Criteria andInvoiceNumNotEqualTo(Integer value) {
             addCriterion("invoice_num <>", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumGreaterThan(Long value) {
+        public Criteria andInvoiceNumGreaterThan(Integer value) {
             addCriterion("invoice_num >", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumGreaterThanOrEqualTo(Long value) {
+        public Criteria andInvoiceNumGreaterThanOrEqualTo(Integer value) {
             addCriterion("invoice_num >=", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumLessThan(Long value) {
+        public Criteria andInvoiceNumLessThan(Integer value) {
             addCriterion("invoice_num <", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumLessThanOrEqualTo(Long value) {
+        public Criteria andInvoiceNumLessThanOrEqualTo(Integer value) {
             addCriterion("invoice_num <=", value, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumIn(List<Long> values) {
+        public Criteria andInvoiceNumIn(List<Integer> values) {
             addCriterion("invoice_num in", values, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumNotIn(List<Long> values) {
+        public Criteria andInvoiceNumNotIn(List<Integer> values) {
             addCriterion("invoice_num not in", values, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumBetween(Long value1, Long value2) {
+        public Criteria andInvoiceNumBetween(Integer value1, Integer value2) {
             addCriterion("invoice_num between", value1, value2, "invoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andInvoiceNumNotBetween(Long value1, Long value2) {
+        public Criteria andInvoiceNumNotBetween(Integer value1, Integer value2) {
             addCriterion("invoice_num not between", value1, value2, "invoiceNum");
             return (Criteria) this;
         }
@@ -476,52 +486,52 @@ public class BmsOperatorSettleRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumEqualTo(Long value) {
+        public Criteria andRushInvoiceNumEqualTo(Integer value) {
             addCriterion("rush_invoice_num =", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumNotEqualTo(Long value) {
+        public Criteria andRushInvoiceNumNotEqualTo(Integer value) {
             addCriterion("rush_invoice_num <>", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumGreaterThan(Long value) {
+        public Criteria andRushInvoiceNumGreaterThan(Integer value) {
             addCriterion("rush_invoice_num >", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumGreaterThanOrEqualTo(Long value) {
+        public Criteria andRushInvoiceNumGreaterThanOrEqualTo(Integer value) {
             addCriterion("rush_invoice_num >=", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumLessThan(Long value) {
+        public Criteria andRushInvoiceNumLessThan(Integer value) {
             addCriterion("rush_invoice_num <", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumLessThanOrEqualTo(Long value) {
+        public Criteria andRushInvoiceNumLessThanOrEqualTo(Integer value) {
             addCriterion("rush_invoice_num <=", value, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumIn(List<Long> values) {
+        public Criteria andRushInvoiceNumIn(List<Integer> values) {
             addCriterion("rush_invoice_num in", values, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumNotIn(List<Long> values) {
+        public Criteria andRushInvoiceNumNotIn(List<Integer> values) {
             addCriterion("rush_invoice_num not in", values, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumBetween(Long value1, Long value2) {
+        public Criteria andRushInvoiceNumBetween(Integer value1, Integer value2) {
             addCriterion("rush_invoice_num between", value1, value2, "rushInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andRushInvoiceNumNotBetween(Long value1, Long value2) {
+        public Criteria andRushInvoiceNumNotBetween(Integer value1, Integer value2) {
             addCriterion("rush_invoice_num not between", value1, value2, "rushInvoiceNum");
             return (Criteria) this;
         }
@@ -536,52 +546,52 @@ public class BmsOperatorSettleRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumEqualTo(Long value) {
+        public Criteria andReprintInvoiceNumEqualTo(Integer value) {
             addCriterion("reprint_invoice_num =", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumNotEqualTo(Long value) {
+        public Criteria andReprintInvoiceNumNotEqualTo(Integer value) {
             addCriterion("reprint_invoice_num <>", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumGreaterThan(Long value) {
+        public Criteria andReprintInvoiceNumGreaterThan(Integer value) {
             addCriterion("reprint_invoice_num >", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumGreaterThanOrEqualTo(Long value) {
+        public Criteria andReprintInvoiceNumGreaterThanOrEqualTo(Integer value) {
             addCriterion("reprint_invoice_num >=", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumLessThan(Long value) {
+        public Criteria andReprintInvoiceNumLessThan(Integer value) {
             addCriterion("reprint_invoice_num <", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumLessThanOrEqualTo(Long value) {
+        public Criteria andReprintInvoiceNumLessThanOrEqualTo(Integer value) {
             addCriterion("reprint_invoice_num <=", value, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumIn(List<Long> values) {
+        public Criteria andReprintInvoiceNumIn(List<Integer> values) {
             addCriterion("reprint_invoice_num in", values, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumNotIn(List<Long> values) {
+        public Criteria andReprintInvoiceNumNotIn(List<Integer> values) {
             addCriterion("reprint_invoice_num not in", values, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumBetween(Long value1, Long value2) {
+        public Criteria andReprintInvoiceNumBetween(Integer value1, Integer value2) {
             addCriterion("reprint_invoice_num between", value1, value2, "reprintInvoiceNum");
             return (Criteria) this;
         }
 
-        public Criteria andReprintInvoiceNumNotBetween(Long value1, Long value2) {
+        public Criteria andReprintInvoiceNumNotBetween(Integer value1, Integer value2) {
             addCriterion("reprint_invoice_num not between", value1, value2, "reprintInvoiceNum");
             return (Criteria) this;
         }
@@ -1646,52 +1656,52 @@ public class BmsOperatorSettleRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdEqualTo(Long value) {
+        public Criteria andVerifyOperatorIdEqualTo(Integer value) {
             addCriterion("verify_operator_id =", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdNotEqualTo(Long value) {
+        public Criteria andVerifyOperatorIdNotEqualTo(Integer value) {
             addCriterion("verify_operator_id <>", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdGreaterThan(Long value) {
+        public Criteria andVerifyOperatorIdGreaterThan(Integer value) {
             addCriterion("verify_operator_id >", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andVerifyOperatorIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("verify_operator_id >=", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdLessThan(Long value) {
+        public Criteria andVerifyOperatorIdLessThan(Integer value) {
             addCriterion("verify_operator_id <", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdLessThanOrEqualTo(Long value) {
+        public Criteria andVerifyOperatorIdLessThanOrEqualTo(Integer value) {
             addCriterion("verify_operator_id <=", value, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdIn(List<Long> values) {
+        public Criteria andVerifyOperatorIdIn(List<Integer> values) {
             addCriterion("verify_operator_id in", values, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdNotIn(List<Long> values) {
+        public Criteria andVerifyOperatorIdNotIn(List<Integer> values) {
             addCriterion("verify_operator_id not in", values, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdBetween(Long value1, Long value2) {
+        public Criteria andVerifyOperatorIdBetween(Integer value1, Integer value2) {
             addCriterion("verify_operator_id between", value1, value2, "verifyOperatorId");
             return (Criteria) this;
         }
 
-        public Criteria andVerifyOperatorIdNotBetween(Long value1, Long value2) {
+        public Criteria andVerifyOperatorIdNotBetween(Integer value1, Integer value2) {
             addCriterion("verify_operator_id not between", value1, value2, "verifyOperatorId");
             return (Criteria) this;
         }

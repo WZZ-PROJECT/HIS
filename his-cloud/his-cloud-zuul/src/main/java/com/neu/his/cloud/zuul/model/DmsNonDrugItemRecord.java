@@ -6,26 +6,37 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class DmsNonDrugItemRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "门诊号")
     private Long registrationId;
 
+    @ApiModelProperty(value = "状态 :  1 未交费 2 退费")
     private Integer status;
 
+    @ApiModelProperty(value = "目的")
     private String aim;
 
+    @ApiModelProperty(value = "检查检验要求")
     private String demand;
 
+    @ApiModelProperty(value = "登记状态")
     private Integer logStatus;
 
+    @ApiModelProperty(value = "检查检验结果")
     private String checkResult;
 
+    @ApiModelProperty(value = "检查检验结果img")
     private String resultImgUrlList;
 
+    @ApiModelProperty(value = "临床印象")
     private String clinicalImpression;
 
+    @ApiModelProperty(value = "临床诊断")
     private String clinicalDiagnosis;
 
+    @ApiModelProperty(value = "开立时间")
     private Date createTime;
 
     private Long excuteStaffId;
@@ -34,19 +45,27 @@ public class DmsNonDrugItemRecord implements Serializable {
 
     private Long noDrugId;
 
+    @ApiModelProperty(value = "检查的部位")
     private String checkParts;
 
+    @ApiModelProperty(value = "1检查 2检验 3处置")
     private Integer type;
 
+    @ApiModelProperty(value = "所属科室Id")
     private Long excuteDeptId;
 
+    @ApiModelProperty(value = "医生Id")
     private Long createStaffId;
 
     private Long logStaffId;
 
     private Date excuteTime;
 
+    @ApiModelProperty(value = "数额")
     private BigDecimal amount;
+
+    @ApiModelProperty(value = "打发票")
+    private Long invoice;
 
     private static final long serialVersionUID = 1L;
 
@@ -218,6 +237,14 @@ public class DmsNonDrugItemRecord implements Serializable {
         this.amount = amount;
     }
 
+    public Long getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Long invoice) {
+        this.invoice = invoice;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -245,6 +272,7 @@ public class DmsNonDrugItemRecord implements Serializable {
         sb.append(", logStaffId=").append(logStaffId);
         sb.append(", excuteTime=").append(excuteTime);
         sb.append(", amount=").append(amount);
+        sb.append(", invoice=").append(invoice);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

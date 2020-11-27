@@ -44,5 +44,8 @@ public class BookingInformationResult implements Serializable {
     @ApiModelProperty(value = "是否预约1/0:预约/未预约" )
     private Integer status;
 
+    @ApiModelProperty(value = "系统当前时间" )
+    private String currentTime;
+
 
 }

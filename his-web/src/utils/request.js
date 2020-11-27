@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox, Message, Notification } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // 发送请求时携带token
-  timeout: 5000 // 请求超时实践
+  timeout: 60000 // 请求超时实践
 })
 // request拦截器
 service.interceptors.request.use(
@@ -15,12 +15,12 @@ service.interceptors.request.use(
     if (store.getters.token) {
       // 在头部Authorization携带token，以供后端验证
       config.headers['Authorization'] = getToken()
+      config.headers['openId']=""
     }
     return config
   },
   error => {
     // 打印错误信息
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -55,13 +55,18 @@ service.interceptors.response.use(
           })
         })
       }
+      Notification({
+        title: '提示',
+        message: res.message,
+        type: 'warning',
+        duration: 4500
+      })
       return Promise.reject(res.message || 'error')
     } else {
       return res
     }
   },
   error => {
-    console.log('err' + error) // for debug
     // Message({
     //   message: error.message,
     //   type: 'error',

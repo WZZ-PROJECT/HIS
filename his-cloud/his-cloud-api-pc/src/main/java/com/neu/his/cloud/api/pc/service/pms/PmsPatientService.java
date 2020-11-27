@@ -2,9 +2,7 @@ package com.neu.his.cloud.api.pc.service.pms;
 
 import com.neu.his.cloud.api.pc.common.CommonResult;
 import com.neu.his.cloud.api.pc.dto.dms.DmsCaseHistoryResult;
-import com.neu.his.cloud.api.pc.dto.pms.PmsDiagnosisPatientListResult;
-import com.neu.his.cloud.api.pc.dto.pms.PmsPatientParam;
-import com.neu.his.cloud.api.pc.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.api.pc.dto.pms.*;
 import com.neu.his.cloud.api.pc.dto.sms.SmsStaffResult;
 import com.neu.his.cloud.api.pc.dto.sms.SmsStopFollowDoctorParam;
 import com.neu.his.cloud.api.pc.model.PmsPatient;
@@ -53,11 +51,20 @@ public interface PmsPatientService {
     @ApiOperation("根据openId获得patient")
     @RequestMapping(value = "/pmsPatient/patientByOpenId", method = RequestMethod.GET)
     @ResponseBody
-    CommonResult<PmsPatient> patientByOpenId(@RequestParam String openId);
+    CommonResult<PmsPatients> patientByOpenId(@RequestParam String openId);
 
     @ApiOperation("添加患者并绑定")
     @RequestMapping(value = "/pmsPatient/insertBindPmsPatient", method = RequestMethod.POST)
     @ResponseBody
     CommonResult<PmsPatient> insertBindPmsPatient(@RequestBody PmsPatientParam pmsPatientParam);
 
+    @ApiOperation("根据条件查询病人")
+    @RequestMapping(value = "/diagnosisPatient/queryPeople", method = RequestMethod.POST)
+    @ResponseBody
+    CommonResult<PmsDiagnosisPatientListResult> queryPeople(@RequestBody PmsQueryPeople pmsQueryPeople);
+
+    @ApiOperation("查询病人信息用于查看病例信息")
+    @RequestMapping(value = "/diagnosisPatient/selectPeopleByRegistrationId", method = RequestMethod.POST)
+    @ResponseBody
+    CommonResult<PmsDiagnosisPatientResult> selectPeopleByRegistrationId(@RequestParam("registrationId") Long registrationId);
 }

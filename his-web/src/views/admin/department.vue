@@ -10,16 +10,21 @@
       <el-select v-model="listQuery.type" placeholder="科室类别" clearable class="filter-item" style="width: 130px" filterable>
         <el-option v-for="item in allType" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增科室
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出科室
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        导出当前页科室
       </el-button>
-      <el-button type="primary" icon="el-icon-upload2" class="filter-item" @click="uploaddept">导入科室</el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+
+<!--      <el-button  class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload1">-->
+<!--        导入模板-->
+<!--      </el-button>-->
+
+<!--      <el-button type="primary" icon="el-icon-upload2" class="filter-item" @click="uploaddept">导入科室</el-button>-->
+      <el-button :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
       </el-button>
     </div>
@@ -55,8 +60,8 @@
     </el-table>
     <el-dialog :visible.sync="dialogVisible" width="500px" :title="dialogType==='edit'?'修改科室信息':'新增科室'" @close="getDeplist">
       <el-form ref="depart" :model="depart" label-width="80px"  label-position="left" :rules="rules">
-        <el-form-item label="科室编号" prop="code">
-          <el-input v-model="depart.code" placeholder="编号" />
+        <el-form-item label="科室编码" prop="code">
+          <el-input v-model="depart.code" placeholder="科室编码" />
         </el-form-item>
         <el-form-item label="科室名称" prop="name">
           <el-input v-model="depart.name" placeholder="科室名称" />
@@ -78,9 +83,9 @@
       </div>
     </el-dialog>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getDeplist" />
-    <el-dialog :visible.sync="uploadVisible" title="上传Excel数据">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-    </el-dialog>
+<!--    <el-dialog :visible.sync="uploadVisible" title="上传Excel数据">-->
+<!--      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />-->
+<!--    </el-dialog>-->
   </div>
 </template>
 
@@ -122,6 +127,7 @@ export default {
       listLoading: true,
       allCatId:[],
       allDep:[],
+      allDep1:[],
       allType:[],
       listQuery: {
         id: '',
@@ -131,7 +137,7 @@ export default {
         type: '',
         status:'',
         page: 1,
-        limit: 20
+        limit: 10
       },
       downloadLoading: false,
       rules:{
@@ -162,6 +168,12 @@ export default {
   },
   methods: {
     beforeUpload(file) {
+      let extension = file.name.split(".")[1];
+      let extensionList = ["xsl", "xlsx"];
+      if (extensionList.indexOf(extension) < 0) {
+        this.$message.warning("只能上传xsl / xlsx文件");
+        return false;
+      }
       const isLt1M = file.size / 1024 / 1024 < 1
       if (isLt1M) {
         return true
@@ -176,18 +188,28 @@ export default {
       this.tableData = results
       this.tableHeader = header
       this.tableData.forEach(item=>{
-        createDep(item).then(res=>{
+        let listQuery1= {
+          code: '',
+          name: '',
+          catId: '',
+          type: '',
+          status:'',
+        }
+        listQuery1.catId=item.科室分类
+        listQuery1.name=item.科室名称
+        listQuery1.type=item.科室类型
+        listQuery1.code=item.科室编码
+        createDep(listQuery1).then(res=>{
           this.getDeplist()
-          this.$notify({
-          title: '成功',
-          message: '成功从Excel导入科室数据',
-          type: 'success',
-          duration: 2000
-        })
           this.uploadVisible = false
+          this.$notify({
+            title: '成功',
+            message: '成功从Excel导入科室数据,条插入失败，原因为科室重名',
+            type: 'success',
+            duration: 2000
+          })
         })
       })
-
     },
     uploaddept(){
       this.uploadVisible = true
@@ -213,6 +235,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.listQuery.limit = 10
       this.getDeplist()
     },
     handleAdd() {
@@ -263,7 +286,7 @@ export default {
         })
         return;
       }
-        this.$confirm('确认删除选中科室?', '警告', {
+        this.$confirm('确认删除选中科室?', '提示', {
           confirmButtonText: '确认',
           cancelButtonText: '取消',
           type: 'warning'
@@ -290,7 +313,7 @@ export default {
     }
     ,
     handleDelete(row) {
-      this.$confirm('确认删除当前科室?', '警告', {
+      this.$confirm('确认删除当前科室?', '确认删除', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
@@ -321,34 +344,79 @@ export default {
         this.downloadLoading = false
       })
     },
+
+    handleDownload1() {
+      this.allDep1 = []
+      let data={
+        code:'KS004',
+        name:'神经内科会诊中心',
+        catId:'1',
+        type:'1'
+      }
+      this.allDep1.push(data)
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['科室编码', '科室名称', '科室分类', '科室类型']
+        const filterVal = ['code', 'name', 'catId', 'type']
+        const data = this.formatJson(filterVal, this.allDep1)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '科室目录'
+        })
+      })
+    },
+
     async confirmDep(formName){
       this.$refs[formName].validate((valid)=>{
         if(valid){
-          console.log(this.depart)
+
           const isEdit = this.dialogType === 'edit'
-          this.listLoading=true
           if(isEdit){
-            console.log(this.depart.id)
             updateDep(this.depart).then(res=>{
                 this.getDeplist()
+              if(res.data===1){
                 this.$notify({
-                title: '成功',
-                message: '已修改该科室',
-                type: 'success',
-                duration: 2000
-              })
+                  title: '成功',
+                  message: '已修改该科室',
+                  type: 'success',
+                  duration: 2000
+                })
+              }else if(res.data===2){
+                this.$notify({
+                  title: '提示',
+                  message: '科室重名更新失败',
+                  type: 'warning',
+                  duration: 2000
+                })
+              }else {
+                this.$notify({
+                  title: '提示',
+                  message: '修改科室信息失败',
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
             })
             this.dialogVisible=false
           }else{
             createDep(this.depart).then(res=>{
-              this.getDeplist()
-              this.$notify({
-              title: '成功',
-              message: '新增科室成功！',
-              type: 'success',
-              duration: 2000
-            })
-            this.dialogVisible=false
+              if (res.data > 0) {
+                this.getDeplist()
+                this.$notify({
+                  title: '提示',
+                  message: '新增科室成功！',
+                  type: 'success',
+                  duration: 2000
+                })
+                this.dialogVisible=false
+              }else {
+                this.$notify({
+                  title: '提示',
+                  message: res.message,
+                  type: 'warning',
+                  duration: 2000
+                })
+              }
             })
           }
         }

@@ -32,6 +32,16 @@ public class BmsFeeQueryDistributionController {
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
+    @HystrixCommand(fallbackMethod = "updateInvoiceFallbackInfo")
+    @ApiOperation("打发票")
+    @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateInvoice(@RequestBody List<BmsDoctorPatientFeeResult> list){
+        return  apiPcBmsFeeQueryDistributionService.updateInvoice(list);
+    }
+    private CommonResult updateInvoiceFallbackInfo( List<BmsDoctorPatientFeeResult> list){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
 
 
 }

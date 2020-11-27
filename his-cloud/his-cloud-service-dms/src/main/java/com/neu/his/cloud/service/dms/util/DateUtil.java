@@ -1,5 +1,6 @@
 package com.neu.his.cloud.service.dms.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -121,6 +122,13 @@ public class DateUtil {
         System.out.println(integers.get(0));
         System.out.println(integers.get(1) == null);
         System.out.println(getDateSubtraction(DateUtil.getDateBefore(new Date(),7),new Date()));
+    }
+
+    public static String date(Date date) {
+        // 获得SimpleDateFormat类
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        String time=sf.format(date);
+        return time;
     }
 
 

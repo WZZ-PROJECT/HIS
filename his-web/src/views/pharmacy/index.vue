@@ -183,6 +183,7 @@ import {charge} from '@/api/regist'
   export default{
     data(){
       return{
+        change:[],
         selectid:'',
         refundVisible:false,
         refundamout:1,
@@ -271,6 +272,20 @@ import {charge} from '@/api/regist'
           })
           return;
         }
+        let status =[]
+
+        this.sendrefs.forEach(item =>{
+          status.push(item.status)
+        })
+        if (status.join(',').includes(1)) {
+          this.$notify({
+            title: '提示',
+            message: "存在未缴费项目！",
+            type: 'warning',
+            duration: 2000
+          })
+          return;
+        }
         this.sendrefs.forEach(item=>{
           releaseDrug(item.id,5).then(res=>{
             this.$notify({
@@ -287,8 +302,8 @@ import {charge} from '@/api/regist'
         })
       },
       changedep(val){
-        console.log(val)
         this.sendrefs = val
+        this.change.push(val);
       },
       rowspan() {
       this.spanArr = [];//在data里面定义
@@ -392,6 +407,7 @@ import {charge} from '@/api/regist'
               drug.doctorname = temp3
               drug.cname = temp2
               drug.status = item.status
+              drug.type = item.type
               this.druglist.push(deepClone(drug))
             })
           })
@@ -456,7 +472,8 @@ import {charge} from '@/api/regist'
       },
       // 缴费
       charge(){
-        if (this.sendrefs.length===0){
+
+        if (this.druglist.length===0){
           this.$notify({
             title: '提示',
             message: "请选择一条数据！",
@@ -465,24 +482,59 @@ import {charge} from '@/api/regist'
           })
           return;
         }
+        let status = []
+        this.druglist.forEach(item =>{
+          status.push(item.status)
+        })
+        if (status.join(',').includes(2)) {
+          this.$notify({
+            title: '提示',
+            message: "存在已缴费项目！",
+            type: 'warning',
+            duration: 2000
+          })
+          return;
+        }
         let data = [];
-        this.sendrefs.forEach(item=>{
-          this.refs.chargeItemId = item.id
-          this.refs.amount = item.price
-          this.refs.invoiceNo = this.orderCode()
-          this.refs.type = 4
-          this.refs.operatorId = this.$store.getters.id
-          data.push(this.refs);
+        let drugNames = []
+        let price = 0
+        this.druglist.forEach(item=>{
+          let drug = {}
+          drugNames.push(item.drugName)
+          price += item.price * item.num
+          drug.chargeItemId = item.id
+          drug.amount = item.price * item.num
+          drug.invoiceNo = this.orderCode()
+          drug.type = item.type
+          drug.operatorId = this.$store.getters.id
+          data.settlementCatId = 7
+          data.push(drug);
         });
+        this.$confirm(' 确定为项目 '+drugNames.join(',')+'  缴纳费用  '+ price +'  元吗?',  '成药项目', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
           charge(data).then(res=>{
+            if (res.data === 2) {
+              this.$notify({
+                title: '缴费失败',
+                message: '余额不足,请充值',
+                type: 'warning',
+                duration: 2000
+              })
+              return
+            }
             this.$notify({
               title: '成功',
               message: '缴费成功',
               type: 'success',
               duration: 2000
             })
+            this.handleGive(this.patient)
             this.getMechlist()
           })
+        })
       },
       // 生成发票号
       orderCode() {
@@ -492,7 +544,7 @@ import {charge} from '@/api/regist'
           orderCode += Math.floor(Math.random() * 10);
         }
         orderCode = new Date().getTime() + orderCode;  //时间戳，用来生成订单号。
-        console.log(orderCode)
+
         return orderCode;
       }
   }

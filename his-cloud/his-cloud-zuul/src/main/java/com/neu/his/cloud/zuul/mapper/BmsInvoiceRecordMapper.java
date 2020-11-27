@@ -16,15 +16,21 @@ public interface BmsInvoiceRecordMapper {
 
     int insertSelective(BmsInvoiceRecord record);
 
+    List<BmsInvoiceRecord> selectByExampleWithBLOBs(BmsInvoiceRecordExample example);
+
     List<BmsInvoiceRecord> selectByExample(BmsInvoiceRecordExample example);
 
     BmsInvoiceRecord selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") BmsInvoiceRecord record, @Param("example") BmsInvoiceRecordExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") BmsInvoiceRecord record, @Param("example") BmsInvoiceRecordExample example);
+
     int updateByExample(@Param("record") BmsInvoiceRecord record, @Param("example") BmsInvoiceRecordExample example);
 
     int updateByPrimaryKeySelective(BmsInvoiceRecord record);
+
+    int updateByPrimaryKeyWithBLOBs(BmsInvoiceRecord record);
 
     int updateByPrimaryKey(BmsInvoiceRecord record);
 }

@@ -6,10 +6,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class DmsNonDrug implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "缴费项编码")
     private String code;
 
+    @ApiModelProperty(value = "缴费项名称")
     private String name;
 
     private String format;
@@ -27,6 +30,12 @@ public class DmsNonDrug implements Serializable {
     private Integer status;
 
     private Long deptId;
+
+    @ApiModelProperty(value = "是否为套餐 : 1 是 2 否")
+    private Integer isSetmeal;
+
+    @ApiModelProperty(value = "检查检验处置的地点")
+    private String place;
 
     private static final long serialVersionUID = 1L;
 
@@ -118,6 +127,22 @@ public class DmsNonDrug implements Serializable {
         this.deptId = deptId;
     }
 
+    public Integer getIsSetmeal() {
+        return isSetmeal;
+    }
+
+    public void setIsSetmeal(Integer isSetmeal) {
+        this.isSetmeal = isSetmeal;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -135,6 +160,8 @@ public class DmsNonDrug implements Serializable {
         sb.append(", createDate=").append(createDate);
         sb.append(", status=").append(status);
         sb.append(", deptId=").append(deptId);
+        sb.append(", isSetmeal=").append(isSetmeal);
+        sb.append(", place=").append(place);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

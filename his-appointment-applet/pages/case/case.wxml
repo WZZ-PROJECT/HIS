@@ -1,0 +1,39 @@
+<!--pages/case/case.wxml-->
+<list-wrap data="{{caseList}}">
+<view class='box'>
+  <block wx:for="{{caseList}}">
+    <view class='text-item' bindtap="upDown" data-index="{{index}}">
+      <view class="item-line">
+        <view class='text-name'>{{item.priliminaryDiseStrList}}</view>
+        <view class='text-time'>2020-10-10 20:00:00</view>
+      </view>
+      <view class='text-desc' wx:if="{{index == status}}">
+        <view class="myline">
+          <view class="left">主要就诊</view>
+          <view class="right">{{item.priliminaryDiseStrList}}</view>
+        </view>
+        <view class="myline">
+          <view class="left">主诉</view>
+          <view class="right">{{item.chiefComplaint}}</view>
+        </view>
+        <view class="myline">
+          <view class="left">现治疗情况</view>
+          <view class="right">{{item.historyOfTreatment}}</view>
+        </view>
+        <view class="myline">
+          <view class="left">现病史</view>
+          <view class="right">{{item.historyOfPresentIllness}}</view>
+        </view>
+        <view class="myline">
+          <view class="left">既往史</view>
+          <view class="right">{{item.pastHistory}}</view>
+        </view>
+        <view class="myline">
+          <view class="left">过敏史</view>
+          <view class="right">{{item.allergies}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+</list-wrap>

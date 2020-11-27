@@ -11,12 +11,15 @@ import PharmacyIndex from '@/views/pharmacy/index'
 import PharmacyHerbal from '@/views/pharmacy/herbal'
 import TechnologyIndex from '@/views/technology/index'
 import OutpatientIndex from '@/views/outpatient/index'
+import HistoryRecordsIndex from '@/views/historyRecords/index'
 import MaintainMould from '@/views/outpatient/maintain/mould'
 import MaintainInspection from '@/views/outpatient/maintain/inspection'
 import DrugModel from '@/views/outpatient/maintain/drugModel'
+import FamiliarInform from '@/views/outpatient/maintain/familiarInform'
 import HerDrugModel from '@/views/outpatient/maintain/herDrugModel'
 import Freguse from '@/views/outpatient/maintain/frequse'
 import RegistWorkIndex from '@/views/registWork/index'
+import CheckChange from '@/views/registWork/checkCharge'
 import CommonSchedule from '@/views/common/schedule'
 import DayReport from '@/views/registWork/dayReport'
 import DayReportHis from '@/views/registWork/dayReportHis'
@@ -24,6 +27,9 @@ import RolePermission from '@/views/permission/role'
 import FinanceCheck from '@/views/finance/check'
 import DeptWorkLoad from '@/views/finance/deptWorkload'
 import PerWorkLoad from '@/views/finance/perWorkload'
+
+import InformationMaintenance from '@/views/admin/informationMaintenance'
+
 import Monitor from '@/views/cloud/monitor'
 import Zipkin from '@/views/cloud/zipkin'
 import Swagger from '@/views/cloud/swagger'
@@ -136,26 +142,59 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
-    path: '/packagePlan',
+    path: '/registWork',
     component: Layout,
-    redirect: '/schedule/index',
-    name: 'packagePlan',
+    redirect: '/registWork/index',
+    name: 'pay',
     meta: {
-      title: '套餐排班管理',
-      icon: 'people',
-      roles:[1,7]
+      title: '门诊收费挂号',
+      icon: 'money',
+      roles: [5,7]
     },
     children: [
       {
         path: 'index',
-        component: packagePlanIndex,
-        name: 'packagePlanIndex',
-        meta: { title: '套餐排班管理', icon: 'dashboard', noCache: true }
+        component: RegistWorkIndex,
+        name: 'registWork',
+        meta: {
+          title: '门诊挂号收费',
+          noCache: true,
+          roles: [5,7]
+        },
+      },
+      {
+        path: 'checkCharge',
+        component: CheckChange,
+        name: 'registWork',
+        meta: {
+          title: '检查项收费处',
+          noCache: true,
+          roles: [5]
+        }
       }
     ]
   },
+
+  // {
+  //   path: '/packagePlan',
+  //   component: Layout,
+  //   redirect: '/schedule/index',
+  //   name: 'packagePlan',
+  //   meta: {
+  //     title: '套餐排班管理',
+  //     icon: 'people',
+  //     roles:[1,7]
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: packagePlanIndex,
+  //       name: 'packagePlanIndex',
+  //       meta: { title: '套餐排班管理', icon: 'dashboard', noCache: true }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/pharmacy',
@@ -228,10 +267,30 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/historyRecords',
+    component: Layout,
+    redirect: '/historyRecords/index',
+    roles:[2],
+    children: [
+      {
+        path: 'index',
+        component: HistoryRecordsIndex,
+        name: 'historyRecords',
+        meta: {
+          title: '历史病历',
+          icon: 'peoples',
+          noCache: true,
+          hidden: true,
+          roles: [2,5,7]
+        },
+      }
+    ]
+  },
+
+  {
     path: '/outpatient',
     component: Layout,
     redirect: '/outpatient/maintain/mould',
-    name: 'mould',
     meta: {
       title: '模板&常用项',
       icon: 'nested',
@@ -263,6 +322,12 @@ export const asyncRoutes = [
         meta: { title: '草药药品模板管理', noCache: true }
       },
       {
+        path: '/maintain/familiarInform',
+        component: FamiliarInform,
+        name: 'familiarInform',
+        meta: { title: '知情告知模板管理', noCache: true }
+      },
+      {
         path: '/maintain/frequse',
         component: Freguse,
         name: 'frequse',
@@ -270,30 +335,6 @@ export const asyncRoutes = [
       },
     ]
   },
-  {
-    path: '/registWork',
-    component: Layout,
-    redirect: '/registWork/index',
-    name: 'pay',
-    meta: {
-      title: '门诊收费挂号',
-      icon: 'money',
-      roles: [5,7]
-    },
-    children: [
-      {
-        path: 'index',
-        component: RegistWorkIndex,
-        name: 'registWork',
-        meta: {
-          title: '门诊挂号收费',
-          noCache: true,
-          roles: [5,7]
-        },
-      },
-    ]
-  },
-
   {
     path: '/schedule',
     component: Layout,
@@ -312,18 +353,17 @@ export const asyncRoutes = [
     ]
   },
 
-
   {
-    path: '/packagePlan',
+    path: '/admin',
     component: Layout,
-    redirect: '/schedule',
+    redirect: '/informationMaintenance',
     children: [
       {
         path: 'schedule',
-        component: CommonPackagePlan,
-        name: 'CommonPackagePlan',
+        component: InformationMaintenance,
+        name: 'informationMaintenance',
         meta: {
-          title: '套餐排班表',
+          title: '预约基本信息维护',
           icon: 'table',
           noCache: true
         },
@@ -331,13 +371,32 @@ export const asyncRoutes = [
     ]
   },
 
+
+  // {
+  //   path: '/packagePlan',
+  //   component: Layout,
+  //   redirect: '/schedule',
+  //   children: [
+  //     {
+  //       path: 'schedule',
+  //       component: CommonPackagePlan,
+  //       name: 'CommonPackagePlan',
+  //       meta: {
+  //         title: '套餐排班表',
+  //         icon: 'table',
+  //         noCache: true
+  //       },
+  //     },
+  //   ]
+  // },
+
   {
     path: '/dayReport',
     component: Layout,
     redirect: '/registWork/dayReport',
     name: 'dayReport',
     meta: {
-      title: '门诊日结',
+      title: '门诊日流水',
       icon: 'documentation',
       roles: [5,7]
     },
@@ -347,9 +406,19 @@ export const asyncRoutes = [
         component: DayReport,
         name: 'dayReport',
         meta: {
-          title: '门诊日结',
+          title: '门诊日流水',
           noCache: true,
           roles: [5,7]
+        },
+      },
+      {
+        path: '/finance/check',
+        component: FinanceCheck,
+        name: 'check',
+        meta: {
+          title: '门诊日流水核对',
+          noCache: true,
+          roles:[5,7]
         },
       },
       {
@@ -357,11 +426,11 @@ export const asyncRoutes = [
         component: DayReportHis,
         name: 'dayReportHis',
         meta: {
-          title: '历史日结',
+          title: '历史日流水',
           noCache: true,
           roles: [5,7]
         },
-      },
+      }
     ]
   },
   {
@@ -424,18 +493,20 @@ export const asyncRoutes = [
         meta: {
           title: '个人工作量统计',
           noCache: true,
+          roles:[2,3]
         },
       },
     ]
   },
-  {
+  /*{
     path: '/cloud',
     component: Layout,
     redirect: '/cloud/monitor',
     name: 'cloud',
     meta: {
       title: '服务监控',
-      icon: 'eye-open'
+      icon: 'eye-open',
+      roles:[1,7]
     },
     children: [
       {
@@ -489,7 +560,7 @@ export const asyncRoutes = [
         },
       },
     ]
-  },
+  },*/
   { path: '*', redirect: '/404', hidden: true }
 ]
 const createRouter = () => new Router({

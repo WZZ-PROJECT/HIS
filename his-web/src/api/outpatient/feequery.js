@@ -8,3 +8,12 @@ export function listByRegistration(data) {
     }
   })
 }
+
+export function updateInvoice(data) {
+  return request({
+    url: '/feeQuery/updateInvoice',
+    method: 'post',
+    data
+  })
+}
+

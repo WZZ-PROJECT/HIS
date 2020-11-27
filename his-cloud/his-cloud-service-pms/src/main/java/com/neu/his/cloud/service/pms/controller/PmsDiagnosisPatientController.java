@@ -3,7 +3,9 @@ package com.neu.his.cloud.service.pms.controller;
 import com.neu.his.cloud.service.pms.common.CommonResult;
 import com.neu.his.cloud.service.pms.dto.dms.DmsCaseHistoryResult;
 import com.neu.his.cloud.service.pms.dto.pms.PmsDiagnosisPatientListResult;
+import com.neu.his.cloud.service.pms.dto.pms.PmsDiagnosisPatientResult;
 import com.neu.his.cloud.service.pms.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.service.pms.dto.pms.PmsQueryPeople;
 import com.neu.his.cloud.service.pms.service.PmsPatientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,8 +28,8 @@ public class PmsDiagnosisPatientController {
     @ResponseBody
     public CommonResult<PmsPatientResult> selectPatientByIdNo(@RequestParam("identificationNo") String identificationNo){
         PmsPatientResult pmsPatientResult = pmsPatientService.selectPatientByIdNo(identificationNo);
-        if (pmsPatientResult == null)
-            return CommonResult.failed();
+//        if (pmsPatientResult == null)
+//            return CommonResult.failed();
         return CommonResult.success(pmsPatientResult);
     }
 
@@ -75,5 +77,23 @@ public class PmsDiagnosisPatientController {
     public CommonResult<DmsCaseHistoryResult> startDiagnosis(@RequestParam("registrationId") Long registrationId){
         DmsCaseHistoryResult dmsCaseHistoryResult = pmsPatientService.startDiagnosis(registrationId);
         return CommonResult.success(dmsCaseHistoryResult);
+    }
+
+    //根据医生id查询所有患者
+    @ApiOperation(value = "根据条件查询患者")
+    @RequestMapping(value = "/queryPeople", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientListResult> queryPeople(@RequestBody PmsQueryPeople pmsQueryPeople){
+        PmsDiagnosisPatientListResult pmsDiagnosisPatientListResult = pmsPatientService.queryPeople(pmsQueryPeople);
+        return CommonResult.success(pmsDiagnosisPatientListResult);
+    }
+
+    //查询病人信息用于查看病例信息
+    @ApiOperation(value = "查询病人信息用于查看病例信息")
+    @RequestMapping(value = "/selectPeopleByRegistrationId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientResult> selectPeopleByRegistrationId(@RequestParam("registrationId") Long registrationId){
+        PmsDiagnosisPatientResult pmsDiagnosisPatientResult = pmsPatientService.selectPeopleByRegistrationId(registrationId);
+        return CommonResult.success(pmsDiagnosisPatientResult);
     }
 }

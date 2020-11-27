@@ -1,8 +1,12 @@
 <template>
   <!-- 检验申请 -->
   <el-container>
+   <!-- <div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
   <el-aside :width="mainwidth" style="background:white;padding:0 10px 0 0">
     <el-table
+      id="historyExamine"
     ref="multipleTable"
     :data="record"
     border
@@ -290,7 +294,7 @@ export default {
     },
     handleClick(){
       this.$notify({
-        title: '暂无数据',
+        title: '检查',
         message: '您开立的项目中包含已开立的项目，请检查后重新提交！',
         type: 'warning',
         duration: 2000
@@ -377,7 +381,12 @@ export default {
           if(flag)
             this.record.push(val)
           else
-            alert('已存在该检验项目！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该检验项目！')
           this.dialogTableVisible = false
         })
     },
@@ -406,6 +415,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="65%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyExamine1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

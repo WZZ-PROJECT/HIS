@@ -24,6 +24,26 @@ public class DmsHerbalItemRecord implements Serializable {
 
     private Long currentNum;
 
+    private Long invoice;
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    private String frequency;
+
+    public Long getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Long invoice) {
+        this.invoice = invoice;
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -123,6 +143,7 @@ public class DmsHerbalItemRecord implements Serializable {
         sb.append(", totalNum=").append(totalNum);
         sb.append(", currentNum=").append(currentNum);
         sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append(", frequency=").append(frequency);
         sb.append("]");
         return sb.toString();
     }

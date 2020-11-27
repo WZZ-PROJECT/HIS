@@ -7,12 +7,12 @@
       <el-select v-model="listQuery.type" placeholder="签章类型" clearable style="width: 130px" class="filter-item" filterable>
         <el-option v-for="item in allSignature" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增签章
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+      <el-button  :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
       </el-button>
     </div>
@@ -38,8 +38,8 @@
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope.row)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button type="primary" size="small" @click="handleEnable(scope.row)">启用</el-button>
-          <el-button type="danger" size="small" @click="handleDisable(scope.row)">禁用</el-button>
+          <el-button type="primary" v-if="scope.row.state===2" size="small" @click="handleEnable(scope.row)">启用</el-button>
+          <el-button type="danger" v-if="scope.row.state===1" size="small" @click="handleDisable(scope.row)">禁用</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -110,7 +110,7 @@ export default {
         type: '',
         state:'',
         page: 1,
-        limit: 20
+        limit: 10
       },
       downloadLoading: false,
       rules:{
@@ -280,9 +280,25 @@ export default {
 
     //启用 禁用
     handleEnable(row){
-      this.depart = Object.assign({}, row);
-      this.depart.state = 1;
-      this.handleDisableOrEnable(this.depart)
+
+
+      let status = []
+      this.signatureList.forEach(item =>{
+        status.push(item.state)
+      })
+      if (status.join(',').includes(1)) {
+        this.$notify({
+          title: '提示',
+          message: "已存在启用状态的印章！",
+          type: 'warning',
+          duration: 2000
+        })
+        return;
+      }else {
+        this.depart = Object.assign({}, row);
+        this.depart.state = 1;
+        this.handleDisableOrEnable(this.depart)
+      }
     },
     handleDisable(row){
       this.depart = Object.assign({}, row);
@@ -309,6 +325,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.listQuery.limit = 10
       this.getSignatureList()
     },
     resetTemp() {

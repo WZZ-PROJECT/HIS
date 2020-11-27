@@ -1,0 +1,80 @@
+/* pages/my/my.wxss */
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 200rpx;
+}
+
+.userinfo-avatar {
+  width: 200rpx;
+  height: 200rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+.avatar {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+  font-size: 20px;
+}
+.nickname {
+  color: black;
+  width: 0;
+  flex: 1;
+  text-align: left;
+  padding-left: 40rpx;
+  font-size: 16px;
+}
+.detail{
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+}
+.detailAvatar{
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  float: right;
+  margin-right: 30rpx;
+}
+.line{
+  height: 2.2rem;
+  border-bottom:1px solid #EEEEEE;
+  margin-top: 0.7rem;
+}
+.lineText{
+  margin-left: 1rem;
+}
+.subButton{
+  width: 100%;
+}
+.weui-cells__title {
+  display: none;
+}
+.page-section {
+  margin-bottom: 10px;
+}
+.weui-input {
+  height: 30px;
+  line-height: 30px;
+  border: 1px solid #a1a1a1;
+}
+.login-button {
+  box-sizing: border-box;
+  padding: 30rpx;
+  height: 250rpx;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-bottom:2px solid #ebedf0;
+  border-radius: 0;
+}
+button::after{
+  border: none;
+}

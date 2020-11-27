@@ -12,6 +12,7 @@
     <result column="usage_num_unit" jdbcType="INTEGER" property="usageNumUnit" />
     <result column="total_num" jdbcType="BIGINT" property="totalNum" />
     <result column="current_num" jdbcType="BIGINT" property="currentNum" />
+    <result column="invoice" jdbcType="BIGINT" property="invoice" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, status, prescription_id, medical_advice, footnote, drug_id, usage_num, usage_num_unit, 
-    total_num, current_num
+    id, status, prescription_id, medical_advice, footnote, drug_id, usage_num, usage_num_unit,
+    total_num, current_num,invoice
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.DmsHerbalItemRecordExample" resultMap="BaseResultMap">
     select
@@ -90,7 +91,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from dms_herbal_item_record
     where id = #{id,jdbcType=BIGINT}
@@ -109,13 +110,13 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into dms_herbal_item_record (status, prescription_id, medical_advice, 
-      footnote, drug_id, usage_num, 
-      usage_num_unit, total_num, current_num
+    insert into dms_herbal_item_record (status, prescription_id, medical_advice,
+      footnote, drug_id, usage_num,
+      usage_num_unit, total_num, current_num,invoice
       )
-    values (#{status,jdbcType=INTEGER}, #{prescriptionId,jdbcType=BIGINT}, #{medicalAdvice,jdbcType=VARCHAR}, 
-      #{footnote,jdbcType=VARCHAR}, #{drugId,jdbcType=BIGINT}, #{usageNum,jdbcType=BIGINT}, 
-      #{usageNumUnit,jdbcType=INTEGER}, #{totalNum,jdbcType=BIGINT}, #{currentNum,jdbcType=BIGINT}
+    values (#{status,jdbcType=INTEGER}, #{prescriptionId,jdbcType=BIGINT}, #{medicalAdvice,jdbcType=VARCHAR},
+      #{footnote,jdbcType=VARCHAR}, #{drugId,jdbcType=BIGINT}, #{usageNum,jdbcType=BIGINT},
+      #{usageNumUnit,jdbcType=INTEGER}, #{totalNum,jdbcType=BIGINT}, #{currentNum,jdbcType=BIGINT}, #{invoice,jdbcType=BIGINT}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.DmsHerbalItemRecord">
@@ -151,6 +152,9 @@
       <if test="currentNum != null">
         current_num,
       </if>
+      <if test="invoice != null">
+        invoice,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="status != null">
@@ -179,6 +183,9 @@
       </if>
       <if test="currentNum != null">
         #{currentNum,jdbcType=BIGINT},
+      </if>
+      <if test="invoice != null">
+        #{invoice,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -221,6 +228,9 @@
       <if test="record.currentNum != null">
         current_num = #{record.currentNum,jdbcType=BIGINT},
       </if>
+      <if test="record.invoice != null">
+        current_num = #{record.invoice,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -237,7 +247,8 @@
       usage_num = #{record.usageNum,jdbcType=BIGINT},
       usage_num_unit = #{record.usageNumUnit,jdbcType=INTEGER},
       total_num = #{record.totalNum,jdbcType=BIGINT},
-      current_num = #{record.currentNum,jdbcType=BIGINT}
+      current_num = #{record.currentNum,jdbcType=BIGINT},
+      invoice = #{record.invoice,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -272,6 +283,9 @@
       <if test="currentNum != null">
         current_num = #{currentNum,jdbcType=BIGINT},
       </if>
+      <if test="invoice != null">
+        invoice = #{invoice,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -285,7 +299,8 @@
       usage_num = #{usageNum,jdbcType=BIGINT},
       usage_num_unit = #{usageNumUnit,jdbcType=INTEGER},
       total_num = #{totalNum,jdbcType=BIGINT},
-      current_num = #{currentNum,jdbcType=BIGINT}
+      current_num = #{currentNum,jdbcType=BIGINT},
+      invoice = #{invoice,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

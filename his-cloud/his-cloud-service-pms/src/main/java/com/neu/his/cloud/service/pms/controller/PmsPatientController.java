@@ -3,6 +3,7 @@ package com.neu.his.cloud.service.pms.controller;
 import com.neu.his.cloud.service.pms.common.CommonResult;
 import com.neu.his.cloud.service.pms.dto.pms.PmsPatientParam;
 import com.neu.his.cloud.service.pms.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.service.pms.dto.pms.PmsPatients;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStaffResult;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStopFollowDoctorParam;
 import com.neu.his.cloud.service.pms.model.PmsPatient;
@@ -61,8 +62,8 @@ public class PmsPatientController {
     @ApiOperation("根据openId 获得 patient")
     @RequestMapping(value = "/patientByOpenId", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<PmsPatient> patientByOpenId(@RequestParam String openId){
-        PmsPatient pmsPatient = pmsPatientService.patientByOpenId(openId);
+    public CommonResult<PmsPatients> patientByOpenId(@RequestParam String openId){
+        PmsPatients pmsPatient = pmsPatientService.patientByOpenId(openId);
         return CommonResult.success(pmsPatient,"操作成功");
     }
 

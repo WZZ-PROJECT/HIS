@@ -1,3 +1,111 @@
+#spring:
+#  application:
+#    name: his-cloud-zuul
+#  zipkin:
+#    base-url: http://152.136.233.245:9411
+#  boot:
+#    admin:
+#      client:
+#        url: http://152.136.233.245:8084
+#  datasource:
+#    url: jdbc:mysql://49.233.254.194:8806/his?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    username: yuncheng
+#    password: YunCheng@123#!
+#    druid:
+#      initial-size: 5 #连接池初始化大小
+#      min-idle: 10 #最小空闲连接数
+#      max-active: 20 #最大连接数
+#      web-stat-filter:
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+#      stat-view-servlet: #访问监控网页的登录用户名和密码
+#        login-username: druid
+#        login-password: druid
+#  jackson:
+#    time-zone: GMT+8  #市区设置
+#
+#server:
+#  http:
+#    port: 10023
+#  port: 10022  #10011
+#  ssl:
+#    key-store: classpath:4602509_his.cgjiankang.com.pfx
+#    key-store-password: 2o8CKg5S
+#    key-store-type: PKCS12
+#    key-alias: alias
+#
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://152.136.233.245:10030/eureka/
+#
+#feign:  #添加熔断
+#  hystrix:
+#    enabled: true
+#
+#zuul:
+#  routes:
+##    api-a:
+##      path: /pc/**
+##      serviceId: his-cloud-api-pc
+#    api-b:
+#      path: /app/**
+#      serviceId: his-cloud-api-app
+#
+#gateway:
+#  globalcors:
+#    corsConfigurations:
+#      '[/**]':
+#        allowedOrigins: "docs.spring.io"
+#        allowedMethods:
+#          - GET
+#          - POST
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"   #暴露所有的端点我们可以看到更多的服务实例相关信息，
+#    endpoint:
+#      health:
+#        show-details: ALWAYS   #health endpoint是否必须显示全部细节
+#
+#
+#mybatis:
+#  type-aliases-package: com.neu.his.cloud.zuul.model
+#  mapper-locations: classpath:/com.neu.his.cloud.zuul.mapper/*.xml
+#
+#
+#
+#jwt:
+#  tokenHeader: Authorization #JWT存储的请求头
+#  secret: mySecret #JWT加解密使用的密钥
+#  expiration: 604800 #JWT的超期限时间(60*60*24)
+#  tokenHead: Bearer  #JWT负载中拿到开头
+#
+##
+#logging:
+#  level:
+#    root: info #日志配置DEBUG,INFO,WARN,ERROR
+#    com.neu.his: debug
+#  file: /log #配置日志文件路径
+#  path: his-cloud-zuul-log.log #配置日志生成名称
+#
+#appid: wx0c46f1e02b77a254
+#secret: c14f660e7415e281c2ee48cabf5c0b01
+#grantType: authorization_code
+#mch_id: 1602987321
+#
+#AppId: wx5413df4415f5b4eb
+#Appsecret: b30b3c27b3f8c21003bb5c48d64eea3e
+#AppGrant_type: authorization_code
+#AppMch_id: 1602987321   #商户号
+#AppPassword: UtQldsIcA8rldkOUdlyHOdGZzHhJX7fz  #商户平台秘钥
+#
+#ribbon:
+#  ConnectTimeout: 150000
+#  # 请求处理的超时时间
+#  ReadTimeout: 150000
+
 spring:
   application:
     name: his-cloud-zuul
@@ -8,9 +116,9 @@ spring:
       client:
         url: http://localhost:8084
   datasource:
-    url: jdbc:mysql://192.168.0.164:8806/his?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://49.233.254.194:8806/his_dev?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: yuncheng
-    password: yuncheng@123
+    password: YunCheng@123#!
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -24,14 +132,14 @@ spring:
     time-zone: GMT+8  #市区设置
 
 server:
-#  http:
-#    port: 10023
+  http:
+    port: 10023
   port: 10022  #10011
-#  ssl:
-#    key-store: classpath:4602509_his.cgjiankang.com.pfx
-#    key-store-password: 2o8CKg5S
-#    key-store-type: PKCS12
-#    key-alias: alias
+  ssl:
+    key-store: classpath:4602509_his.cgjiankang.com.pfx
+    key-store-password: 2o8CKg5S
+    key-store-type: PKCS12
+    key-alias: alias
 
 eureka:
   client:
@@ -44,9 +152,9 @@ eureka:
 
 zuul:
   routes:
-#    api-a:
-#      path: /pc/**
-#      serviceId: his-cloud-api-pc
+    #    api-a:
+    #      path: /pc/**
+    #      serviceId: his-cloud-api-pc
     api-b:
       path: /app/**
       serviceId: his-cloud-api-app
@@ -71,8 +179,8 @@ management:
 
 
 mybatis:
-  type-aliases-package: com.neu.his.cloud.zull.model
-  mapper-locations: classpath:/com.neu.his.cloud.zull.com.neu.his.cloud.zuul.mapper/*.xml
+  type-aliases-package: com.neu.his.cloud.zuul.model
+  mapper-locations: classpath:/com.neu.his.cloud.zuul.mapper/*.xml
 
 
 
@@ -95,10 +203,26 @@ secret: c14f660e7415e281c2ee48cabf5c0b01
 grantType: authorization_code
 mch_id: 1602987321
 
+AppId: wx5413df4415f5b4eb
+Appsecret: b30b3c27b3f8c21003bb5c48d64eea3e
+AppGrant_type: authorization_code
+AppMch_id: 1602987321   #商户号
+AppPassword: UtQldsIcA8rldkOUdlyHOdGZzHhJX7fz  #商户平台秘钥
+
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 360000
+#ribbon的超时时间
 ribbon:
-  ConnectTimeout: 150000
-  # 请求处理的超时时间
-  ReadTimeout: 150000
+  ReadTimeout: 360000
+  ConnectTimeout: 360000
 
 
 

@@ -3,6 +3,7 @@ package com.neu.his.cloud.api.pc.controller.dms;
 import com.neu.his.cloud.api.pc.common.CommonResult;
 import com.neu.his.cloud.api.pc.dto.dms.DmsCaseHistoryParam;
 import com.neu.his.cloud.api.pc.dto.dms.DmsCaseHistoryResult;
+import com.neu.his.cloud.api.pc.dto.sms.AddInformParam;
 import com.neu.his.cloud.api.pc.service.dms.DmsCaseHistoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,9 +47,20 @@ public class DmsCaseHistoryController {
     @RequestMapping(value = "/selectEndCaseHistoryByReg/{registrationId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<DmsCaseHistoryResult> selectEndCaseHistoryByReg(@PathVariable("registrationId") Long registrationId){
-
         return dmsCaseHistoryService.selectEndCaseHistoryByReg(registrationId);
+    }
 
+    /**
+     * 描述：根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）
+     * <p>author:赵煜
+     */
+    @ApiOperation(value = "根据挂号id查询已结束就诊的历史病历（病历首页显示各种串）")
+    @RequestMapping(value = "/selectEndCaseHistory/{registrationId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<DmsCaseHistoryResult> selectEndCaseHistory(@PathVariable("registrationId") Long registrationId,@RequestParam(value = "status",required =
+            false)Integer status){
+        CommonResult<DmsCaseHistoryResult> dmsCaseHistoryResultCommonResult = dmsCaseHistoryService.selectEndCaseHistory(registrationId, status);
+        return dmsCaseHistoryResultCommonResult;
     }
 
 
@@ -80,5 +92,38 @@ public class DmsCaseHistoryController {
     public CommonResult<DmsCaseHistoryResult> queryCaseHistory(@RequestParam("patientId") long patientId){
         return dmsCaseHistoryService.queryCaseHistory(patientId);
     }
+
+
+    @ApiOperation(value = "知情告知增加")
+    @RequestMapping(value = "/insertFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult insertFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return dmsCaseHistoryService.insertFamiliarInform(addInformParam);
+    }
+
+    @ApiOperation(value = "知情告知删除")
+    @RequestMapping(value = "/deleteFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult deleteFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return dmsCaseHistoryService.deleteFamiliarInform(addInformParam);
+    }
+
+    @ApiOperation(value = "知情告知修改")
+    @RequestMapping(value = "/updateFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return dmsCaseHistoryService.updateFamiliarInform(addInformParam);
+    }
+
+    @ApiOperation(value = "知情告知查询")
+    @RequestMapping(value = "/selectFamiliarInform", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult selectFamiliarInform(@RequestBody AddInformParam addInformParam){
+        return dmsCaseHistoryService.selectFamiliarInform(addInformParam);
+    }
+
+
+
+
 
 }

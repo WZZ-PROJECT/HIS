@@ -1,6 +1,8 @@
 package com.neu.his.cloud.zuul.service.sms.impl;
 
 
+import com.neu.his.cloud.zuul.common.CommonResult;
+import com.neu.his.cloud.zuul.dto.sms.CheckPassword;
 import com.neu.his.cloud.zuul.dto.sms.SmsStaffParam;
 import com.neu.his.cloud.zuul.mapper.SmsStaffMapper;
 import com.neu.his.cloud.zuul.model.SmsStaff;
@@ -20,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -43,7 +46,7 @@ public class SmsStaffServiceImpl implements SmsStaffService {
     private String tokenHead;
 
     public String test(){
-       return tokenHead;
+        return tokenHead;
     }
 
     @Override
@@ -108,4 +111,54 @@ public class SmsStaffServiceImpl implements SmsStaffService {
         return smsStaff;  //返回对象的密码是经过加密的
     }
 
+    @Override
+    public CommonResult checkPasswords(CheckPassword checkPassword) {
+        SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(checkPassword.getStaffId());
+        if (!StringUtils.isEmpty(smsStaff)) {
+            if (!passwordEncoder.matches(checkPassword.getNewPassword(),smsStaff.getPassword())) {
+                return CommonResult.success(1,"校验正确");
+            }
+        }
+        return CommonResult.success(-1,"新密码与原始密码重复");
+    }
+
+    @Override
+    public CommonResult checkPassword(CheckPassword checkPassword) {
+        //将密码进行加密操作
+        SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(checkPassword.getStaffId());
+        if (!StringUtils.isEmpty(smsStaff)) {
+            if (passwordEncoder.matches(checkPassword.getOldPassword(),smsStaff.getPassword())) {
+                return CommonResult.success(1,"校验正确");
+            }
+        }
+        return CommonResult.success(0,"原始密码不正确");
+    }
+
+    @Override
+    public CommonResult updatePassword(CheckPassword checkPassword) {
+        CommonResult commonResult;
+        commonResult = checkPassword(checkPassword);
+        if ((Integer) commonResult.getData() != 0) {
+            commonResult = checkPasswords(checkPassword);
+            if ((Integer) commonResult.getData() != -1) {
+                SmsStaff smsStaff = new SmsStaff();
+                smsStaff.setPassword(passwordEncoder.encode(checkPassword.getNewPassword()));
+                smsStaff.setId(checkPassword.getStaffId());
+                int i = smsStaffMapper.updateByPrimaryKeySelective(smsStaff);
+                return CommonResult.success(i,"密码更新成功");
+            }
+        }
+        return commonResult;
+    }
+
+    @Override
+    public String getToken(String username) {
+        String token = null;
+        try {
+            token = jwtTokenUtil.APPGenerateToken(username);
+        } catch (AuthenticationException e) {
+            LOGGER.warn("登录异常:{}", e.getMessage());
+        }
+        return token;
+    }
 }

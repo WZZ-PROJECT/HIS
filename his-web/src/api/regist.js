@@ -11,7 +11,6 @@ export function listRegisteredPatient(data) {
 }
 //挂号
 export function createRegistration(data) {
-  console.log(data)
   return request({
     url: '/registration/createRegistration',
     method: 'post',
@@ -21,7 +20,6 @@ export function createRegistration(data) {
 
 //充值
 export function recharge(data) {
-  console.log(data)
   return request({
     url: '/registration/recharge',
     method: 'post',
@@ -31,7 +29,6 @@ export function recharge(data) {
 
 //退费
 export function rollback(data) {
-  console.log(data)
   return request({
     url: '/registration/rollback',
     method: 'post',
@@ -116,5 +113,43 @@ export function listTime(data) {
   return request({
     url: '/registration/TimeDifference?ruletime='+data.ruletime+'&skdId='+data.skdId+'&noon='+data.noon,
     method: 'get',
+  })
+}
+
+//判断是否有用户
+export function isAccount(data) {
+  return request({
+    url: '/registration/isAccount',
+    method: 'post',
+    params:{
+      identificationNo:data.identificationNo
+    }
+  })
+}
+
+//修改病人信息
+export function updateInformation(data) {
+  return request({
+    url: '/registration/updateInformation',
+    method: 'post',
+    data
+  })
+}
+
+// 根据病人身份证号查询历史病人信息
+export function listPatientByCardId(data) {
+  return request({
+    url: '/fee/listPatientByCardId',
+    method: 'post',
+    data
+  })
+}
+
+//获得各个方式的退款金额
+export function selectRefundResultsParam(data) {
+  return request({
+    url: '/registration/selectRefundResultsParam',
+    method: 'post',
+    data
   })
 }

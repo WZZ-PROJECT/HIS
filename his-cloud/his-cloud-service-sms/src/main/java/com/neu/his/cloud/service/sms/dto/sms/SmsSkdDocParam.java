@@ -25,4 +25,5 @@ public class SmsSkdDocParam  implements Serializable {
     @ApiModelProperty(value = "日期")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
+
 }

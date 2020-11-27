@@ -25,7 +25,7 @@ router.beforeEach(async(to, from, next) => {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
         //如果已有角色权限信息，则说明已经获取到用户信息，直接跳转到下一个默认页面
-        next()  
+        next()
       } else {
         try {
           //调用store中user/getInfo方法，通过用户的token获取用户的信息

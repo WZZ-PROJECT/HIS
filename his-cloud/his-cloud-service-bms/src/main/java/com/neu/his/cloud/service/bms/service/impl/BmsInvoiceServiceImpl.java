@@ -1,18 +1,18 @@
 package com.neu.his.cloud.service.bms.service.impl;
 
 
+import com.neu.his.cloud.service.bms.dto.bms.BmsInvoiceParam;
 import com.neu.his.cloud.service.bms.dto.bms.BmsInvoiceResult;
-import com.neu.his.cloud.service.bms.mapper.BmsBillsRecordMapper;
-import com.neu.his.cloud.service.bms.mapper.BmsInvoiceRecordMapper;
-import com.neu.his.cloud.service.bms.mapper.BmsOperatorSettleRecordMapper;
-import com.neu.his.cloud.service.bms.mapper.BmsSettlementCatMapper;
+import com.neu.his.cloud.service.bms.mapper.*;
 import com.neu.his.cloud.service.bms.model.*;
 import com.neu.his.cloud.service.bms.service.BmsInvoiceService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +26,8 @@ public class BmsInvoiceServiceImpl implements BmsInvoiceService {
     BmsSettlementCatMapper bmsSettlementCatMapper;
     @Autowired
     BmsOperatorSettleRecordMapper bmsOperatorSettleRecordMapper;
+    @Autowired
+    SmsStaffMapper mapper;
     //发票补打：
     //1.传入更新后的发票号，挂号id
     //2.根据挂号id在账单表中查找出账单，根据账单id在发票表中查找出最近的一条发票，更新发票号
@@ -76,12 +78,18 @@ public class BmsInvoiceServiceImpl implements BmsInvoiceService {
     }
     //传入新的start_datetime和end_datetime和收费员id，查询发票信息
     @Override
-    public List<BmsInvoiceResult> queryInvoiceInfo(Long cashierId, Date startDatetime, Date endDatetime) {
-        List<BmsInvoiceResult> bmsInvoiceResultList = new ArrayList<>();
+    public List<BmsInvoiceResult> queryInvoiceInfo(BmsInvoiceParam bmsInvoiceParam) {
         BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
-        bmsInvoiceRecordExample.createCriteria().andOperatorIdEqualTo(cashierId).andCreateTimeBetween(startDatetime,endDatetime);
+
+        if (!StringUtils.isEmpty(bmsInvoiceParam.getStartDatetime()) && !StringUtils.isEmpty(bmsInvoiceParam.getEndDatetime())) {
+            bmsInvoiceRecordExample.createCriteria().andCreateTimeBetween(bmsInvoiceParam.getStartDatetime(),bmsInvoiceParam.getEndDatetime());
+        }
+        if (!StringUtils.isEmpty(bmsInvoiceParam.getCashierId())) {
+            bmsInvoiceRecordExample.createCriteria().andOperatorIdEqualTo(bmsInvoiceParam.getCashierId());
+        }
         bmsInvoiceRecordExample.setOrderByClause("create_time asc");
         List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
+        List<BmsInvoiceResult> bmsInvoiceResultList = new ArrayList<>();
         for (BmsInvoiceRecord bmsInvoiceRecord : bmsInvoiceRecordList){
             BmsInvoiceResult bmsInvoiceResult = new BmsInvoiceResult();
             BeanUtils.copyProperties(bmsInvoiceRecord,bmsInvoiceResult);
@@ -90,6 +98,12 @@ public class BmsInvoiceServiceImpl implements BmsInvoiceService {
                 String settlementCatName = bmsSettlementCatMapper.selectByPrimaryKey(bmsInvoiceRecord.getSettlementCatId()).getName();
                 bmsInvoiceResult.setSettlementCatName(settlementCatName);
             }
+            // settlement tilte
+            if (!StringUtils.isEmpty(bmsInvoiceRecord.getOperatorId())) {
+                SmsStaff smsStaff = mapper.selectByPrimaryKey(bmsInvoiceRecord.getOperatorId());
+                bmsInvoiceResult.setOperatorName(smsStaff.getName());
+            }
+
             //对账人id,所属日结记录id
             BmsOperatorSettleRecord bmsOperatorSettleRecord = bmsOperatorSettleRecordMapper.selectByPrimaryKey(bmsInvoiceRecord.getSettleRecordId());
             if (bmsOperatorSettleRecord != null){
@@ -106,20 +120,29 @@ public class BmsInvoiceServiceImpl implements BmsInvoiceService {
         List<BmsInvoiceResult> bmsInvoiceResultList = new ArrayList<>();
         BmsOperatorSettleRecord bmsOperatorSettleRecord = bmsOperatorSettleRecordMapper.selectByPrimaryKey(settleRecordId);
 
-        BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
-        bmsInvoiceRecordExample.createCriteria().andSettleRecordIdEqualTo(settleRecordId);
-        List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
-        if (!bmsInvoiceRecordList.isEmpty()){
-            for (BmsInvoiceRecord bmsInvoiceRecord : bmsInvoiceRecordList){
-                BmsInvoiceResult bmsInvoiceResult = new BmsInvoiceResult();
-                BeanUtils.copyProperties(bmsInvoiceRecord,bmsInvoiceResult);
-                //结算类型name
-                String settlementCatName = bmsSettlementCatMapper.selectByPrimaryKey(bmsInvoiceRecord.getSettlementCatId()).getName();
-                bmsInvoiceResult.setSettlementCatName(settlementCatName);
-                //对账人id,所属日结记录id
-                bmsInvoiceResult.setOperatorSettleId(bmsOperatorSettleRecord.getVerifyOperatorId());
-                bmsInvoiceResult.setSettleRecordId(bmsOperatorSettleRecord.getId());
-                bmsInvoiceResultList.add(bmsInvoiceResult);
+        if (!StringUtils.isEmpty(bmsOperatorSettleRecord.getStartEndInvoiceIdStr())) {
+            List<String> invoiceNo = Arrays.asList(bmsOperatorSettleRecord.getStartEndInvoiceIdStr().split(","));
+            for (String invoice:invoiceNo) {
+                BmsInvoiceRecordExample bmsInvoiceRecordExample = new BmsInvoiceRecordExample();
+                bmsInvoiceRecordExample.createCriteria().andInvoiceNoEqualTo(Long.parseLong(invoice));
+                List<BmsInvoiceRecord> bmsInvoiceRecordList = bmsInvoiceRecordMapper.selectByExample(bmsInvoiceRecordExample);
+                if (!bmsInvoiceRecordList.isEmpty()){
+                    for (BmsInvoiceRecord bmsInvoiceRecord : bmsInvoiceRecordList){
+                        BmsInvoiceResult bmsInvoiceResult = new BmsInvoiceResult();
+                        BeanUtils.copyProperties(bmsInvoiceRecord,bmsInvoiceResult);
+                        //结算类型name
+                        String settlementCatName = bmsSettlementCatMapper.selectByPrimaryKey(bmsInvoiceRecord.getSettlementCatId()).getName();
+                        bmsInvoiceResult.setSettlementCatName(settlementCatName);
+                        if (!StringUtils.isEmpty(bmsInvoiceRecord.getOperatorId())) {
+                            SmsStaff smsStaff = mapper.selectByPrimaryKey(bmsInvoiceRecord.getOperatorId());
+                            bmsInvoiceResult.setOperatorName(smsStaff.getName());
+                        }
+                        //对账人id,所属日结记录id
+                        bmsInvoiceResult.setOperatorSettleId(bmsOperatorSettleRecord.getVerifyOperatorId());
+                        bmsInvoiceResult.setSettleRecordId(bmsOperatorSettleRecord.getId());
+                        bmsInvoiceResultList.add(bmsInvoiceResult);
+                    }
+                }
             }
         }
         return bmsInvoiceResultList;

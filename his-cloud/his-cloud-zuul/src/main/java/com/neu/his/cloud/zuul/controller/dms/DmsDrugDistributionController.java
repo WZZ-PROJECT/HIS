@@ -98,11 +98,15 @@ public class DmsDrugDistributionController {
      * 描述:根据id查询药品
      * <p>author: wang
      */
+    @HystrixCommand(fallbackMethod = "selectByIdFallbackInfo")
     @ApiOperation("根据id查询药品")
     @RequestMapping(value = "/selectById", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<DmsDrugResult> selectById(@RequestParam("id") Long id){
         return apiPcDmsDrugDistributionService.selectById(id);
+    }
+    private CommonResult<DmsDrugResult> selectByIdFallbackInfo(Long id){
+        return CommonResult.success(null,"请检查您的网络") ;
     }
 
 }

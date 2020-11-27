@@ -60,10 +60,8 @@ public class SmsStaffController {
     @ApiOperation("模糊查询用户、且分页")
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam,
-                                                         @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-       return smsStaffService.list(queryParam,pageSize,pageNum);
+    public CommonResult<CommonPage<SmsStaffResult>> list(@RequestBody SmsStaffParam queryParam){
+       return smsStaffService.list(queryParam);
     }
 
 

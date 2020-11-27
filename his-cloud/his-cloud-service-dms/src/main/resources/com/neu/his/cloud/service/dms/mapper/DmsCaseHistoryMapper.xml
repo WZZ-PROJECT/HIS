@@ -27,6 +27,8 @@
     <result column="priliminary_dise_id_list" jdbcType="VARCHAR" property="priliminaryDiseIdList" />
     <result column="check_result" jdbcType="VARCHAR" property="checkResult" />
     <result column="test_result" jdbcType="VARCHAR" property="testResult" />
+    <result column="testAdvice" jdbcType="VARCHAR" property="testAdvice" />
+    <result column="familiarInform" jdbcType="VARCHAR" property="familiarInform" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -91,7 +93,7 @@
     allergies, health_checkup, registration_id, priliminary_dise_str_list, start_date, 
     name, gender, age_str, check_str_list, disposition_str_list, herbal_prescription_str_list, 
     create_time, definite_dise_str_list, patient_id, test_str_list, medicine_prescription_str_list, 
-    status, priliminary_dise_id_list, check_result, test_result
+    status, priliminary_dise_id_list, check_result, test_result,testAdvice,familiarInform
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.DmsCaseHistoryExample" resultMap="BaseResultMap">
     select
@@ -384,6 +386,13 @@
       <if test="record.testResult != null">
         test_result = #{record.testResult,jdbcType=VARCHAR},
       </if>
+      <if test="record.testAdvice != null">
+        testAdvice = #{record.testAdvice,jdbcType=VARCHAR},
+      </if>
+
+      <if test="record.familiarInform != null">
+        familiarInform = #{record.familiarInform,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -494,6 +503,10 @@
       </if>
       <if test="testResult != null">
         test_result = #{testResult,jdbcType=VARCHAR},
+      </if>
+
+      <if test="familiarInform != null">
+        familiarInform = #{familiarInform,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

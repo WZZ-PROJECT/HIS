@@ -31,7 +31,7 @@ public interface SmsStaffService {
     /**
      * 描述：查询员工
      */
-    List<SmsStaffResult> select(SmsStaffParam smsStaffQueryParam, Integer pageSize, Integer pageNum);
+    List<SmsStaffResult> select(SmsStaffParam smsStaffQueryParam);
 
     /**
      * 描述：列出所有员工

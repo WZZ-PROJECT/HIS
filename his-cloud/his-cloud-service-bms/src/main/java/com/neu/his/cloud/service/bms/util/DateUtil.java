@@ -109,18 +109,37 @@ public class DateUtil {
         return timeStr.substring(0,length>timeStr.length()?timeStr.length():length);
     }
 
+    /**
+     * 获取当前时间24小时以前的时间
+     * @return
+     */
+    public static Date Yesterday(Date date){
+        //获取当前时间24小时前的时间
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY,c.get(Calendar.HOUR_OF_DAY) - 24);
+        Date time= c.getTime();
+        return time;
+    }
 
     public static void main(String[] args) {
         //System.out.println( getTimeStr(new Date(),100));
-        List<Integer> integers = new ArrayList<>(3);
-        for (int i = 0 ;i<3;i++){
-            integers.add(i);
-        }
-        integers.set(0,100);
-        integers.set(1,null);
-        System.out.println(integers.get(0));
-        System.out.println(integers.get(1) == null);
-        System.out.println(getDateSubtraction(DateUtil.getDateBefore(new Date(),7),new Date()));
+//        List<Integer> integers = new ArrayList<>(3);
+//        for (int i = 0 ;i<3;i++){
+//            integers.add(i);
+//        }
+//        integers.set(0,100);
+//        integers.set(1,null);
+//        System.out.println(integers.get(0));
+//        System.out.println(integers.get(1) == null);
+//        System.out.println(getDateSubtraction(DateUtil.getDateBefore(new Date(),7),new Date()));
+
+        Date yesterday = Yesterday(new Date());
+        long time = new Date().getTime() - yesterday.getTime();
+        long result = 24 * 60 * 60 * 1000;
+      System.out.println(result);
+
+
     }
 
 

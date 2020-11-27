@@ -5,16 +5,21 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SmsRegistrationRank implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "挂号等级编码")
     private String code;
 
+    @ApiModelProperty(value = "挂号等级名称")
     private String name;
 
     private Long seqNo;
 
+    @ApiModelProperty(value = "价格")
     private BigDecimal price;
 
+    @ApiModelProperty(value = "挂号等级状态")
     private Integer status;
 
     private static final long serialVersionUID = 1L;

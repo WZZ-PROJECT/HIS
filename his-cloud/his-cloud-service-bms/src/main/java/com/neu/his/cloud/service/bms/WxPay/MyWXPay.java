@@ -18,6 +18,7 @@ public class MyWXPay {
     /**
      * 扫码支付
      * @throws Exception
+     * 调用微信支付的接口
      */
     public static Map<String,String> scanCodeToPay(String auth_code,String total_fee) throws Exception {
         MyConfig config = new MyConfig();
@@ -32,6 +33,7 @@ public class MyWXPay {
         map.put("out_trade_no", out_trade_no);
         map.put("spbill_create_ip", "127.0.0.1");
         map.put("total_fee", total_fee);
+        /*map.put("total_fee", "1.01");*/
         //生成签名
         String sign = WXPayUtil.generateSignature(map, config.getKey());
         map.put("sign", sign);
@@ -94,4 +96,50 @@ public class MyWXPay {
         log.error("微信支付失败！");
         return null;
     }
+
+    /**
+     * 退款
+     * @throws Exception
+     */
+
+    public static Map<String,String> refund(String transaction_id,String total_fee,String refund_fee) throws Exception{
+
+        MyConfig config = new MyConfig();
+        WXPay wxpay = new WXPay(config);
+        String nonce_str = WXPayUtil.generateNonceStr();
+        String out_refund_no=WXPayUtil.generateNonceStr();
+        Map<String, String> map = new HashMap<>(16);
+        map.put("nonce_str",nonce_str);
+        map.put("out_refund_no",out_refund_no);
+        map.put("transaction_id",transaction_id);
+        map.put("refund_fee_type", "CNY");
+        map.put("total_fee", total_fee);
+        map.put("refund_fee", refund_fee);//部退款金额
+        String sign = WXPayUtil.generateSignature(map, config.getKey());
+        map.put("sign",sign);
+        String mapToXml = null;
+        try {
+            //调用微信退款
+            Map<String, String> resp = wxpay.refund(map);
+            mapToXml = WXPayUtil.mapToXml(resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("微信退款失败"+ e);
+        }
+
+        Map<String, String> stringStringMap = WXPayUtil.xmlToMap(mapToXml);
+        String return_code = stringStringMap.get("return_code");
+        String result_code = stringStringMap.get("result_code");
+        if(PAY_SUCCESS.equals(return_code) && PAY_SUCCESS.equals(result_code)){
+            Map<String, String> data = new HashMap<>(16);
+            data.put("out_refund_no", out_refund_no);
+            //查询退款返回结果
+            Map<String, String> stringStringMap1 = wxpay.refundQuery(data);
+            String results = WXPayUtil.mapToXml(stringStringMap1);
+            stringStringMap1.put("results",results);
+            return stringStringMap1;
+        }
+        return null;
+    }
+
 }

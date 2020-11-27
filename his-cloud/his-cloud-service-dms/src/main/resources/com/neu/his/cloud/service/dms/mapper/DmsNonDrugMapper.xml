@@ -13,6 +13,8 @@
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="is_setmeal" jdbcType="INTEGER" property="isSetmeal" />
+    <result column="place" jdbcType="VARCHAR" property="place" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -74,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, code, name, format, price, exp_class_id, mnemonic_code, record_type, create_date, 
-    status, dept_id
+    status, dept_id, is_setmeal, place
   </sql>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.DmsNonDrugExample" resultMap="BaseResultMap">
     select
@@ -113,11 +115,13 @@
     insert into dms_non_drug (code, name, format, 
       price, exp_class_id, mnemonic_code, 
       record_type, create_date, status, 
-      dept_id)
+      dept_id, is_setmeal, place
+      )
     values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, 
       #{price,jdbcType=DECIMAL}, #{expClassId,jdbcType=BIGINT}, #{mnemonicCode,jdbcType=VARCHAR}, 
       #{recordType,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{deptId,jdbcType=BIGINT})
+      #{deptId,jdbcType=BIGINT}, #{isSetmeal,jdbcType=INTEGER}, #{place,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.DmsNonDrug">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -155,6 +159,12 @@
       <if test="deptId != null">
         dept_id,
       </if>
+      <if test="isSetmeal != null">
+        is_setmeal,
+      </if>
+      <if test="place != null">
+        place,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="code != null">
@@ -186,6 +196,12 @@
       </if>
       <if test="deptId != null">
         #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="isSetmeal != null">
+        #{isSetmeal,jdbcType=INTEGER},
+      </if>
+      <if test="place != null">
+        #{place,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -231,6 +247,12 @@
       <if test="record.deptId != null">
         dept_id = #{record.deptId,jdbcType=BIGINT},
       </if>
+      <if test="record.isSetmeal != null">
+        is_setmeal = #{record.isSetmeal,jdbcType=INTEGER},
+      </if>
+      <if test="record.place != null">
+        place = #{record.place,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -248,7 +270,9 @@
       record_type = #{record.recordType,jdbcType=INTEGER},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      dept_id = #{record.deptId,jdbcType=BIGINT}
+      dept_id = #{record.deptId,jdbcType=BIGINT},
+      is_setmeal = #{record.isSetmeal,jdbcType=INTEGER},
+      place = #{record.place,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -286,6 +310,12 @@
       <if test="deptId != null">
         dept_id = #{deptId,jdbcType=BIGINT},
       </if>
+      <if test="isSetmeal != null">
+        is_setmeal = #{isSetmeal,jdbcType=INTEGER},
+      </if>
+      <if test="place != null">
+        place = #{place,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -300,7 +330,9 @@
       record_type = #{recordType,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      dept_id = #{deptId,jdbcType=BIGINT}
+      dept_id = #{deptId,jdbcType=BIGINT},
+      is_setmeal = #{isSetmeal,jdbcType=INTEGER},
+      place = #{place,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

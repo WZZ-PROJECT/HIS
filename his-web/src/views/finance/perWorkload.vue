@@ -57,7 +57,7 @@ export default {
       queryPersonal(data).then(res=>{
         this.total = []
         this.total.push(res.data)
-        console.log(res)
+
       })
     }
   }

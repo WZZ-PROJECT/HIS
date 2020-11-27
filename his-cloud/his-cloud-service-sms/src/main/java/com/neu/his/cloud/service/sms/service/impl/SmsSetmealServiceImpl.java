@@ -352,7 +352,7 @@ public class SmsSetmealServiceImpl implements SmsSetmealService {
             criteria.andNonDrugIdEqualTo(smsSetmealSkdParam.getNonDrugId());
         }
         if(smsSetmealSkdParam.getStartDate() != null &&smsSetmealSkdParam.getStartDate().compareTo(parse)!=0){
-            criteria.andDateGreaterThanOrEqualTo(smsSetmealSkdParam.getStartDate());
+            criteria.andDateEqualTo(smsSetmealSkdParam.getStartDate());
         }
         if(smsSetmealSkdParam.getEndDate() != null){
             criteria.andDateLessThanOrEqualTo(smsSetmealSkdParam.getEndDate());

@@ -48,7 +48,7 @@ public interface DmsAppService {
      * 描述：查询该病人历史就诊医生信息
      */
     @RequestMapping(value = "/staff/listNowDoctorRegistration", method = RequestMethod.GET)
-    CommonResult<List<DmsNowDoctorRegistrationResult>> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
+    CommonResult <DmsNowDoctorRegistrationResults> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
                                                                                  @RequestParam("thedate") String thedate);
 
     /**
@@ -59,4 +59,16 @@ public interface DmsAppService {
 
     @RequestMapping(value = "/staff/listPatientConventionUpdate", method = RequestMethod.GET)
     CommonResult<List<BookingInformationResult>> listPatientConventionUpdate(@RequestParam("Id") Long Id);
+
+    /**
+     *  查看信息
+     */
+    @RequestMapping(value = "/staff/selectMaintenanceParam", method = RequestMethod.POST)
+    CommonResult<List<InformationMaintenance>> selectMaintenanceParam();
+
+    /**
+     *  修改信息
+     */
+    @RequestMapping(value = "/staff/updateMaintenanceParam", method = RequestMethod.POST)
+    CommonResult updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance);
 }

@@ -49,8 +49,8 @@ public class SmsDeptServiceImpl implements SmsDeptService {
             return 0;
         }
 
-        //插入成功，在redis修改flag
-        redisUtil.setObj("deptChangeStatus","1");
+//        //插入成功，在redis修改flag
+//        redisUtil.setObj("deptChangeStatus","1");
 
         //没有则插入数据
         return smsDeptMapper.insert(smsDept);
@@ -63,8 +63,8 @@ public class SmsDeptServiceImpl implements SmsDeptService {
         SmsDeptExample example = new SmsDeptExample();
         example.createCriteria().andIdIn(ids);
 
-        //删除成功，在redis修改flag
-        redisUtil.setObj("deptChangeStatus","1");
+//        //删除成功，在redis修改flag
+//        redisUtil.setObj("deptChangeStatus","1");
 
         return smsDeptMapper.updateByExampleSelective(smsDept, example);
     }
@@ -73,10 +73,17 @@ public class SmsDeptServiceImpl implements SmsDeptService {
     public int update(Long id,SmsDeptParam smsDeptParam){
         SmsDept smsDept = new SmsDept();
         BeanUtils.copyProperties(smsDeptParam, smsDept);
+        SmsDeptExample example = new SmsDeptExample();
+        example.createCriteria().andNameEqualTo(smsDept.getName()).andStatusNotEqualTo(0);
+        List<SmsDept> SmsDeptList = smsDeptMapper.selectByExample(example);
+        if (SmsDeptList.size() > 0) {
+            return 2;
+        }
+        BeanUtils.copyProperties(smsDeptParam, smsDept);
         smsDept.setId(id);
 
         //修改成功，在redis修改flag
-        redisUtil.setObj("deptChangeStatus","1");
+//        redisUtil.setObj("deptChangeStatus","1");
 
         return smsDeptMapper.updateByPrimaryKeySelective(smsDept);
     }
@@ -117,17 +124,17 @@ public class SmsDeptServiceImpl implements SmsDeptService {
 
     @Override
     public List<SmsDeptResult> selectAll(){
-        //先在redis中查询是否存在
-        String status = (String)redisUtil.getObj("deptChangeStatus");
-        if(status != null && Integer.parseInt(status)>0){
-            List<SmsDeptResult> resultList = (List<SmsDeptResult>)redisUtil.getObj("allDept");
-            if(resultList != null){
-                System.err.println("从redis中取出全部科室数据");
-                return resultList;
-            }
-        }else{
-            System.err.println("从mysql中取出全部科室数据");
-        }
+//        //先在redis中查询是否存在
+//        String status = (String)redisUtil.getObj("deptChangeStatus");
+//        if(status != null && Integer.parseInt(status)>0){
+//            List<SmsDeptResult> resultList = (List<SmsDeptResult>)redisUtil.getObj("allDept");
+//            if(resultList != null){
+//                System.err.println("从redis中取出全部科室数据");
+//                return resultList;
+//            }
+//        }else{
+//            System.err.println("从mysql中取出全部科室数据");
+//        }
 
         //数据库查询
         SmsDeptExample example = new SmsDeptExample();
@@ -141,9 +148,9 @@ public class SmsDeptServiceImpl implements SmsDeptService {
             smsDeptResults.add(r);
         }
 
-        //向redis添加
-        redisUtil.setObj("allDept",smsDeptResults);
-        redisUtil.setObj("deptChangeStatus","0");
+//        //向redis添加
+//        redisUtil.setObj("allDept",smsDeptResults);
+//        redisUtil.setObj("deptChangeStatus","0");
 
 
         return smsDeptResults;

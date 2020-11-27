@@ -1,0 +1,14 @@
+<!--pages/information.wxml-->
+<view class="information-page">
+  <web-view src="https://www.cgjiankang.com?timestamp={{timestamp}}"></web-view>
+  <!-- <view class="list-item" wx:for="{{5}}" wx:key="item">
+    <view class="item-picture">
+      <image src="../../images/touxiang.png" alt=""></image>
+    </view>
+    <view class="item-info">
+      <view class="name">医生名称</view>
+      <view class="expert elli">擅长：擅长擅长擅长擅长擅长擅长擅长擅长擅长擅长擅长擅长擅长擅长</view>
+      <view class="detail">医生简介：医生简介医生简介医生简介医生简介医生简介医生简介医生简介医生简介医生简介医生简介医生简介医生简介</view>
+    </view>
+  </view> -->
+</view>

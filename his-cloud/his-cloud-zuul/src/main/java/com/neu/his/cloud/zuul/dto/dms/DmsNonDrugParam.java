@@ -34,4 +34,6 @@ public class DmsNonDrugParam  implements Serializable {
     private Date createDate;
     @ApiModelProperty(value = "状态")
     private Integer status;
+    @ApiModelProperty(value = "地点")
+    private String place;
 }

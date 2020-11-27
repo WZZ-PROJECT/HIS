@@ -1,15 +1,15 @@
 <template>
   <div class="upload-container">
-    <el-form>
-      <el-form-item label="检查结果">
-        <el-input style="width:60%" type="textarea" :autosize="{ minRows: 2, maxRows: 3}" v-model="checkResult" placeholder=""></el-input>
+    <el-form :model="check" ref="check" :rules="rules">
+      <el-form-item label="检查结果" prop="checkResult">
+        <el-input style="width:80%" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" v-model="check.checkResult" placeholder="" ></el-input>
       </el-form-item>
 
       <el-form-item label="" align="center">
         <el-button icon='el-icon-upload' size="mini" :style="{background:color,borderColor:color}"
                   @click=" dialogVisible=true" type="primary">上传图片
         </el-button>
-        <el-button type="primary" size="mini" @click="uploadResult">确 定</el-button>
+        <el-button type="primary" size="mini" @click="uploadResult('check')">确 定</el-button>
       </el-form-item>
     </el-form>
     <el-dialog append-to-body :visible.sync="dialogVisible">
@@ -24,6 +24,7 @@
                  :on-success="handleSuccess"
                  :before-upload="beforeUpload">
         <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传  jpg/png  文件</div>
       </el-upload>
       <el-button @click="dialogVisible = false">取 消</el-button>
       <el-button type="primary" @click="handleSubmit">确 定</el-button>
@@ -39,7 +40,15 @@
     name: 'Upload',
     data() {
       return {
-        checkResult:'',
+        rules: {
+          checkResult: [
+            { required: true, message: '请输入检查结果', trigger: 'blur' },
+            { min: 1, max: 150, message: '长度在 1 到 150 个字符', trigger: 'blur' }
+          ]
+        },
+        check:{
+          checkResult:'',
+        },
         color: '#1890ff',
         dialogVisible: false,
         listObj: {},
@@ -66,26 +75,28 @@
       })
     },
     methods: {
-      uploadResult(){
-        let data = {}
-        data.id = this.uploadpatient
-        data.executeStaffId = this.$store.getters.id
-        data.checkResult = this.checkResult
-        data.resultImgUrlList = ''
-        this.arr.forEach(item=>{
-          data.resultImgUrlList += (item.url+',')
-        })
-        data.resultImgUrlList = data.resultImgUrlList.substr(0,data.resultImgUrlList.length-1)
-        uploadResult(data).then(res=>{
-          this.$notify({
-            title: '成功',
-            message: res.message,
-            type: 'success',
-            duration: 2000
-          })
-          console.log(8921)
-          this.$emit('reflect')
-          console.log(666312)
+      uploadResult(check){
+        this.$refs[check].validate((valid) => {
+          if (valid) {
+            let data = {}
+            data.id = this.uploadpatient
+            data.executeStaffId = this.$store.getters.id
+            data.checkResult = this.check.checkResult
+            data.resultImgUrlList = ''
+            this.arr.forEach(item=>{
+              data.resultImgUrlList += (item.url+',')
+            })
+            data.resultImgUrlList = data.resultImgUrlList.substr(0,data.resultImgUrlList.length-1)
+            uploadResult(data).then(res=>{
+              this.$emit('reflect',res)
+            })
+            this.dataObj = {}
+            this.arr = []
+            this.listObj = {}
+            this.fileList = []
+            this.check.checkResult=''
+          }
+          return
         })
       },
       checkAllSuccess() {
@@ -113,7 +124,7 @@
         }
         this.$notify({
             title: '成功',
-            message: '上传成功222',
+            message: '上传成功',
             type: 'success',
             duration: 2000
           })
@@ -129,6 +140,13 @@
         }
       },
       beforeUpload(file) {
+        let extension = file.name.split(".")[1];
+        let extensionList = ["jpg", "png"];
+        if (extensionList.indexOf(extension) < 0) {
+          this.$message.warning("只能上传jpg / png文件");
+          return false;
+        }
+        console.log(file);
         const _self = this
         const fileName = file.uid;
         this.listObj[fileName] = {};

@@ -8,7 +8,7 @@
     <el-aside :width="asidewidth" style="margin-top:0;background:white;padding: 0 0 0 0">
           <aside style="height:50px;margin:0 0 0 0">
             <el-tag size="large">药品模板</el-tag>
-            
+
           </aside>
         <div style="padding: 0 10px 0 10px">
         <el-card v-if="!isaside">
@@ -63,7 +63,7 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" prop="id" width="150px">
-            <template slot-scope="scope"> 
+            <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="editModel(scope.row)">修改</el-button>
               <el-button type="danger" size="mini" @click="deleteModel(scope.row)">删除</el-button>
             </template>
@@ -76,35 +76,37 @@
     </transition>
     <!-- 医生工作台 -->
     <el-main style="padding:0 0 0 0;"  v-if="isaside">
-      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="edit" @click="updateModel">提交修改</el-button>
-      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="!edit" @click="createModel">新建模板</el-button>
+      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="edit" @click="updateModel('model')">提交修改</el-button>
+      <el-button type="primary" style="margin-left:30px;margin-top:30px;margin-bottom:30px" v-if="!edit" @click="createModel('model')">新建模板</el-button>
       <el-button type="danger" @click="showaside">取消</el-button>
-      <el-form :model="model" label-width="140px" inline>
-        <el-form-item label="模板名称">
+      <el-form :model="model" ref="model" label-width="140px" inline :rules="rules">
+        <el-form-item label="模板名称" prop="name">
           <el-input placeholder="请输入模板名称" v-model="model.name"></el-input>
         </el-form-item>
-        <el-form-item label="模板简介">
+        <el-form-item label="模板简介" prop="aim">
           <el-input placeholder="模板简介" v-model="model.aim"></el-input>
         </el-form-item>
-        <el-form-item v-if='edit' label="模板编码">
+        <el-form-item v-if='edit' label="模板编码" >
           <el-input placeholder="模板编码" disabled v-model="model.code"></el-input>
         </el-form-item>
-        <el-form-item label="嘱托">
+        <el-form-item label="嘱托" prop="medicalAdvice">
           <el-input v-model="model.medicalAdvice" placeholder="嘱托"></el-input>
         </el-form-item>
-        <el-form-item label="治法">
+        <el-form-item label="治法" prop="therapy">
           <el-input v-model="model.therapy" placeholder="治法"></el-input>
         </el-form-item>
-        <el-form-item label="用法">
-          <el-input v-model="model.frequency" placeholder="用法"></el-input>
+        <el-form-item label="用法" prop="frequency">
+          <el-select placeholder="请选择用法" v-model="model.frequency" clearable style="width: 130px" class="filter-item">
+            <el-option v-for="item in [{key:1,value:'一天一次'},{key:2,value:'一天三次'}]" :key="item.key" :label="item.value" :value="item.key" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="付数">
-          <el-input v-model="model.pairNum" placeholder="付数"></el-input>
+        <el-form-item label="付数" prop="pairNum">
+          <el-input-number controls-position="right" v-model="model.pairNum" :min="1" :max="10000000" placeholder="付数"></el-input-number>
         </el-form-item>
         <el-form-item v-if='edit'  label="创建时间">
           <el-input placeholder="" v-model="model.createTime"  style="width:300px" disabled></el-input>
         </el-form-item>
-        <el-form-item label="模板范围">
+        <el-form-item label="模板范围" prop="scope">
           <el-select placeholder="请选择范围" v-model="model.scope" clearable style="width: 130px" class="filter-item">
                <el-option v-for="item in [{key:0,value:'个人'},{key:1,value:'科室'},{key:2,value:'全院'}]" :key="item.key" :label="item.value" :value="item.key" />
           </el-select>
@@ -125,7 +127,6 @@
             <span v-if="scope.row.frequency===2">一天三次</span>
           </template>
         </el-table-column>
-        <el-table-column label="天数" prop="days"></el-table-column>
         <el-table-column label="用量" prop="usageNum"></el-table-column>
         <el-table-column label="单位" prop="usageNumUnit">
           <template slot-scope="scope">
@@ -156,52 +157,52 @@
         <el-main>
           <el-tag type="primary">项目金额总计:</el-tag>
           <el-tag type="warning">{{oneprescription.amount}}元</el-tag>
-          <el-button type="primary" style="float:right" @click="addDrug">确定</el-button>
-          <el-table  height="500px" :data="oneprescription.druglist" cell-style="text-align:center" header-cell-style="text-align:center">
-              <el-table-column width="50px">
-                <template slot-scope="scope">
-                  <el-button type="text" @click="deldrug(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-            <el-table-column property="name" label="药品名" width="150"></el-table-column>
-            <el-table-column property="format" label="规格" width="200"></el-table-column>
-            <el-table-column property="price" label="单价"></el-table-column>
-            <el-table-column label="数量" width="130px"> 
-              <template slot-scope="scope">
-                <el-input-number controls-position="right" style="width:100px" :min="1" :max="100" size="mini" @change="changenum(scope.row)" v-model="scope.row.num"></el-input-number>
-              </template>
-            </el-table-column>
-            <el-table-column label="剂型" width="130px" prop="dosage.name">
-            </el-table-column>
-            <el-table-column label="医嘱" width="130">
-          <template slot-scope="scope">
-            <el-input placeholder="医嘱" v-model="scope.row.medicalAdvice"></el-input>
-          </template>  
-        </el-table-column>
-        <el-table-column label="脚注" width="130">
-          <template slot-scope="scope">
-            <el-input placeholder="脚注" v-model="scope.row.footnote"></el-input>
-          </template>  
-        </el-table-column>
-        <el-table-column label="频次" width="130px">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.frequency" placeholder="" style="width:120px">
-              <el-option  v-for="item in [{key:1,label:'一天一次'},{key:2,label:'一天三次'}]" :key="item.key" :label="item.label" :value="item.key" ></el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="用量" width="100px">
-          <template slot-scope="scope">
-           <el-input v-model="scope.row.usageNum" placeholder=""></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="单位" width="130px">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.usageNumUnit" placeholder="" style="width:120px">
-              <el-option  v-for="item in [{key:1,label:'片'},{key:2,label:'支'},{key:3,label:'瓶'},{key:2,label:'克'}]" :key="item.key" :label="item.label" :value="item.key" ></el-option>
-            </el-select>
-          </template>
-        </el-table-column>
+          <el-button type="primary" style="float:right" @click="addDrug('druglist')">确定</el-button>
+          <el-table  height="500px" :data="oneprescription.druglist"  ref="druglist" cell-style="text-align:center" header-cell-style="text-align:center" :rules="oneprescriptionDruglist">
+          <el-table-column width="50px">
+            <template slot-scope="scope">
+              <el-button type="text" @click="deldrug(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column property="name" label="药品名" width="150"></el-table-column>
+          <el-table-column property="format" label="规格" width="200"></el-table-column>
+          <el-table-column property="price" label="单价"></el-table-column>
+          <el-table-column label="数量" width="130px" prop="num">
+            <template slot-scope="scope" >
+              <el-input-number controls-position="right" style="width:100px" :min="1" :max="100" size="mini" @change="changenum(scope.row)" v-model="scope.row.num"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="剂型" width="130px" prop="dosage.name">
+          </el-table-column>
+          <el-table-column label="医嘱" width="130" prop="medicalAdvice">
+             <template slot-scope="scope">
+                <el-input placeholder="医嘱" v-model="scope.row.medicalAdvice"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="脚注" width="130" prop="footnote">
+            <template slot-scope="scope">
+              <el-input placeholder="脚注" v-model="scope.row.footnote"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="频次" width="130px" prop="frequency">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.frequency" placeholder="" style="width:120px">
+                <el-option  v-for="item in [{key:1,label:'一天一次'},{key:2,label:'一天三次'}]" :key="item.key" :label="item.label" :value="item.key" ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="用量" width="100px" prop="usageNum">
+            <template slot-scope="scope">
+             <el-input-number controls-position="right" style="width:80px" v-model="scope.row.usageNum" :min="1" :max="1000000" placeholder=""></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" width="130px" prop="usageNumUnit">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.usageNumUnit" placeholder="" style="width:120px">
+                <el-option  v-for="item in [{key:1,label:'片'},{key:2,label:'支'},{key:3,label:'瓶'},{key:2,label:'克'}]" :key="item.key" :label="item.label" :value="item.key" ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
           </el-table>
         </el-main>
         </el-container>
@@ -259,6 +260,26 @@ export default {
         name:'',
         range:'',
         type:''
+      },
+      rules:{
+        name:[
+          {required: true, message: '请输入模板名称',trigger: 'blur'}
+        ],
+        aim:[{required: true, message: '请输入模板简介',trigger: 'blur'}],
+        medicalAdvice:[{required: true, message: '请输入嘱托',trigger: 'blur'}],
+        therapy:[{required: true, message: '请输入治法',trigger: 'blur'}],
+        frequency:[{required: true, message: '请输入用法',trigger: 'blur'}],
+        pairNum:[{required: true, message: '请输入付数',trigger: 'blur'}],
+        scope:[{required: true, message: '请选择模板范围',trigger: 'blur'}]
+      },
+      oneprescriptionDruglist:{
+        medicalAdvice:[
+          {required: true, message: '请输入医嘱',trigger: 'blur'}
+        ],
+        footnote:[{required: true, message: '请输入脚注',trigger: 'blur'}],
+        frequency:[{required: true, message: '请输入拼刺',trigger: 'blur'}],
+        usageNum:[{required: true, message: '请输入用量',trigger: 'blur'}],
+        usageNumUnit:[{required: true, message: '请选择单位',trigger: 'blur'}]
       }
     }
   },
@@ -267,11 +288,11 @@ export default {
   },
   methods:{
     addDrug(){
-      this.dialogVisible = false
-      this.itemdrugList = this.oneprescription.druglist
-      this.itemdrugList.forEach(item=>{
-        item.totalprice = Math.floor((item.price*item.num)*100)/100
-      })
+          this.dialogVisible = false
+          this.itemdrugList = this.oneprescription.druglist
+          this.itemdrugList.forEach(item=>{
+            item.totalprice = Math.floor((item.price*item.num)*100)/100
+          })
     },
     async getdrugList(type) {
       let data = {}
@@ -293,7 +314,8 @@ export default {
       this.oneprescription.druglist.forEach(item=>{
         this.oneprescription.amount += item.price
       })
-      this.oneprescription.amount = Math.floor((this.oneprescription.amount+0.5)*100)/100
+      // this.oneprescription.amount = Math.floor((this.oneprescription.amount+0.5)*100)/100
+      this.oneprescription.amount = Math.floor((this.oneprescription.amount)*100)/100
     },
     choosedrug(val){
       let flag = 1
@@ -305,7 +327,8 @@ export default {
       })
       if(flag){
         this.oneprescription.amount +=val.price
-        this.oneprescription.amount = Math.floor((this.oneprescription.amount+0.5)*100)/100
+        // this.oneprescription.amount = Math.floor((this.oneprescription.amount+0.5)*100)/100
+        this.oneprescription.amount = Math.floor((this.oneprescription.amount)*100)/100
         this.oneprescription.druglist.push(val)
         this.oneprescription.druglist.forEach(item=>{
           if(item.num===undefined)
@@ -318,7 +341,7 @@ export default {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(()=>{      
+      }).then(()=>{
         deleteModel(row.id).then(res=>{
         this.getModelList()
         this.$notify({
@@ -329,36 +352,68 @@ export default {
         })
       })})
     },
-    createModel(){
-      let data = deepClone(this.model)
-      data.status = 1
-      data.ownId = this.$store.getters.id
-      data.dmsMedicineModelItemList = deepClone(this.itemdrugList)
-      data.type = 2
-      createModel(data).then(res=>{
-        this.getModelList()
-        this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
-          duration: 2000
-        })
+    createModel(model){
+      this.$refs[model].validate((valid)=>{
+        if (valid) {
+          let data = deepClone(this.model)
+          data.status = 1
+          data.ownId = this.$store.getters.id
+          data.dmsMedicineModelItemList = deepClone(this.itemdrugList)
+          if (data.dmsMedicineModelItemList.length<=0) {
+            this.$notify({
+              title: '警告',
+              message: '请添加项目',
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          data.type = 2
+          createModel(data).then(res=>{
+            this.getModelList()
+            this.$notify({
+              title: '成功',
+              message: res.message,
+              type: 'success',
+              duration: 2000
+            })
+          })
+          this.showaside()
+        }else {
+          return;
+        }
       })
-      this.showaside()
     },
-    updateModel(){
-      let data = deepClone(this.model)
-      data.nonDrugIdList = deepClone(this.choices)
-      updateModel(data).then(res=>{
-        this.getModelList()
-        this.$notify({
-          title: '成功',
-          message: res.message,
-          type: 'success',
-          duration: 2000
-        })
+    updateModel(model){
+      this.$refs[model].validate((valid)=>{
+        if (valid) {
+          let data = deepClone(this.model)
+          data.dmsMedicineModelItemList = deepClone(this.itemdrugList)
+          if (data.dmsMedicineModelItemList.length<=0) {
+            this.$notify({
+              title: '警告',
+              message: '请添加项目',
+              type: 'warning',
+              duration: 2000
+            })
+            return;
+          }
+          data.createTime = ''
+          data.ownId = this.$store.getters.id
+          updateModel(data).then(res=>{
+            this.getModelList()
+            this.$notify({
+              title: '成功',
+              message: res.message,
+              type: 'success',
+              duration: 2000
+            })
+          })
+          this.showaside()
+        }else {
+          return;
+        }
       })
-      this.showaside()
     },
     confirmItem(){
       this.nondrugList = this.alldrugList.filter(item=>{
@@ -386,7 +441,7 @@ export default {
         this.total = res.data.total
         this.modelList.forEach(model=>{
           model.dmsMedicineModelItemList.forEach(item=>{
-          selectById(item.id).then(res=>{
+          selectById(item.drugId).then(res=>{
             item.name = res.data.name
             item.format = res.data.format
             item.price = res.data.price
@@ -398,7 +453,7 @@ export default {
         })
         this.total = res.data.total
       })
-      
+
     },
     searchModel(){
       this.loading = true
@@ -418,7 +473,7 @@ export default {
         this.nondrugList = []
         this.itemdrugList = []
         this.model = {}
-        this.edit = 0 
+        this.edit = 0
       }
       else
         this.edit = 0
@@ -428,7 +483,15 @@ export default {
       this.model = deepClone(row)
       this.model.createTime = parseTime(this.model.createTime)
       this.showaside('edit')
-    }
+    },
+    changenum(val){
+      this.oneprescription.amount=0
+      this.oneprescription.druglist.forEach(item=>{
+        this.oneprescription.amount+=item.price*item.num
+      })
+      // this.oneprescription.amount = Math.floor((this.oneprescription.amount+0.5)*100)/100
+      this.oneprescription.amount = Math.floor((this.oneprescription.amount)*100)/100
+    },
   }
 }
 </script>

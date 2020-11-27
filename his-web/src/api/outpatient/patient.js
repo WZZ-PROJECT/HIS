@@ -9,6 +9,14 @@ export function getPatientList(data) {
   })
 }
 
+export function queryPeople(data) {
+  return request({
+    url: '/diagnosisPatient/queryPeople',
+    method: 'post',
+    data
+  })
+}
+
 export function bindPatient(registrationId,staffId) {
   return request({
     url: '/diagnosisPatient/bindPatient',
@@ -36,6 +44,17 @@ export function selectPatientByIdNo(data) {
     method: 'post',
     params: {
       identificationNo:data
+    }
+  })
+}
+
+//查询病人信息用于查看病例信息
+export function selectPeopleByRegistrationId(data) {
+  return request({
+    url: '/diagnosisPatient/selectPeopleByRegistrationId',
+    method: 'post',
+    params: {
+      registrationId:data
     }
   })
 }

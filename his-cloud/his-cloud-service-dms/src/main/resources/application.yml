@@ -1,3 +1,98 @@
+#spring:
+#  application:
+#    name: his-cloud-service-dms
+#  zipkin:
+#    base-url: http://152.136.233.245:9411
+#  boot:
+#    admin:
+#      client:
+#        url: http://152.136.233.245:8084
+#  jackson:
+#    time-zone: GMT+8  #市区设置
+#  rabbitmq:
+#    host: 152.136.233.245
+#    port: 5672
+#    virtual-host: his
+#    username: admin
+#    password: admin
+#    publisher-confirms: true #如果对异步消息需要回调必须设置为true
+#
+#  datasource:
+#    url: jdbc:mysql://49.233.254.194:8806/his?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    username: yuncheng
+#    password: YunCheng@123#!
+#    druid:
+#      initial-size: 5 #连接池初始化大小
+#      min-idle: 10 #最小空闲连接数
+#      max-active: 20 #最大连接数
+#      web-stat-filter:
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+#      stat-view-servlet: #访问监控网页的登录用户名和密码
+#        login-username: druid
+#        login-password: druid
+#
+##  main:
+##    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+#
+#
+#server:
+#  port: 10008
+#
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://152.136.233.245:10030/eureka/
+#
+#redis:
+#  host: 152.136.233.245 # Redis服务器地址
+#  database: 0 # Redis数据库索引（默认为0）
+#  port: 6379 # Redis服务器连接端口
+#  password: # Redis服务器连接密码（默认为空）
+#  jedis:
+#    pool:
+#      max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
+#      max-wait: -1ms # 连接池最大阻塞等待时间（使用负值表示没有限制）
+#      max-idle: 8 # 连接池中的最大空闲连接
+#      min-idle: 0 # 连接池中的最小空闲连接
+#  timeout: 3000ms # 连接超时时间（毫秒）
+#
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"   #暴露所有的端点我们可以看到更多的服务实例相关信息，
+#    endpoint:
+#      health:
+#        show-details: ALWAYS   #health endpoint是否必须显示全部细节
+#      rabbit:
+#        enabled: false
+#
+#mybatis:
+#  type-aliases-package: com.neu.his.cloud.service.dms.model
+#  mapper-locations: classpath:/com.neu.his.cloud.service.dms.mapper/*.xml
+#
+#logging:
+#  level:
+#    root: info #日志配置DEBUG,INFO,WARN,ERROR
+#    com.neu.his: debug
+#  file: /log #配置日志文件路径
+#  path: his-cloud-service-dms.log #配置日志生成名称
+#
+#
+#aliyun:
+#  oss:
+#    endpoint: oss-cn-beijing.aliyuncs.com
+#    accessKeyId: LTAI4GEuRodq2mqRe8pigqT2
+#    accessKeySecret: DB6pN1VRizFzU62qdza9o80bu8B3pN
+#    bucketName: shandongciguang
+#    policy:
+#      expire: 300
+#    maxSize: 10
+#    callback: http://152.136.233.245:8080/aliyun/oss/callback
+#    dir:
+#      prefix: mall/images/
+
 spring:
   application:
     name: his-cloud-service-dms
@@ -10,7 +105,7 @@ spring:
   jackson:
     time-zone: GMT+8  #市区设置
   rabbitmq:
-    host: 192.168.0.164
+    host: 152.136.233.245
     port: 5672
     virtual-host: his
     username: admin
@@ -18,9 +113,9 @@ spring:
     publisher-confirms: true #如果对异步消息需要回调必须设置为true
 
   datasource:
+    url: jdbc:mysql://49.233.254.194:8806/his_dev?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: yuncheng
-    password: yuncheng@123
-    url: jdbc:mysql://192.168.0.164:8806/his?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowMultiQueries=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    password: YunCheng@123#!
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -72,12 +167,12 @@ mybatis:
   type-aliases-package: com.neu.his.cloud.service.dms.model
   mapper-locations: classpath:/com.neu.his.cloud.service.dms.mapper/*.xml
 
-logging:
-  level:
-    root: info #日志配置DEBUG,INFO,WARN,ERROR
-    com.neu.his: debug
-  file: /log #配置日志文件路径
-  path: his-cloud-service-dms.log #配置日志生成名称
+#logging:
+#  level:
+#    root: info #日志配置DEBUG,INFO,WARN,ERROR
+#    com.neu.his: debug
+#  file: E:/log #配置日志文件路径
+#  path: his-cloud-service-dms.log #配置日志生成名称
 
 
 aliyun:
@@ -92,3 +187,14 @@ aliyun:
     callback: http://localhost:8080/aliyun/oss/callback
     dir:
       prefix: mall/images/
+
+appid1: wx5413df4415f5b4eb
+key1: UtQldsIcA8rldkOUdlyHOdGZzHhJX7fz
+mchid1: 1602987321
+path1: classpath:apiclient_cert.p12
+
+sms:
+  appid: 1400440002
+  appkey: 5d2c9b2c9346a20d0bbce9a40824cbbd
+  templateId: 756537
+  smsSign: 慈光健康

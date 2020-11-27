@@ -4,7 +4,10 @@ export function getMechlist(data) {
     url: '/DmsMechanicItemRecord/listByDept',
     method: 'post',
     params:{
-      deptId:data
+      deptId:data.deptId,
+      pageSize:data.pageSize,
+      pageNum:data.pageNum,
+      name:data.name
     }
   })
 }
@@ -30,5 +33,22 @@ export function uploadResult(data) {
       checkResult:data.checkResult,
       resultImgUrlList:data.resultImgUrlList
     }
+  })
+}
+
+// 收费员处
+export function listByDeptChange(data) {
+  return request({
+    url: '/DmsMechanicItemRecord/listByDeptChange',
+    method: 'post',
+    data
+  })
+}
+// 退费
+export function refundCharge(data) {
+  return request({
+    url: '/fee/refundCharge',
+    method: 'post',
+    data
   })
 }

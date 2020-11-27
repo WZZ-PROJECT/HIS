@@ -55,6 +55,7 @@ public class DmsMedicinePrescriptionRecordServiceImpl implements DmsMedicinePres
             dmsMedicineItemRecord.setPrescriptionId(currentId);
             dmsMedicineItemRecord.setCurrentNum(dmsMedicineItemRecord.getNum());
             dmsMedicineItemRecord.setRefundNum(new Long(0));
+            dmsMedicineItemRecord.setInvoice(0L);
             insertCount += dmsMedicineItemRecordMapper.insert(dmsMedicineItemRecord);
         }
         return currentId;
@@ -130,7 +131,7 @@ public class DmsMedicinePrescriptionRecordServiceImpl implements DmsMedicinePres
     @Override
     public List<DmsMedicinePrescriptionRecordResult> listByIds(List<Long> ids) {
 
-        List<DmsMedicinePrescriptionRecord> dmsMedicinePrescriptionRecordList=new ArrayList<>();
+        List<DmsMedicinePrescriptionRecord> dmsMedicinePrescriptionRecordList= new ArrayList<>();
         List<DmsMedicinePrescriptionRecordResult> dmsMedicinePrescriptionRecordResultList=new ArrayList<>();
         DmsMedicinePrescriptionRecordExample dmsMedicinePrescriptionRecordExample = new DmsMedicinePrescriptionRecordExample();
         dmsMedicinePrescriptionRecordExample.createCriteria().andIdIn(ids);

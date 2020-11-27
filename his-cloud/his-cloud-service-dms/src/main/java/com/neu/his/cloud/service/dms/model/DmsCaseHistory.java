@@ -57,6 +57,26 @@ public class DmsCaseHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String testAdvice;
+
+    private String familiarInform;
+
+    public String getFamiliarInform() {
+        return familiarInform;
+    }
+
+    public void setFamiliarInform(String familiarInform) {
+        this.familiarInform = familiarInform;
+    }
+
+    public String getTestAdvice() {
+        return testAdvice;
+    }
+
+    public void setTestAdvice(String testAdvice) {
+        this.testAdvice = testAdvice;
+    }
+
     public Long getId() {
         return id;
     }

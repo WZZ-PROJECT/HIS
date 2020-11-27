@@ -1,7 +1,11 @@
 package com.neu.his.cloud.zuul.distribution.api.pc.sms;
 
 
+import com.neu.his.cloud.zuul.common.CommonPage;
 import com.neu.his.cloud.zuul.common.CommonResult;
+import com.neu.his.cloud.zuul.dto.sms.AddInformParam;
+import com.neu.his.cloud.zuul.dto.sms.FamiliarInformTemplate;
+import com.neu.his.cloud.zuul.dto.sms.InformParam;
 import com.neu.his.cloud.zuul.dto.sms.SmsFrequentUsedResult;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +29,21 @@ public interface ApiPcSmsFrequentUsedDistributionService {
     @RequestMapping(value = "/frequentUsed/selectByType", method = RequestMethod.POST)
     CommonResult<SmsFrequentUsedResult> selectFrequent(@RequestParam("staffId") Long staffId,
                                                               @RequestParam("selectType") int selectType);
+
+    //添加知情告知
+    @RequestMapping(value = "/frequentUsed/addInform", method = RequestMethod.POST)
+    public CommonResult addInform(@RequestBody AddInformParam addInformParam);
+
+    //删除知情告知
+    @RequestMapping(value = "/frequentUsed/deleteInform", method = RequestMethod.POST)
+    public CommonResult deleteInform(@RequestParam("frequentId") Long frequentId);
+
+    //修改知情告知
+    @RequestMapping(value = "/frequentUsed/updateInform", method = RequestMethod.POST)
+    public CommonResult updateInform(@RequestBody AddInformParam addInformParam);
+
+    //查询知情告知
+    @RequestMapping(value = "/frequentUsed/selectInform", method = RequestMethod.POST)
+    public CommonResult<CommonPage<FamiliarInformTemplate>> selectInform(@RequestBody InformParam informParam);
 
 }

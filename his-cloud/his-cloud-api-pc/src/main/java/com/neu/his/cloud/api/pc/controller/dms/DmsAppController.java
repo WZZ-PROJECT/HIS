@@ -69,7 +69,7 @@ public class DmsAppController {
     @ApiOperation(value = "根据科室Id查询医生、科室、排班信息")
     @RequestMapping(value = "/listNowDoctorRegistration", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<DmsNowDoctorRegistrationResult>>listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
+    public CommonResult <DmsNowDoctorRegistrationResults> listNowDoctorRegistration(@RequestParam("deptId")  Long deptId,
                                                                                        @RequestParam("thedate") String thedate){
         return dmsAppService.listNowDoctorRegistration(deptId,thedate);
     }
@@ -86,6 +86,21 @@ public class DmsAppController {
     @ResponseBody
     public CommonResult<List<BookingInformationResult>>listPatientConventionUpdate(@RequestParam("Id") Long Id){
         return dmsAppService.listPatientConventionUpdate(Id);
+    }
+
+
+    @ApiOperation(value = "查看信息")
+    @RequestMapping(value = "/selectMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<List<InformationMaintenance>>selectMaintenanceParam(){
+        return dmsAppService.selectMaintenanceParam();
+    }
+
+    @ApiOperation(value = "修改信息")
+    @RequestMapping(value = "/updateMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<List<BookingInformationResult>>updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance){
+        return dmsAppService.updateMaintenanceParam(informationMaintenance);
     }
 
 }

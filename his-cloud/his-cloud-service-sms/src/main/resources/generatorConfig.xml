@@ -35,7 +35,7 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.neu.his.cloud.service.sms.mapper"
                              targetProject="his-cloud-service-sms\src\main\java"/>
         <!--生成全部表tableName设为%-->
-        <table tableName="sms_signature_type">
+        <table tableName="familiar_inform_template">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>

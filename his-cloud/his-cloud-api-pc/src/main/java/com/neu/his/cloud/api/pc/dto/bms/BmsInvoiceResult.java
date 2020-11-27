@@ -31,6 +31,8 @@ public class BmsInvoiceResult implements Serializable {
     Long operatorSettleId;
     @ApiModelProperty(value = "日结人id")
     Long operatorId;
+    @ApiModelProperty(value = "日结人名称")
+    String operatorName;
     @ApiModelProperty(value = "所属日结记录id")
     Long settleRecordId;
 

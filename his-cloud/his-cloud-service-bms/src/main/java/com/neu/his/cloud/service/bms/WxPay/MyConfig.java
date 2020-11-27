@@ -1,21 +1,37 @@
 package com.neu.his.cloud.service.bms.WxPay;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
+
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
+@Slf4j
 public class MyConfig extends WXPayConfig {
 
     /** 加载证书  这里证书需要到微信商户平台进行下载*/
     private byte[] certData;
 
     public MyConfig() throws Exception {
-        //证书只是撤销订单时会使用，在这里的demo中没有用到
-        /*String certPath = "自己商户平台下载的证书";
-        File file = new File(certPath);
-        InputStream certStream = new FileInputStream(file);
-        this.certData = new byte[(int) file.length()];
+//        //证书只是撤销订单时会使用，在这里的demo中没有用到
+//        String certPath = this.getClass().getClassLoader().getResource("apiclient_cert.p12").getPath();
+//        //String certPath = "apiclient_cert.p12";
+//        File file = new File(certPath);
+//        InputStream certStream = new FileInputStream(file);
+//        this.certData = new byte[(int) file.length()];
+//        certStream.read(this.certData);
+//        certStream.close();
+
+        //springboot jar包形式 注意: 这里小编的证书放在resources/static 目录下  大家根据自己的情况修改
+        ClassPathResource classPathResource = new ClassPathResource("apiclient_cert.p12");
+        InputStream certStream = classPathResource.getInputStream();
+        this.certData = IOUtils.toByteArray(certStream);
         certStream.read(this.certData);
-        certStream.close();*/
+        certStream.close();
+
     }
 
     /**
@@ -36,6 +52,21 @@ public class MyConfig extends WXPayConfig {
     public String getKey() {
         return "UtQldsIcA8rldkOUdlyHOdGZzHhJX7fz";
     }//自己的密钥
+
+    /*@Override
+    public String getAppID() {
+        return appid;
+    }//自己的appId
+
+    @Override
+    public String getMchID() {
+        return mchid;
+    }//自己的商户号
+
+    @Override
+    public String getKey() {
+        return key;
+    }//自己的密钥*/
 
     @Override
     public InputStream getCertStream() {

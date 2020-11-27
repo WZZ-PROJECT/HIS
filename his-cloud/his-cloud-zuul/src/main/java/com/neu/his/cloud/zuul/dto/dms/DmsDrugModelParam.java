@@ -1,12 +1,14 @@
 package com.neu.his.cloud.zuul.dto.dms;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.neu.his.cloud.zuul.model.DmsHerbalModelItem;
 import com.neu.his.cloud.zuul.model.DmsMedicineModelItem;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -34,6 +36,8 @@ public class DmsDrugModelParam  implements Serializable {
     @ApiModelProperty(value = "药品模版目的")
     private String aim;
     @ApiModelProperty(value = "药品模版创建时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(  pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @ApiModelProperty(value = "药品模版编码")
     private String code;

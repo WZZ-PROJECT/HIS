@@ -6,7 +6,7 @@ spring:
   boot:
     admin:
       client:
-        url: http:/localhost:10013
+        url: http://localhost:10013
 
 server:
   port: 10030
@@ -28,7 +28,7 @@ eureka:
     enable-self-preservation: false
   client:
     registerWithEureka: true
-    fetchRegistry: true
+    fetchRegistry: false
     preferIpAddress: true
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

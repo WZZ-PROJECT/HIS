@@ -1,0 +1,34 @@
+<!--pages/detail/detail.wxml-->
+<view class="detail-page">
+  <view class="line" style="height:150rpx;">
+    <view class="left" style="margin-top:60rpx;">头像</view>
+    <view class="right"><image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image></view>
+  </view>
+  <view class="line">
+    <view class="left">昵称</view>
+    <view class="right">{{userInfo.nickName}}</view>
+  </view>
+  <view class="line">
+    <view class="left">绑定手机号</view>
+    <view class="right">{{patient.phoneNo}}</view>
+  </view>
+  <view class="line">
+    <view class="left">就诊人姓名</view>
+    <view class="right">{{patient.name}}</view>
+  </view>
+  <view class="line">
+    <view class="left">就诊人身份证号</view>
+    <view class="right">{{patient.identificationNo}}</view>
+  </view>
+  <view class="line">
+    <view class="left">预存金额</view>
+    <view class="right">{{patient.blance}}元</view>
+  </view>
+  <view class="user-buttons">
+    <van-button custom-style="edit-button" color="#21bb9d" bindtap="handleEdit">编辑</van-button>
+    <!-- <van-button color="#21bb9d" data-gid='{{patient.identificationNo}}' bindtap="cancel">取消绑定</van-button> -->
+  </view>
+    
+  <!-- <button class="btn" data-gid='{{patient.identificationNo}}' bindtap="cancel">解除绑定</button> -->
+</view>
+

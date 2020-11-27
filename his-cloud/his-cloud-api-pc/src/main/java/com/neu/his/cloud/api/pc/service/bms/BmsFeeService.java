@@ -43,11 +43,13 @@ public interface BmsFeeService {
 
 
 
-    @RequestMapping(value = "ByRegistrationId", method = RequestMethod.GET)
+    @RequestMapping(value = "/fee/listChargeByRegistrationId", method = RequestMethod.GET)
     CommonResult<List<BmsChargeResult>>  listChargeByRegistrationId(@RequestParam("registrationId") Long registrationId);
 
-    @ApiOperation(value = "根据患者id查询所有项目")
     @RequestMapping(value = "/fee/listCharge", method = RequestMethod.POST)
-    @ResponseBody
     CommonResult<List<BmsResult>>  listCharge(@RequestBody BmsParam bmsParam);
+
+    @RequestMapping(value = "/fee/listPatientByCardId", method = RequestMethod.POST)
+    CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardId(@RequestBody BmsPatientParam bmsPatientParam);
+
 }

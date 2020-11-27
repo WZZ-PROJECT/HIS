@@ -34,6 +34,7 @@ public class DmsCaseHistoryParam  implements Serializable {
     @ApiModelProperty(value = "初诊结果Id串" )
     private String priliminaryDiseIdList;
     @ApiModelProperty(value = "发病时间" )
+    
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
     @ApiModelProperty(value = "病人姓名" )
@@ -58,9 +59,6 @@ public class DmsCaseHistoryParam  implements Serializable {
     @ApiModelProperty(value = "确诊诊断串" )
     private String definiteDiseStrList;
 
-
-
-
     @ApiModelProperty(value = "处置：name><" )
     private String dispositionIdList;
     @ApiModelProperty(value = "草药处方: 处方名[处方项名 <<>> 数量 >< 处方项名 | 数量] <> " )
@@ -68,5 +66,6 @@ public class DmsCaseHistoryParam  implements Serializable {
     @ApiModelProperty(value = "西药处方: 处方名[处方项名 <<>> 数量 >< 处方项名 | 数量] <>" )
     private String medicinePrescriptionIdList;
 
-
+    @ApiModelProperty(value = "医嘱" )
+    private String testAdvice;
 }

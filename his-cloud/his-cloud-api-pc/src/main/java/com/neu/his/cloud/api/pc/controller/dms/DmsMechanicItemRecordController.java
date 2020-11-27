@@ -3,6 +3,7 @@ package com.neu.his.cloud.api.pc.controller.dms;
 import com.neu.his.cloud.api.pc.common.CommonPage;
 import com.neu.his.cloud.api.pc.common.CommonResult;
 import com.neu.his.cloud.api.pc.dto.dms.DmsMechanicItemRecordResult;
+import com.neu.his.cloud.api.pc.dto.dms.ListByDeptChangeParam;
 import com.neu.his.cloud.api.pc.service.dms.DmsMechanicItemRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,9 +27,10 @@ public class DmsMechanicItemRecordController {
     @RequestMapping(value = "/listByDept", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDept(@RequestParam("deptId") Long deptId,
+                                                                            @RequestParam("name") String name,
                                                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
-        return  dmsMechanicItemRecordService.listByDept(deptId,pageSize,pageNum);
+        return  dmsMechanicItemRecordService.listByDept(deptId,name,pageSize,pageNum);
     }
 
 
@@ -49,6 +51,17 @@ public class DmsMechanicItemRecordController {
                                      @RequestParam("checkResult") String checkResult,
                                      @RequestParam("resultImgUrlList") String resultImgUrlList){
         return dmsMechanicItemRecordService.uploadResult(id,excuteStaffId,checkResult,resultImgUrlList);
+    }
+
+    /**
+     * 描述:收费员账号： 根据科室id刷新患者列表
+     * <p>author: ma
+     */
+    @ApiOperation(value = "根据科室id刷新患者列表")
+    @RequestMapping(value = "/listByDeptChange", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<DmsMechanicItemRecordResult>> listByDeptChange(@RequestBody ListByDeptChangeParam listByDeptChangeParam){
+        return dmsMechanicItemRecordService.listByDeptChange(listByDeptChangeParam);
     }
 
 }

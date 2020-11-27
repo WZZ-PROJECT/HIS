@@ -33,9 +33,17 @@ exports.cssLoaders = function (options) {
     }
   }
 
+  const px2rem = {
+    loader: 'px2rem-loader',
+    options: {
+      remUnit: 37.5,
+      remPrecision: 10
+    }
+  }
+
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
-    const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
+    const loaders = options.usePostCSS ? [cssLoader, postcssLoader, px2rem] : [cssLoader, px2rem]
 
     if (loader) {
       loaders.push({

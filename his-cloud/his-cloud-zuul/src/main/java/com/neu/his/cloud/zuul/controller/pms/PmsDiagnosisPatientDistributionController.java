@@ -7,7 +7,9 @@ import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.distribution.api.pc.pms.ApiPcPmsDiagnosisPatientDistributionService;
 import com.neu.his.cloud.zuul.dto.dms.DmsCaseHistoryResult;
 import com.neu.his.cloud.zuul.dto.pms.PmsDiagnosisPatientListResult;
+import com.neu.his.cloud.zuul.dto.pms.PmsDiagnosisPatientResult;
 import com.neu.his.cloud.zuul.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.zuul.dto.pms.PmsQueryPeople;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +80,26 @@ public class PmsDiagnosisPatientDistributionController {
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
+    @HystrixCommand(fallbackMethod = "queryPeopleFallbackInfo")
+    @ApiOperation("根据条件查询病人")
+    @RequestMapping(value = "/queryPeople", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientListResult> queryPeople(@RequestBody PmsQueryPeople pmsQueryPeople){
+        return apiPcPmsDiagnosisPatientDistributionService.queryPeople(pmsQueryPeople);
+    }
+    public CommonResult<PmsDiagnosisPatientListResult> queryPeopleFallbackInfo(PmsQueryPeople pmsQueryPeople){
+        return CommonResult.success(null,"请检查您的网络");
+    }
 
+    @HystrixCommand(fallbackMethod = "selectPeopleByRegistrationIdFallbackInfo")
+    @ApiOperation("查询病人信息用于查看病例信息")
+    @RequestMapping(value = "/selectPeopleByRegistrationId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientResult> selectPeopleByRegistrationId(@RequestParam("registrationId") Long registrationId){
+        return apiPcPmsDiagnosisPatientDistributionService.selectPeopleByRegistrationId(registrationId);
+    }
+    public CommonResult<PmsDiagnosisPatientResult> selectPeopleByRegistrationIdFallbackInfo(Long registrationId){
+        return CommonResult.success(null,"请检查您的网络");
+    }
 
 }

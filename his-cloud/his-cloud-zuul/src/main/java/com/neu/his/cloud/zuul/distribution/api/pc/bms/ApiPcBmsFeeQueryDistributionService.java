@@ -17,4 +17,6 @@ public interface ApiPcBmsFeeQueryDistributionService {
     @RequestMapping(value = "/feeQuery/listByRegistration", method = RequestMethod.POST)
     CommonResult<List<BmsDoctorPatientFeeResult>> listFeeByRegistrationId(@RequestParam("registrationId") Long registrationId);
 
+    @RequestMapping(value = "/feeQuery/updateInvoice", method = RequestMethod.POST)
+    CommonResult updateInvoice(@RequestBody List<BmsDoctorPatientFeeResult> list);
 }

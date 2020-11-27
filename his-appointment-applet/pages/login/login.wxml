@@ -1,0 +1,7 @@
+<!-- 微信授权登录 -->
+<view>
+  <!-- <image class='login_img' src=''></image> -->
+  <view class='login_title'>济南槐荫慈光诊所</view>
+  <view class='login_info'>请完成微信授权以继续使用</view>
+  <button class='preview-btn' open-type="getUserInfo" bindgetuserinfo='bindgetuserinfo'>微信授权用户信息</button>
+</view>

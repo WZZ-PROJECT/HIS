@@ -3,12 +3,12 @@
   <div class="div1">
       <aside>
         <el-button disabled style="color:black">门诊医技工作台</el-button>
-        <el-input v-model="search" placeholder="病历号/姓名" style="width: 180px;margin-left:50px" class="filter-item input1" />
-        <el-button><svg-icon icon-class="search" /></el-button>
+        <el-input  placeholder="姓名" v-model="name" style="width: 180px" class="filter-item input1"/>
+        <el-button @click="searchMechlist()"><svg-icon icon-class="search" /></el-button>
       </aside>
 
-      <el-table border stripe highlight-current-row :data="MechList.filter(data => !search || data.patientName.toLowerCase().includes(search.toLowerCase()))" style="margin-left:10px">
-        <el-table-column align="center" label="病历号">
+      <el-table border stripe highlight-current-row :data="MechList" style="margin-left:10px">
+        <el-table-column align="center" label="挂号编码">
           <template slot-scope="scope">
             {{scope.row.registrationId}}
           </template>
@@ -53,10 +53,11 @@
             <el-button v-if="scope.row.status===4" size="small" disabled>已完成</el-button>
             <el-button v-if="scope.row.status===1" size="small" type="danger"  @click="charge(scope.row)">缴费</el-button>
             <el-button v-if="scope.row.status===2" size="small" type="primary" @click="register(scope.row)">登记</el-button>
-            <el-button v-if="scope.row.status===2" type="danger" size="small" @click="addExtra(scope.row)">补录</el-button>
+<!--            <el-button v-if="scope.row.status===2" type="danger" size="small" @click="addExtra(scope.row)">补录</el-button>-->
           </template>
         </el-table-column>
       </el-table>
+    <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getMechlist"/>
       <el-dialog title="药材补录" :visible.sync="dialogTableVisible" width="1500px" top="10px">
         <el-container>
         <el-aside width="30%" style="padding:0 0 0 0;margin:0 0 0 0">
@@ -114,7 +115,7 @@
         </el-main>
         </el-container>
       </el-dialog>
-      <el-dialog title="结果" :visible.sync="uploadvisible" v-bind:patient="patient" width="400px">
+      <el-dialog title="结果" :visible.sync="uploadvisible" v-bind:patient="patient" width="600px">
         <Upload ref="upload" :uploadpatient="uploadpatient" @reflect="reflect" />
       </el-dialog>
   </div>
@@ -133,7 +134,15 @@
     components:{Upload,Pagination},
     data(){
       return{
+        total:0,
         uploadpatient:'',
+        name:'',
+        listQuery:{
+          name:'',
+          deptId:'',
+          pageSize: 10,
+          pageNum: 1,
+        },
         extraname:{
           name:'',
           type:1
@@ -154,7 +163,6 @@
         drugList:[],
         searchdrug:'',
         dialogTableVisible:false,
-        search:'',
         isaside: true,
         activeName: 'first',
         activeName2: 'first',
@@ -166,52 +174,16 @@
           amount:'',
           type:''
         },
-        data2: [{
-          date: '0001',
-          name: '王小虎1',
-          address: '验血',
-          status: 0
-        }, {
-          date: '0002',
-          name: '王小虎2',
-          address: '验血',
-          status: 0
-        }, {
-          date: '0003',
-          name: '王小虎3',
-          address: '验血',
-          status: 0
-        }, {
-          date: '0004',
-          name: '王小虎4',
-          address: '验血',
-          status: 3
-        },{
-          date: '0004',
-          name: '王小虎4',
-          address: '验血',
-          status: 2
-        },{
-          date: '0004',
-          name: '王小虎4',
-          address: '验血',
-          status: 1
-        },{
-          date: '0004',
-          name: '王小虎4',
-          address: '验血',
-          status: 1
-        }]
       };
     },
     created(){
       this.getMechlist()
     },
     methods: {
-      reflect(){
+      reflect(res){
         this.$notify({
-            title: '成功',
-            message: '上传成功',
+            title: '提示',
+            message: res.message,
             type: 'success',
             duration: 2000
           })
@@ -237,6 +209,8 @@
             type: 'success',
             duration: 2000
           })
+          this.oneprescription.druglist = []
+          this.getMechlist()
         })
         this.dialogTableVisible = false
       },
@@ -293,9 +267,17 @@
         this.uploadpatient = val.itemRecordId
         this.uploadvisible = true
       },
+      searchMechlist(){
+        this.listQuery.pageNum = 1
+        this.listQuery.pageSize = 10
+        this.listQuery.name = this.name
+        this.getMechlist()
+      },
       getMechlist(){
-        getMechlist(this.$store.getters.deptId).then(res=>{
-          this.MechList = res.data
+        this.listQuery.deptId=this.$store.getters.deptId;
+        getMechlist(this.listQuery).then(res=>{
+          this.total=res.data.total
+          this.MechList = res.data.list
         })
       },
       addExtra(row){
@@ -328,21 +310,36 @@
       },
       // 缴费
       charge(val){
-        let data = [];
-        this.refs.chargeItemId = val.itemRecordId
-        this.refs.amount = val.amount
-        this.refs.invoiceNo = this.orderCode()
-        this.refs.type = val.type+1
-        this.refs.operatorId = this.$store.getters.id
-        data.push(this.refs);
-        charge(data).then(res=>{
-          this.$notify({
-            title: '成功',
-            message: '缴费成功',
-            type: 'success',
-            duration: 2000
+        this.$confirm(' 确定为 '+ val.itemType +' 项目 '+val.itemName+'  缴纳费用  '+val.amount+'  元吗?', val.itemType +'  项目', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(()=>{
+          let data = [];
+          this.refs.chargeItemId = val.itemRecordId
+          this.refs.amount = val.amount
+          this.refs.invoiceNo = this.orderCode()
+          this.refs.type = val.type+1
+          this.refs.operatorId = this.$store.getters.id
+          data.push(this.refs);
+          charge(data).then(res=>{
+            if (res.data === 2) {
+              this.$notify({
+                title: '缴费失败',
+                message: '余额不足,请充值',
+                type: 'warning',
+                duration: 2000
+              })
+              return
+            }
+            this.$notify({
+              title: '成功',
+              message: '缴费成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getMechlist()
           })
-          this.getMechlist()
         })
       },
       // 生成发票号
@@ -353,7 +350,6 @@
           orderCode += Math.floor(Math.random() * 10);
         }
         orderCode = new Date().getTime() + orderCode;  //时间戳，用来生成订单号。
-        console.log(orderCode)
         return orderCode;
       }
   }

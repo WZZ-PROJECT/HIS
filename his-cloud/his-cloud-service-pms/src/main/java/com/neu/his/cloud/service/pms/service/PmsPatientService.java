@@ -2,9 +2,7 @@ package com.neu.his.cloud.service.pms.service;
 
 
 import com.neu.his.cloud.service.pms.dto.dms.DmsCaseHistoryResult;
-import com.neu.his.cloud.service.pms.dto.pms.PmsDiagnosisPatientListResult;
-import com.neu.his.cloud.service.pms.dto.pms.PmsPatientParam;
-import com.neu.his.cloud.service.pms.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.service.pms.dto.pms.*;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStaffResult;
 import com.neu.his.cloud.service.pms.dto.sms.SmsStopFollowDoctorParam;
 import com.neu.his.cloud.service.pms.model.PmsPatient;
@@ -70,7 +68,7 @@ public interface PmsPatientService {
      * @param openId
      * @return
      */
-    PmsPatient patientByOpenId(String openId);
+    PmsPatients patientByOpenId(String openId);
 
     /**
      * 添加一个新的病人
@@ -78,4 +76,18 @@ public interface PmsPatientService {
      * @return
      */
     PmsPatient insertPatient(PmsPatientParam pmsPatientParam);
+
+    /**
+     * 条件查看历史病历
+     * @param pmsQueryPeople
+     * @return
+     */
+    PmsDiagnosisPatientListResult queryPeople(PmsQueryPeople pmsQueryPeople);
+
+
+    /**
+     * 描述：查询病人信息用于查看病例信息
+     */
+    PmsDiagnosisPatientResult selectPeopleByRegistrationId(Long registrationId);
+
 }

@@ -1,0 +1,5 @@
+.list-wrap-loading {
+  padding-top: 150rpx;
+  display: flex;
+  justify-content: center;
+}

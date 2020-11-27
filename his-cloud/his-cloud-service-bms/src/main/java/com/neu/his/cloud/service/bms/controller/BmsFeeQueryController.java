@@ -60,5 +60,22 @@ public class BmsFeeQueryController {
         return CommonResult.success(itemResultList);
     }
 
+    /**
+     * 描述:查看某次挂号费用小项
+     * <p>author: ma
+     */
+    @ApiOperation("打发票")
+    @RequestMapping(value = "/updateInvoice", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateInvoice(@RequestBody List<BmsDoctorPatientFeeResult> list){
+        int i = bmsFeeQueryService.updateInvoice(list);
+        if(i>0){
+            return CommonResult.success(1,"打发票成功");
+        }else {
+            return CommonResult.success(0,"打发票失败");
+        }
+
+    }
+
 
 }

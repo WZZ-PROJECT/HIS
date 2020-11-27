@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -46,4 +47,6 @@ public class SmsStaffResult  implements Serializable {
     private String description;
     @ApiModelProperty(value = "头像")
     private String picture;
+    @ApiModelProperty(value = "挂号医生金额")
+    private BigDecimal amount;
 }

@@ -57,6 +57,7 @@ public class DmsNonDrugItemRecordServiceImpl implements DmsNonDrugItemRecordServ
             dmsNonDrugItemRecord.setType(dmsNonDrugItemRecordListParam.getType());
             dmsNonDrugItemRecord.setStatus(1);
             dmsNonDrugItemRecord.setCreateTime(date);
+            dmsNonDrugItemRecord.setInvoice(0L);
             dmsNonDrugItemRecordMapper.insertSelective(dmsNonDrugItemRecord);
         }
         Date endDate = new Date();

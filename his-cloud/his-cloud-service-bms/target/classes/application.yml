@@ -48,10 +48,10 @@ mybatis:
   type-aliases-package: com.neu.his.cloud.service.bms.model
   mapper-locations: classpath:/com.neu.his.cloud.service.bms.mapper/*.xml
 
-
-logging:
-  level:
-    root: info #日志配置DEBUG,INFO,WARN,ERROR
-    com.neu.his: debug
-  file: /log #配置日志文件路径
-  path: his-cloud-service-bms.log #配置日志生成名称
+#
+#logging:
+#  level:
+#    root: info #日志配置DEBUG,INFO,WARN,ERROR
+#    com.neu.his: debug
+#  file: E:/log #配置日志文件路径
+#  path: demo_log_2.log #配置日志生成名称

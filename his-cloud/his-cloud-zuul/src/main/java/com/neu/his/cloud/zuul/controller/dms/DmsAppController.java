@@ -98,11 +98,11 @@ public class DmsAppController {
     @ApiOperation(value = "根据科室Id查询医生、科室、排班信息")
     @RequestMapping(value = "/listNowDoctorRegistration", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<DmsNowDoctorRegistrationResult>> listNowDoctorRegistration(@RequestParam("deptId") Long deptId,
+    public CommonResult <DmsNowDoctorRegistrationResults> listNowDoctorRegistration(@RequestParam("deptId") Long deptId,
                                                                                         @RequestParam("thedate") String thedate){
         return apiDmsAppService.listNowDoctorRegistration(deptId,thedate);
     }
-    private CommonResult<List<DmsNowDoctorRegistrationResult>> listNowDoctorRegistrationFallbackInfo( Long deptId,String thedate){
+    private CommonResult <DmsNowDoctorRegistrationResults>listNowDoctorRegistrationFallbackInfo( Long deptId,String thedate){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 
@@ -125,6 +125,32 @@ public class DmsAppController {
         return apiDmsAppService.listPatientConventionUpdate(Id);
     }
     private CommonResult<List<BookingInformationResult>> listPatientConventionUpdateFallbackInfo(@RequestParam("Id") Long Id){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+
+
+
+
+    @HystrixCommand(fallbackMethod = "selectMaintenanceParamFallbackInfo")
+    @ApiOperation(value = "查看信息")
+    @RequestMapping(value = "/selectMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<List<InformationMaintenance>> selectMaintenanceParam(){
+        return apiDmsAppService.selectMaintenanceParam();
+    }
+    private CommonResult<List<InformationMaintenance>> selectMaintenanceParamFallbackInfo(){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "updateMaintenanceParamFallbackInfo")
+    @ApiOperation(value = "修改信息")
+    @RequestMapping(value = "/updateMaintenanceParam", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateMaintenanceParam(@RequestBody InformationMaintenance informationMaintenance){
+        return apiDmsAppService.updateMaintenanceParam(informationMaintenance);
+    }
+    private CommonResult updateMaintenanceParamFallbackInfo(@RequestBody InformationMaintenance informationMaintenance){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 }

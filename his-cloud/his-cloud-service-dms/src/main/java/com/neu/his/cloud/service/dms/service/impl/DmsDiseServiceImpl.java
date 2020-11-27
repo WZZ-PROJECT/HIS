@@ -35,8 +35,8 @@ public class DmsDiseServiceImpl implements DmsDiseService {
         }
         DmsDise dmsDise = new DmsDise();
         BeanUtils.copyProperties(dmsDiseParam,dmsDise);
-        dmsDiseMapper.insertSelective(dmsDise);
-        return 1;
+        int i = dmsDiseMapper.insertSelective(dmsDise);
+        return i;
     }
 
 
@@ -88,12 +88,16 @@ public class DmsDiseServiceImpl implements DmsDiseService {
         }
         criteria.andStatusNotEqualTo(0);//状态不为0
         example.setOrderByClause("id desc");//按id倒序
+        List<DmsDise> dmsDises = dmsDiseMapper.selectByExample(example);
         List<DmsDiseResult> list = new ArrayList<>();
-        for (DmsDise dmsDise:dmsDiseMapper.selectByExample(example)) {
-            DmsDiseResult dmsDiseResult = new DmsDiseResult();
-            BeanUtils.copyProperties(dmsDise,dmsDiseResult);
-            list.add(dmsDiseResult);
+        if(!CollectionUtils.isEmpty(dmsDises)){
+            for (DmsDise dmsDise:dmsDises) {
+                DmsDiseResult dmsDiseResult = new DmsDiseResult();
+                BeanUtils.copyProperties(dmsDise,dmsDiseResult);
+                list.add(dmsDiseResult);
+            }
         }
+
         return list;
     }
 
@@ -112,25 +116,28 @@ public class DmsDiseServiceImpl implements DmsDiseService {
 
     @Override
     public List<DmsDiseResult> parseList( String idsStr) {
-        //解析ids->list<Id>
-        List<Long> idList = strToList(idsStr);
-       //根据list<Id>查询并封装诊断简单对象
-        DmsDiseExample dmsDiseExample=new DmsDiseExample();
-        dmsDiseExample.createCriteria().andIdIn(idList);
-        List<DmsDise> dmsDiseList=dmsDiseMapper.selectByExample(dmsDiseExample);
-        List<DmsDiseResult> dmsDiseResultList = new ArrayList<>();
+        if(!StringUtils.isEmpty(idsStr)){
+            //解析ids->list<Id>
+            List<Long> idList = strToList(idsStr);
+            //根据list<Id>查询并封装诊断简单对象
+            DmsDiseExample dmsDiseExample=new DmsDiseExample();
+            dmsDiseExample.createCriteria().andIdIn(idList);
+            List<DmsDise> dmsDiseList=dmsDiseMapper.selectByExample(dmsDiseExample);
+            List<DmsDiseResult> dmsDiseResultList = new ArrayList<>();
 
-        if(CollectionUtil.isEmpty(dmsDiseList)){
-           return null;
-        }
+            if(CollectionUtil.isEmpty(dmsDiseList)){
+                return null;
+            }
 
-        //封装dto
-        for(DmsDise dmsDise: dmsDiseList){
-            DmsDiseResult dmsDiseResult=new DmsDiseResult();
-            BeanUtils.copyProperties(dmsDise,dmsDiseResult);
-            dmsDiseResultList.add(dmsDiseResult);
+            //封装dto
+            for(DmsDise dmsDise: dmsDiseList){
+                DmsDiseResult dmsDiseResult=new DmsDiseResult();
+                BeanUtils.copyProperties(dmsDise,dmsDiseResult);
+                dmsDiseResultList.add(dmsDiseResult);
+            }
+            return dmsDiseResultList;
         }
-        return dmsDiseResultList;
+        return null;
     }
 
 

@@ -31,11 +31,7 @@ public class DmsDiseCatalogController {
     public CommonResult create(@RequestBody DmsDiseCatalogParam dmsDiseCatalogParam , BindingResult result){
         CommonResult commonResult;
         int count = dmsDiseCatalogService.create(dmsDiseCatalogParam);
-        if (count == 1) {
-            commonResult = CommonResult.success(count);
-        } else {
-            commonResult = CommonResult.failed();
-        }
+        commonResult = CommonResult.success(count);
         return commonResult;
     }
 

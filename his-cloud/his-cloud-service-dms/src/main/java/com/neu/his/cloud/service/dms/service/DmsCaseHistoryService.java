@@ -1,7 +1,11 @@
 package com.neu.his.cloud.service.dms.service;
 
+import com.neu.his.cloud.service.dms.dto.dms.AddInformParam;
 import com.neu.his.cloud.service.dms.dto.dms.DmsCaseHistoryParam;
 import com.neu.his.cloud.service.dms.dto.dms.DmsCaseHistoryResult;
+import com.neu.his.cloud.service.dms.model.FamiliarInform;
+
+import java.util.List;
 
 
 /**
@@ -16,6 +20,11 @@ public interface DmsCaseHistoryService {
      * 描述：根据门诊号查询历史病历
      */
     DmsCaseHistoryResult selectCaseHistoryByReg(Long registrationId, Integer status);
+
+    /**
+     * 描述：根据门诊号查询历史病历
+     */
+    DmsCaseHistoryResult selectCaseHistory(Long registrationId, Integer status);
     /**
      * 描述：提交门诊确诊信息
      */
@@ -36,4 +45,25 @@ public interface DmsCaseHistoryService {
      * @return
      */
     DmsCaseHistoryResult queryCaseHistory(long patientId);
+
+
+    /**
+     * 描述：插入知情告知信息
+     */
+    int insertFamiliarInform(AddInformParam addInformParam);
+
+    /**
+     * 描述：删除知情告知信息
+     */
+    int deleteFamiliarInform(AddInformParam addInformParam);
+
+    /**
+     * 描述：修改知情告知信息
+     */
+    int updateFamiliarInform(AddInformParam addInformParam);
+
+    /**
+     * 描述：查询知情告知信息
+     */
+    List<FamiliarInform> selectFamiliarInform(AddInformParam addInformParam);
 }

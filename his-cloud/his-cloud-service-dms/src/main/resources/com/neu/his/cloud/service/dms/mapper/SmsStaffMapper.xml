@@ -14,9 +14,10 @@
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="registration_rank_id" jdbcType="BIGINT" property="registrationRankId" />
-    <result column="advantages" jdbcType="VARCHAR" property="advantages" />
-    <result column="description" jdbcType="VARCHAR" property="description" />
-    <result column="picture" jdbcType="VARCHAR" property="picture"/>
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="advantages" jdbcType="LONGVARCHAR" property="advantages" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -78,8 +79,27 @@
   </sql>
   <sql id="Base_Column_List">
     id, username, password, status, create_time, gender, skd_flag, title, name, dept_id, 
-    role_id, registration_rank_id ,advantages,description,picture
+    role_id, registration_rank_id, picture, amount, advantages, description
   </sql>
+  <sql id="Blob_Column_List">
+    advantages, description
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.neu.his.cloud.service.dms.model.SmsStaffExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sms_staff
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.neu.his.cloud.service.dms.model.SmsStaffExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -97,6 +117,8 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from sms_staff
     where id = #{id,jdbcType=BIGINT}
   </select>
@@ -117,11 +139,15 @@
     insert into sms_staff (username, password, status, 
       create_time, gender, skd_flag, 
       title, name, dept_id, 
-      role_id, registration_rank_id)
+      role_id, registration_rank_id, picture, 
+      amount, advantages, description
+      )
     values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{gender,jdbcType=INTEGER}, #{skdFlag,jdbcType=INTEGER}, 
       #{title,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{deptId,jdbcType=BIGINT}, 
-      #{roleId,jdbcType=BIGINT}, #{registrationRankId,jdbcType=BIGINT})
+      #{roleId,jdbcType=BIGINT}, #{registrationRankId,jdbcType=BIGINT}, #{picture,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=DECIMAL}, #{advantages,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.neu.his.cloud.service.dms.model.SmsStaff">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -162,6 +188,18 @@
       <if test="registrationRankId != null">
         registration_rank_id,
       </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="advantages != null">
+        advantages,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="username != null">
@@ -196,6 +234,18 @@
       </if>
       <if test="registrationRankId != null">
         #{registrationRankId,jdbcType=BIGINT},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="advantages != null">
+        #{advantages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -244,7 +294,41 @@
       <if test="record.registrationRankId != null">
         registration_rank_id = #{record.registrationRankId,jdbcType=BIGINT},
       </if>
+      <if test="record.picture != null">
+        picture = #{record.picture,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amount != null">
+        amount = #{record.amount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.advantages != null">
+        advantages = #{record.advantages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update sms_staff
+    set id = #{record.id,jdbcType=BIGINT},
+      username = #{record.username,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      gender = #{record.gender,jdbcType=INTEGER},
+      skd_flag = #{record.skdFlag,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      dept_id = #{record.deptId,jdbcType=BIGINT},
+      role_id = #{record.roleId,jdbcType=BIGINT},
+      registration_rank_id = #{record.registrationRankId,jdbcType=BIGINT},
+      picture = #{record.picture,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      advantages = #{record.advantages,jdbcType=LONGVARCHAR},
+      description = #{record.description,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -262,7 +346,9 @@
       name = #{record.name,jdbcType=VARCHAR},
       dept_id = #{record.deptId,jdbcType=BIGINT},
       role_id = #{record.roleId,jdbcType=BIGINT},
-      registration_rank_id = #{record.registrationRankId,jdbcType=BIGINT}
+      registration_rank_id = #{record.registrationRankId,jdbcType=BIGINT},
+      picture = #{record.picture,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DECIMAL}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -303,7 +389,38 @@
       <if test="registrationRankId != null">
         registration_rank_id = #{registrationRankId,jdbcType=BIGINT},
       </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="advantages != null">
+        advantages = #{advantages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.neu.his.cloud.service.dms.model.SmsStaff">
+    update sms_staff
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      gender = #{gender,jdbcType=INTEGER},
+      skd_flag = #{skdFlag,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      dept_id = #{deptId,jdbcType=BIGINT},
+      role_id = #{roleId,jdbcType=BIGINT},
+      registration_rank_id = #{registrationRankId,jdbcType=BIGINT},
+      picture = #{picture,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      advantages = #{advantages,jdbcType=LONGVARCHAR},
+      description = #{description,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.neu.his.cloud.service.dms.model.SmsStaff">
@@ -318,7 +435,10 @@
       name = #{name,jdbcType=VARCHAR},
       dept_id = #{deptId,jdbcType=BIGINT},
       role_id = #{roleId,jdbcType=BIGINT},
-      registration_rank_id = #{registrationRankId,jdbcType=BIGINT}
+      registration_rank_id = #{registrationRankId,jdbcType=BIGINT},
+      picture = #{picture,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 </mapper>

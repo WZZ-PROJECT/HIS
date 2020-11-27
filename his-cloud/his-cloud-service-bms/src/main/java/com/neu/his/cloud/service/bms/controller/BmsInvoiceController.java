@@ -1,7 +1,11 @@
 package com.neu.his.cloud.service.bms.controller;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.neu.his.cloud.service.bms.common.CommonPage;
 import com.neu.his.cloud.service.bms.common.CommonResult;
+import com.neu.his.cloud.service.bms.dto.bms.BmsInvoiceParam;
 import com.neu.his.cloud.service.bms.dto.bms.BmsInvoiceResult;
 import com.neu.his.cloud.service.bms.service.BmsInvoiceService;
 import io.swagger.annotations.Api;
@@ -49,11 +53,13 @@ public class BmsInvoiceController {
     }
 
     @ApiOperation(value = "传入新的start_datetime和end_datetime和收费员id，查询发票信息")
-    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/queryInvoiceInfo", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfo(@RequestParam("cashierId") Long cashierId, @RequestParam("startDatetime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDatetime, @RequestParam("endDatetime")@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDatetime){
-        List<BmsInvoiceResult> bmsInvoiceResultList = bmsInvoiceService.queryInvoiceInfo(cashierId, startDatetime, endDatetime);
-        return CommonResult.success(bmsInvoiceResultList);
+    public CommonResult<CommonPage<BmsInvoiceResult>>  queryInvoiceInfo(@RequestBody BmsInvoiceParam bmsInvoiceParam){
+        Page page = PageHelper.startPage(bmsInvoiceParam.getPageNum(), bmsInvoiceParam.getPageSize());
+        List<BmsInvoiceResult> list = bmsInvoiceService.queryInvoiceInfo(bmsInvoiceParam);
+        Long pageTotal=page.getTotal();
+        return CommonResult.success(CommonPage.restPage(list,pageTotal));
     }
 
     @ApiOperation(value = "根据日结记录id查询发票详细信息")

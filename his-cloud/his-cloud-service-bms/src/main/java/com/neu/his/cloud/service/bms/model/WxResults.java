@@ -1,7 +1,6 @@
 package com.neu.his.cloud.service.bms.model;
 
 import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +28,11 @@ public class WxResults implements Serializable {
 
     @ApiModelProperty(value = "支付完成时间")
     private Date timeEnd;
+
+    private Long type;
+
+    @ApiModelProperty(value = "状态  0：未退款  1：已退款")
+    private Long state;
 
     @ApiModelProperty(value = "结果")
     private String results;
@@ -99,6 +103,22 @@ public class WxResults implements Serializable {
         this.timeEnd = timeEnd;
     }
 
+    public Long getType() {
+        return type;
+    }
+
+    public void setType(Long type) {
+        this.type = type;
+    }
+
+    public Long getState() {
+        return state;
+    }
+
+    public void setState(Long state) {
+        this.state = state;
+    }
+
     public String getResults() {
         return results;
     }
@@ -121,6 +141,8 @@ public class WxResults implements Serializable {
         sb.append(", outTradeNo=").append(outTradeNo);
         sb.append(", totalFee=").append(totalFee);
         sb.append(", timeEnd=").append(timeEnd);
+        sb.append(", type=").append(type);
+        sb.append(", state=").append(state);
         sb.append(", results=").append(results);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

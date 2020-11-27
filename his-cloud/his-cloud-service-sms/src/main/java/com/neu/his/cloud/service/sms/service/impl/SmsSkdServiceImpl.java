@@ -105,11 +105,7 @@ public class SmsSkdServiceImpl implements SmsSkdService {
      */
     @Override
     public List<SmsSkdRuleResult> selectRuleByDept(Long deptId){
-        //获取科室名
-        SmsDept smsDept = smsDeptMapper.selectByPrimaryKey(deptId);
-        if(StringUtils.isEmpty(smsDept)){
-            return null;
-        }
+
         //查询一个科室的所有排版规则(status为1)
         SmsSkdRuleExample smsSkdRuleExample = new SmsSkdRuleExample();
         smsSkdRuleExample.createCriteria().andDeptIdEqualTo(deptId).andStatusEqualTo(1);
@@ -117,6 +113,13 @@ public class SmsSkdServiceImpl implements SmsSkdService {
         if(CollectionUtils.isEmpty(smsSkdRuleList)){  //如果为空，则不需要接下来的数据封装
             return null;
         }
+
+        //获取科室名
+        SmsDept smsDept = smsDeptMapper.selectByPrimaryKey(deptId);
+        if(StringUtils.isEmpty(smsDept)){
+            return null;
+        }
+
         List<SmsSkdRuleResult> smsSkdRuleResultList = new ArrayList<>();
         for(SmsSkdRule smsSkdRule : smsSkdRuleList){
             SmsSkdRuleResult smsSkdRuleResult = new SmsSkdRuleResult();
@@ -288,9 +291,9 @@ public class SmsSkdServiceImpl implements SmsSkdService {
             criteria.andDateEqualTo(smsSkdParam.getStartDate());
         }
         //20190625 ma
-        if(smsSkdParam.getStartDate() != null){
+       /* if(smsSkdParam.getStartDate() != null){
             criteria.andDateGreaterThanOrEqualTo(smsSkdParam.getStartDate());
-        }
+        }*/
         if(smsSkdParam.getEndDate() != null){
             criteria.andDateLessThanOrEqualTo(smsSkdParam.getEndDate());
         }
@@ -348,19 +351,14 @@ public class SmsSkdServiceImpl implements SmsSkdService {
 
             //封装医生姓名、挂号级别
             SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
-            smsSkdResult.setStaffName(smsStaff.getName());
+            if (!StringUtils.isEmpty(smsStaff.getName())) {
+                smsSkdResult.setStaffName(smsStaff.getName());
+            }
+
             SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
             smsSkdResult.setRegistrationRank(smsRegistrationRank.getName());
 
             smsSkdResultList.add(smsSkdResult);
-        }
-        if (!StringUtils.isEmpty(smsSkdParam.getStaffName())) {
-            List<SmsSkdResult> list = new ArrayList<>();
-            smsSkdResultList.stream()
-                    .filter(smsSkdResult -> smsSkdResult.getStaffName().contains(smsSkdParam.getStaffName())).forEach(smsSkdResult -> {
-                list.add(smsSkdResult);
-            });
-            return list;
         }
         return smsSkdResultList;
     }
@@ -414,8 +412,10 @@ public class SmsSkdServiceImpl implements SmsSkdService {
             //封装医生名字和挂号费
             SmsStaff smsStaff = smsStaffMapper.selectByPrimaryKey(smsSkd.getStaffId());
             smsSkdDocResult.setName(smsStaff.getName());
+            smsSkdDocResult.setStaffId(smsStaff.getId());
+            smsSkdDocResult.setAmount(smsStaff.getAmount());
             SmsRegistrationRank smsRegistrationRank = smsRegistrationRankMapper.selectByPrimaryKey(smsStaff.getRegistrationRankId());
-            smsSkdDocResult.setAmount(smsRegistrationRank.getPrice());
+//            smsSkdDocResult.setAmount(smsRegistrationRank.getPrice());
 
             smsSkdDocResultList.add(smsSkdDocResult);
         }

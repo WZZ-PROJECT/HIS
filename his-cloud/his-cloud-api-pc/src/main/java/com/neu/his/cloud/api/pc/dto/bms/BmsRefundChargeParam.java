@@ -22,6 +22,8 @@ public class BmsRefundChargeParam  implements Serializable {
     Long operatorId;
     @ApiModelProperty(value = "退款金额")
     BigDecimal refundAmount;
+    @ApiModelProperty(value = "病人ID")
+    Long patientId;
     /*
     wang
      */

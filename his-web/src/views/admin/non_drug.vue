@@ -11,15 +11,15 @@
       <el-select v-model="listQuery.deptId" placeholder="执行科室" clearable class="filter-item" style="width: 130px" filterable>
         <el-option v-for="item in Alldept" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-button v-waves:size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button :size="small" class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
       </el-button>
       <el-button class="filter-item"  style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增项目
       </el-button>
-      <el-button v-waves:loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出项目
       </el-button>
-      <el-button v-waves:loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+      <el-button :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
       </el-button>
     </div>
@@ -63,6 +63,13 @@
           <span v-if="scope.row.recordType===3">处置</span>
         </template>
       </el-table-column>
+
+      <el-table-column align="center" label="地点" width="150">
+        <template slot-scope="scope">
+          {{ scope.row.place }}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
           {{ scope.row.createDate }}
@@ -79,8 +86,8 @@
 
     <el-dialog :visible.sync="dialogVisible" width="550px" :title="dialogType==='edit'?'修改项目信息':'新增项目'"> <!--@close="getDeplist"-->
       <el-form ref="depart" :model="nondrug" style="width:400px" label-width="120px"  label-position="left" :rules="rules">
-        <el-form-item label="项目编号" prop="code">
-          <el-input v-model="nondrug.code" placeholder="编号" />
+        <el-form-item label="项目编码" prop="code">
+          <el-input v-model="nondrug.code" placeholder="项目编码" />
         </el-form-item>
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="nondrug.name" placeholder="项目名称" />
@@ -89,7 +96,7 @@
           <el-input v-model="nondrug.format" placeholder="规格" />
         </el-form-item>
         <el-form-item label="价格" prop="price">
-          <el-input v-model="nondrug.price" placeholder="价格" />
+          <el-input-number controls-position="right" style="width:100px" :min="1" v-model="nondrug.price" placeholder="价格" />
         </el-form-item>
         <el-form-item label="执行科室">
           <el-select v-model="nondrug.deptId" placeholder="执行科室" clearable filterable>
@@ -103,6 +110,9 @@
           <el-select v-model="nondrug.recordType" placeholder="项目类型" clearable style="width: 130px" class="filter-item">
             <el-option v-for="item in [{name:'检查',id:1},{name:'检验',id:2},{name:'处置',id:3}]" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="地点" >
+          <el-input v-model="nondrug.place" placeholder="地点" />
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -132,6 +142,7 @@ const defaultNondrug = {
   mnemonicCode:'',
   recordType: '',
   createDate: '',
+  place:''
 }
 
 export default {
@@ -182,7 +193,16 @@ export default {
           {required: true, message: '请输入规格',trigger: 'blur'}
         ],
         price:[
-          {required: true, message: '请输入价格',trigger: 'blur'}
+          {required: true,trigger: 'blur', validator: (rule, value, callback) => {
+            if (!value) {
+              return callback(new Error('请输入价格'));
+            }
+            if (isNaN(value) || value < 0) {
+              callback(new Error('请输入正确的价格'));
+            } else {
+              callback();
+            }
+          }}
         ],
         expClassId:[
           {required:true , message:'请输入费用所属科目',trigger:'blur'}
@@ -191,7 +211,7 @@ export default {
           {required:true,message:'请选择项目类型',trigger:'blur'}
         ]
       },
-      deplistref:[]
+      deplistref:[],
     }
   },
   computed: {
@@ -214,7 +234,7 @@ export default {
     async getAllNondrug(){
       this.listLoading = true
       const response = await getNondrugList(this.listNull)
-      this.allNondrug = response.data
+      this.allNondrug = response.data.list
       this.total=response.data.total
       this.listLoading = false
     },
@@ -222,14 +242,20 @@ export default {
       this.listLoading = true
       const response = await getNondrugList(this.listQuery)
       this.nondrugList = response.data.list
-      this.nondrugList.forEach(item=>{
-        item.createDate = item.createDate.substr(0,10)
-      })
+      this.allNondrug=response.data.list
+      if(this.nondrugList!=null && this.nondrugList.length!=0){
+        this.nondrugList.forEach(item=>{
+          if(item.createDate!=null){
+            item.createDate = item.createDate.substr(0,10)
+          }
+        })
+      }
       this.total = response.data.total
       this.listLoading = false
     },
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pagesize = 10
+      this.listQuery.pageNum=1
       this.getNondrugList()
     },
     handleAdd() {
@@ -288,7 +314,7 @@ export default {
         else
           delsom=delsom+(this.deplistref[i].id)
       }
-      console.log(delsom)
+
       deleteNondrug(delsom).then(res=>{
       this.$notify({
         title: '成功',
@@ -321,11 +347,23 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      this.getAllNondrug()
+      /*this.getAllNondrug()*/
+
+      this.alldrug = deepClone(this.allNondrug);
+
+      this.alldrug.forEach(item=>{
+        if(item.recordType===1){
+          item.recordType='检查'
+        }else if(item.recordType===2){
+          item.recordType='检验'
+        }else if(item.recordType===3){
+          item.recordType='处置'
+        }
+      })
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['项目编码', '项目名称']
-        const filterVal = ['code', 'name']
-        const data = this.formatJson(filterVal, this.allNondrug)
+        const tHeader = ['项目编码', '项目名称','规格','价格','执行科室','拼音助记码','项目类型','创建时间']
+        const filterVal = ['code', 'name','format','price','deptName','mnemonicCode','recordType','createDate']
+        const data = this.formatJson(filterVal, this.alldrug)
         excel.export_json_to_excel({
           header: tHeader,
           data,

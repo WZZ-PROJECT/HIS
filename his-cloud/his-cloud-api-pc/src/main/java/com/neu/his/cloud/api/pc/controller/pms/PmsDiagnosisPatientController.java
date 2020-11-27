@@ -4,7 +4,10 @@ package com.neu.his.cloud.api.pc.controller.pms;
 import com.neu.his.cloud.api.pc.common.CommonResult;
 import com.neu.his.cloud.api.pc.dto.dms.DmsCaseHistoryResult;
 import com.neu.his.cloud.api.pc.dto.pms.PmsDiagnosisPatientListResult;
+import com.neu.his.cloud.api.pc.dto.pms.PmsDiagnosisPatientResult;
 import com.neu.his.cloud.api.pc.dto.pms.PmsPatientResult;
+import com.neu.his.cloud.api.pc.dto.pms.PmsQueryPeople;
+import com.neu.his.cloud.api.pc.model.PmsPatient;
 import com.neu.his.cloud.api.pc.service.pms.PmsPatientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,7 +63,18 @@ public class PmsDiagnosisPatientController {
         return pmsPatientService.getPatient(openId);
     }
 
+    @ApiOperation("根据条件查询患者")
+    @RequestMapping(value = "/queryPeople", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientListResult> queryPeople(@RequestBody PmsQueryPeople pmsQueryPeople){
+        return pmsPatientService.queryPeople(pmsQueryPeople);
+    }
 
-
+    @ApiOperation("查询病人信息用于查看病例信息")
+    @RequestMapping(value = "/selectPeopleByRegistrationId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<PmsDiagnosisPatientResult> selectPeopleByRegistrationId(@RequestParam("registrationId") Long registrationId){
+        return pmsPatientService.selectPeopleByRegistrationId(registrationId);
+    }
 
 }

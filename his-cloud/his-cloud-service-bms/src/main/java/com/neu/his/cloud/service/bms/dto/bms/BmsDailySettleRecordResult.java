@@ -22,6 +22,8 @@ public class BmsDailySettleRecordResult  implements Serializable {
     Date createDatetime;
     @ApiModelProperty(value = "收银员（日结员）id")
     Long cashierId;
+    @ApiModelProperty(value = "日结人名称")
+    String cashierName;
     @ApiModelProperty(value = "发票总数量")
     Long  invoiceNum;
     @ApiModelProperty(value = "冲红发票数量")

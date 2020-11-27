@@ -1,0 +1,38 @@
+page {
+    background: #fff;
+}
+
+/* 微信授权登录 */
+/* .login_img {
+    width: 120rpx;
+    height: 120rpx;
+    margin-top: 210rpx;
+    margin-left: 315rpx;
+} */
+
+.login_title {
+    padding-top: 120rpx;
+    font-size: 34rpx;
+    color: #000;
+    margin-top: 14rpx;
+    text-align: center;
+}
+
+.login_info {
+    margin-top: 203rpx;
+    font-size: 26rpx;
+    color: #5d729a;
+    text-align: center;
+}
+
+.preview-btn {
+    padding: 0;
+    width: 690rpx;
+    height: 88rpx;
+    margin-top: 26rpx;
+    font-size: 36rpx;
+    line-height: 88rpx;
+    color: #fff;
+    font-weight: normal;
+    background: #21bb9d;
+}

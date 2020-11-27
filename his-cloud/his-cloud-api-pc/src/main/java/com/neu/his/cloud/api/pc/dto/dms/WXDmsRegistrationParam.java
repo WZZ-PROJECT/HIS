@@ -83,4 +83,12 @@ public class WXDmsRegistrationParam implements Serializable {
     @ApiModelProperty(value = "退费金额")
     private BigDecimal refund;
 
+    @ApiModelProperty(value = "午别")
+    private String noon;
+
+    @ApiModelProperty(value = "病人ID")
+    private Long patientId;
+
+    @ApiModelProperty(value = "挂号级别")
+    private Long registeredLevel;
 }

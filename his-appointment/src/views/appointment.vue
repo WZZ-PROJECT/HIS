@@ -1,6 +1,8 @@
 <template>
   <div>
-    <tab name="appointment"/>
+    <tab name="appointment">
+      <router-view></router-view>
+    </tab>
   </div>
 </template>
 
@@ -10,9 +12,9 @@ import Tab from '@/components/Tab';
 export default {
   components: {
     Tab,
-  }
+  },
 };
 </script>
 
-<style>
+<style lang="less">
 </style>

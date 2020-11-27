@@ -13,8 +13,8 @@ export function queryRecentEndDatetime(data) {
 export function queryInvoiceInfo(data) {
   return request({
     url: '/invoice/queryInvoiceInfo',
-    method: 'get',
-    params: data
+    method: 'post',
+      data
   })
 }
 //统计日结信息并日结

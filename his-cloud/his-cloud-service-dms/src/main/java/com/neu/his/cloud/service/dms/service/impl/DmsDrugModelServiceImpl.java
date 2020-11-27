@@ -51,12 +51,14 @@ public class DmsDrugModelServiceImpl implements DmsDrugModelService {
             for(DmsHerbalModelItem dmsHerbalModelItem:dmsDrugModelParam.getDmsHerbalModelItemList()){
                 dmsHerbalModelItem.setModelId(id);
                 dmsHerbalModelItem.setStatus(1);//正常
+                dmsHerbalModelItem.setDrugId(dmsHerbalModelItem.getId());
                 dmsHerbalModelItemMapper.insert(dmsHerbalModelItem);
             }
         }else{//成药
             for(DmsMedicineModelItem dmsMedicineModelItem:dmsDrugModelParam.getDmsMedicineModelItemList()){
                 dmsMedicineModelItem.setModelId(id);
                 dmsMedicineModelItem.setStatus(1);//正常
+                dmsMedicineModelItem.setDrugId(dmsMedicineModelItem.getId());
                 dmsMedicineModelItemMapper.insert(dmsMedicineModelItem);
             }
         }
@@ -125,12 +127,14 @@ public class DmsDrugModelServiceImpl implements DmsDrugModelService {
             for(DmsHerbalModelItem dmsHerbalModelItem:dmsDrugModelParam.getDmsHerbalModelItemList()){
                 dmsHerbalModelItem.setModelId(modelId);
                 dmsHerbalModelItem.setStatus(1);//正常
+                dmsHerbalModelItem.setDrugId(dmsHerbalModelItem.getId());
                 dmsHerbalModelItemMapper.insert(dmsHerbalModelItem);
             }
         }else{//成药
             for(DmsMedicineModelItem dmsMedicineModelItem:dmsDrugModelParam.getDmsMedicineModelItemList()){
                 dmsMedicineModelItem.setModelId(modelId);
                 dmsMedicineModelItem.setStatus(1);//正常
+                dmsMedicineModelItem.setDrugId(dmsMedicineModelItem.getId());
                 dmsMedicineModelItemMapper.insert(dmsMedicineModelItem);
             }
         }

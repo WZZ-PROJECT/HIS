@@ -1,6 +1,5 @@
 package com.neu.his.cloud.service.bms.WxPay;
 
-
 import com.neu.his.cloud.service.bms.WxPay.WXPayConstants.SignType;
 
 import java.util.HashMap;
@@ -200,12 +199,12 @@ public class WXPay {
             return respData;
         }
         else if (return_code.equals(WXPayConstants.SUCCESS)) {
-            if (this.isResponseSignatureValid(respData)) {
-                return respData;
-            }
-            else {
-                throw new Exception(String.format("Invalid sign value in XML: %s", xmlStr));
-            }
+           if (this.isResponseSignatureValid(respData)) {
+               return respData;
+           }
+           else {
+               throw new Exception(String.format("Invalid sign value in XML: %s", xmlStr));
+           }
         }
         else {
             throw new Exception(String.format("return_code value %s is invalid in XML: %s", return_code, xmlStr));

@@ -2,6 +2,7 @@ package com.neu.his.cloud.zuul.controller.bms;
 
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.neu.his.cloud.zuul.common.CommonPage;
 import com.neu.his.cloud.zuul.common.CommonResult;
 import com.neu.his.cloud.zuul.distribution.api.pc.bms.ApiPcBmsFeeDistributionService;
@@ -102,6 +103,17 @@ public class BmsFeeDistributionController {
         return apiPcBmsFeeDistributionService.listCharge(bmsParam);
     }
     public CommonResult<List<BmsResult>>  listChargeFallbackInfo( BmsParam bmsParam){
+        return CommonResult.success(null,"请检查您的网络") ;
+    }
+
+    @HystrixCommand(fallbackMethod = "listPatientByCardIdFallbackInfo")
+    @ApiOperation(value = "根据病人身份证号查询历史病人信息")
+    @RequestMapping(value = "/listPatientByCardId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardId(@RequestBody BmsPatientParam bmsPatientParam){
+        return apiPcBmsFeeDistributionService.listPatientByCardId(bmsPatientParam);
+    }
+    private CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardIdFallbackInfo(BmsPatientParam bmsPatientParam){
         return CommonResult.success(null,"请检查您的网络") ;
     }
 }

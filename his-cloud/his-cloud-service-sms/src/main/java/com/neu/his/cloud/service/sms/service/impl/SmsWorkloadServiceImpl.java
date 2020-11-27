@@ -396,8 +396,10 @@ public class SmsWorkloadServiceImpl implements SmsWorkloadService {
         int countSum = 0;
         for(SmsStaff staff : staffList){
             SmsWorkloadResult result = workloadPersonalStatistic(staff.getId(),getEndDate(date));
-            result.setDeptId(null);     //部门id设置为空
-            countSum += insertWorkload(result);
+            if(result!=null){
+                result.setDeptId(null);     //部门id设置为空
+                countSum += insertWorkload(result);
+            }
         }
 
         return countSum;
@@ -412,9 +414,10 @@ public class SmsWorkloadServiceImpl implements SmsWorkloadService {
         int countSum = 0;
         for(SmsDept dept : deptList){
             SmsWorkloadResult result = workloadDeptStatistic(dept.getId(),getEndDate(date));
-            countSum += insertWorkload(result);
+            if(result!=null){
+                countSum += insertWorkload(result);
+            }
         }
-
         return countSum;
     }
 

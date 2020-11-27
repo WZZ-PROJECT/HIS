@@ -78,4 +78,11 @@ public class BmsFeeController {
     public CommonResult<List<BmsResult>>  listCharge(@RequestBody BmsParam bmsParam){
         return bmsFeeService.listCharge(bmsParam);
     }
+
+    @ApiOperation(value = "根据病人身份证号查询历史病人信息")
+    @RequestMapping(value = "/listPatientByCardId", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardId(@RequestBody BmsPatientParam bmsPatientParam){
+        return bmsFeeService.listPatientByCardId(bmsPatientParam);
+    }
 }

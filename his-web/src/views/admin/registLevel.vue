@@ -5,16 +5,16 @@
     <div class="filter-container">
       <el-input v-model="listQuery.code" placeholder="号别编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.name" placeholder="号别名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索号别
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增号别
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出号别
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        导出当前页号别
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+      <el-button :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
       </el-button>
     </div>
@@ -51,8 +51,8 @@
 
     <el-dialog :visible.sync="dialogVisible" width="500px" :title="dialogType==='edit'?'修改号别信息':'新增号别'" @close="getReglist">
       <el-form ref="reg" :model="reg" label-width="80px"  label-position="left" :rules="rules">
-        <el-form-item label="号别编号" prop="code">
-          <el-input v-model="reg.code" placeholder="号别编号" />
+        <el-form-item label="号别编码" prop="code">
+          <el-input v-model="reg.code" placeholder="号别编码" />
         </el-form-item>
         <el-form-item label="号别名称" prop="name">
           <el-input v-model="reg.name" placeholder="号别名称" />
@@ -61,10 +61,10 @@
           <el-input v-model="reg.price" placeholder="挂号费" />
         </el-form-item>
         <el-form-item label="顺序号" prop="seqNo">
-          <el-select v-if="dialogType==='edit'"  v-model="reg.seqNo" placeholder="号别类别" clearable class="filter-item" style="width: 130px">
+          <el-select v-if="dialogType==='edit'"  v-model="reg.seqNo" placeholder="顺序号" clearable class="filter-item" style="width: 130px">
             <el-option v-for="item in total" :key="item" :label="item" :value="item" />
           </el-select>
-          <el-select v-if="dialogType!=='edit'"  v-model="reg.seqNo" placeholder="号别类别" clearable class="filter-item" style="width: 130px">
+          <el-select v-if="dialogType!=='edit'"  v-model="reg.seqNo" placeholder="顺序号" clearable class="filter-item" style="width: 130px">
             <el-option v-for="item in total+1" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -115,7 +115,7 @@
           seqNo: '',
           status: '',
           page: 1,
-          limit: 20
+          limit: 10
         },
         reglistref:[],
         downloadLoading: false,
@@ -130,13 +130,14 @@
             {required: true, message: '请输入挂号费',trigger: 'blur'}
           ],
           seqNo:[
-            {required: true, message: '请选择显示顺序号',trigger: 'blur'}
+            {required: true, message: '请选择顺序号',trigger: 'blur'}
           ],
           status:[
             {required: true, message: '请设置状态',trigger: 'blur'}
           ]
         },
-        allReg:[]
+        allReg:[],
+        queryAll:[]
       }
     },
     computed: {
@@ -150,14 +151,17 @@
         this.listLoading = true
         const response = await getReglist(this.listQuery)
         this.regList = response.data.list
+        this.allReg=response.data.list
         this.total = response.data.total
         this.listLoading = false
       },
       handleFilter() {
         this.listQuery.page = 1
+        this.listQuery.limit = 10
         this.getReglist()
       },
       handleAdd() {
+        this.selectAll()
         this.resetTemp()
         this.dialogType = 'new'
         this.dialogVisible = true
@@ -167,6 +171,7 @@
         })
       },
       handleEdit(row) {
+        this.selectAll()
         this.resetTemp()
         this.reg = Object.assign({}, row) // copy obj
         this.dialogType = 'edit'
@@ -201,6 +206,15 @@
         return false;
       },
       handleSomeDelete(){
+        if (!this.reglistref.length) {
+          this.$notify({
+            title: '提示',
+            message: '请先选中要删除的号别',
+            type: 'warning',
+            duration: 2000
+          });
+          return;
+        }
         this.$confirm('确认删除选中号别?', '警告', {
           confirmButtonText: '确认',
           cancelButtonText: '取消',
@@ -214,7 +228,7 @@
               delsom=delsom+(this.reglistref[i].id)
           }
 
-          console.log(delsom)
+
           if(delsom != null && delsom!= ''){
             deleteReg(delsom).then(res=>{
                 this.$notify({
@@ -254,7 +268,7 @@
         import('@/vendor/Export2Excel').then(excel => {
           const tHeader = ['号别编码', '号别名称', '挂号费', '显示顺序号']
           const filterVal = ['code', 'name', 'price', 'seqNo']
-          const data = this.formatJson(filterVal, this.allReg)
+          const data = this.formatJson(filterVal, this.regList)
           excel.export_json_to_excel({
             header: tHeader,
             data,
@@ -267,9 +281,21 @@
         this.$refs[formName].validate((valid)=>{
           if(valid){
             const isEdit = this.dialogType === 'edit'
-            this.listLoading=true
             if(isEdit){
-              console.log(this.reg)
+
+              let name = []
+              this.queryAll.forEach(item=>{
+                name.push(item.name)
+              })
+              if (name.join(',').includes(this.reg.name)) {
+                this.$notify({
+                  title: '提示',
+                  message: "存在该号别名称！",
+                  type: 'warning',
+                  duration: 2000
+                })
+                return;
+              }
               updateReg(this.reg).then(res=>{
                 this.getReglist()
                 this.$notify({
@@ -281,7 +307,19 @@
               })
               this.dialogVisible=false
             }else{
-              console.log(this.reg)
+              let name = []
+              this.queryAll.forEach(item=>{
+                name.push(item.name)
+              })
+            if (name.join(',').includes(this.reg.name)) {
+              this.$notify({
+                title: '提示',
+                message: "存在该号别名称！",
+                type: 'warning',
+                duration: 2000
+              })
+              return;
+            }
               createReg(this.reg).then(res=>{
                 this.getReglist()
                 this.$notify({
@@ -296,6 +334,12 @@
           }
         })
       },
+      selectAll(){
+        this.queryAll = []
+        getAllReg().then(res=>{
+          this.queryAll =  res.data;
+        })
+      }
     }
   }
 </script>

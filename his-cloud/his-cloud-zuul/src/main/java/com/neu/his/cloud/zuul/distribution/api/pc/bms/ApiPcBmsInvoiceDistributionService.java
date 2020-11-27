@@ -1,7 +1,9 @@
 package com.neu.his.cloud.zuul.distribution.api.pc.bms;
 
 
+import com.neu.his.cloud.zuul.common.CommonPage;
 import com.neu.his.cloud.zuul.common.CommonResult;
+import com.neu.his.cloud.zuul.dto.bms.BmsInvoiceParam;
 import com.neu.his.cloud.zuul.dto.bms.BmsInvoiceResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,8 +25,8 @@ public interface ApiPcBmsInvoiceDistributionService {
     @RequestMapping(value = "/invoice/reprintInvoice", method = RequestMethod.GET)
     CommonResult  reprintInvoice(@RequestParam("newInvoiceNo") Long newInvoiceNo, @RequestParam("oldInvoiceNo") Long oldInvoiceNo);
 
-    @RequestMapping(value = "/invoice/queryInvoiceInfo", method = RequestMethod.GET)
-    CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfo(@RequestParam("cashierId") Long cashierId, @RequestParam("startDatetime")String startDatetime, @RequestParam("endDatetime")String endDatetime);
+    @RequestMapping(value = "/invoice/queryInvoiceInfo", method = RequestMethod.POST)
+    CommonResult<CommonPage<BmsInvoiceResult>>  queryInvoiceInfo(@RequestBody BmsInvoiceParam bmsInvoiceParam);
 
     @RequestMapping(value = "/invoice/queryInvoiceInfoBySettleId", method = RequestMethod.GET)
     CommonResult<List<BmsInvoiceResult>>  queryInvoiceInfoBySettleId(@RequestParam("settleRecordId") Long settleRecordId);

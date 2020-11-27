@@ -1,0 +1,56 @@
+/* pages/attention/attention.wxss */
+.docter {
+  border-bottom: 1px solid #666666;
+  height: 300rpx;
+  margin: 10rpx;
+  font-size: 14px;
+  color: #999999;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 10rpx;
+}
+
+.left {
+  /* width: 350rpx; */
+  /* border-bottom:1px solid #EEEEEE; */
+  padding: 20rpx;
+  margin: 10rpx;
+  flex: 1;
+}
+
+.right {
+  width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom {
+  margin-top: 10rpx;
+  width: 100%;
+  text-indent: 2em;
+  height: 80rpx;
+  line-height: 40rpx;
+  overflow: hidden;
+}
+
+.head {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+}
+
+.right button {
+  margin-top: 15rpx;
+}

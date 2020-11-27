@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class SmsWorkloadRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
     private Date createTime;

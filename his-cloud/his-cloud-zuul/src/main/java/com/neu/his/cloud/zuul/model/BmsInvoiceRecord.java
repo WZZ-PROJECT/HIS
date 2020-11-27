@@ -6,29 +6,38 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class BmsInvoiceRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "发票创建时间")
     private Date createTime;
 
-    private Long invoiceNo;
+    @ApiModelProperty(value = "发票号")
+    private String invoiceNo;
 
-    private Long billId;
+    @ApiModelProperty(value = "账单ID")
+    private String billId;
 
+    @ApiModelProperty(value = "金额")
     private BigDecimal amount;
 
+    @ApiModelProperty(value = "冻结状态 1 正常")
     private Integer freezeStatus;
 
-    private Long associateId;
+    private String associateId;
 
-    private Long operatorId;
+    @ApiModelProperty(value = "操作人员ID")
+    private String operatorId;
 
-    private Long settlementCatId;
+    @ApiModelProperty(value = "结算类别ID")
+    private String settlementCatId;
 
-    private Long settleRecordId;
+    private String settleRecordId;
+
+    @ApiModelProperty(value = "发票状态：1 挂号")
+    private Integer type;
 
     private String itemList;
-
-    private Integer type;
 
     private static final long serialVersionUID = 1L;
 
@@ -48,19 +57,19 @@ public class BmsInvoiceRecord implements Serializable {
         this.createTime = createTime;
     }
 
-    public Long getInvoiceNo() {
+    public String getInvoiceNo() {
         return invoiceNo;
     }
 
-    public void setInvoiceNo(Long invoiceNo) {
+    public void setInvoiceNo(String invoiceNo) {
         this.invoiceNo = invoiceNo;
     }
 
-    public Long getBillId() {
+    public String getBillId() {
         return billId;
     }
 
-    public void setBillId(Long billId) {
+    public void setBillId(String billId) {
         this.billId = billId;
     }
 
@@ -80,44 +89,36 @@ public class BmsInvoiceRecord implements Serializable {
         this.freezeStatus = freezeStatus;
     }
 
-    public Long getAssociateId() {
+    public String getAssociateId() {
         return associateId;
     }
 
-    public void setAssociateId(Long associateId) {
+    public void setAssociateId(String associateId) {
         this.associateId = associateId;
     }
 
-    public Long getOperatorId() {
+    public String getOperatorId() {
         return operatorId;
     }
 
-    public void setOperatorId(Long operatorId) {
+    public void setOperatorId(String operatorId) {
         this.operatorId = operatorId;
     }
 
-    public Long getSettlementCatId() {
+    public String getSettlementCatId() {
         return settlementCatId;
     }
 
-    public void setSettlementCatId(Long settlementCatId) {
+    public void setSettlementCatId(String settlementCatId) {
         this.settlementCatId = settlementCatId;
     }
 
-    public Long getSettleRecordId() {
+    public String getSettleRecordId() {
         return settleRecordId;
     }
 
-    public void setSettleRecordId(Long settleRecordId) {
+    public void setSettleRecordId(String settleRecordId) {
         this.settleRecordId = settleRecordId;
-    }
-
-    public String getItemList() {
-        return itemList;
-    }
-
-    public void setItemList(String itemList) {
-        this.itemList = itemList;
     }
 
     public Integer getType() {
@@ -126,6 +127,14 @@ public class BmsInvoiceRecord implements Serializable {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(String itemList) {
+        this.itemList = itemList;
     }
 
     @Override
@@ -144,8 +153,8 @@ public class BmsInvoiceRecord implements Serializable {
         sb.append(", operatorId=").append(operatorId);
         sb.append(", settlementCatId=").append(settlementCatId);
         sb.append(", settleRecordId=").append(settleRecordId);
-        sb.append(", itemList=").append(itemList);
         sb.append(", type=").append(type);
+        sb.append(", itemList=").append(itemList);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

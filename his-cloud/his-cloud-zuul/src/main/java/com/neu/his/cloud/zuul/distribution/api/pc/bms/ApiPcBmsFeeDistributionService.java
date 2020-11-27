@@ -44,4 +44,7 @@ public interface ApiPcBmsFeeDistributionService {
     @RequestMapping(value = "/fee/listCharge", method = RequestMethod.POST)
     @ResponseBody
     CommonResult<List<BmsResult>>  listCharge(@RequestBody BmsParam bmsParam);
+
+    @RequestMapping(value = "/fee/listPatientByCardId", method = RequestMethod.POST)
+    CommonResult<CommonPage<BmsRegistrationPatientResult>> listPatientByCardId(@RequestBody BmsPatientParam bmsPatientParam);
 }

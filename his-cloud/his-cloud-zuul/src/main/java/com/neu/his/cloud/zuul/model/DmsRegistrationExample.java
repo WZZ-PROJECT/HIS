@@ -774,6 +774,66 @@ public class DmsRegistrationExample {
             addCriterion("patient_age_str not between", value1, value2, "patientAgeStr");
             return (Criteria) this;
         }
+
+        public Criteria andWxResultsIdIsNull() {
+            addCriterion("wx_results_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdIsNotNull() {
+            addCriterion("wx_results_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdEqualTo(Long value) {
+            addCriterion("wx_results_id =", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotEqualTo(Long value) {
+            addCriterion("wx_results_id <>", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdGreaterThan(Long value) {
+            addCriterion("wx_results_id >", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("wx_results_id >=", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdLessThan(Long value) {
+            addCriterion("wx_results_id <", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdLessThanOrEqualTo(Long value) {
+            addCriterion("wx_results_id <=", value, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdIn(List<Long> values) {
+            addCriterion("wx_results_id in", values, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotIn(List<Long> values) {
+            addCriterion("wx_results_id not in", values, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdBetween(Long value1, Long value2) {
+            addCriterion("wx_results_id between", value1, value2, "wxResultsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxResultsIdNotBetween(Long value1, Long value2) {
+            addCriterion("wx_results_id not between", value1, value2, "wxResultsId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

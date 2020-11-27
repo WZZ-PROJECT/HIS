@@ -16,15 +16,21 @@ public interface SmsStaffMapper {
 
     int insertSelective(SmsStaff record);
 
+    List<SmsStaff> selectByExampleWithBLOBs(SmsStaffExample example);
+
     List<SmsStaff> selectByExample(SmsStaffExample example);
 
     SmsStaff selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") SmsStaff record, @Param("example") SmsStaffExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") SmsStaff record, @Param("example") SmsStaffExample example);
+
     int updateByExample(@Param("record") SmsStaff record, @Param("example") SmsStaffExample example);
 
     int updateByPrimaryKeySelective(SmsStaff record);
+
+    int updateByPrimaryKeyWithBLOBs(SmsStaff record);
 
     int updateByPrimaryKey(SmsStaff record);
 }

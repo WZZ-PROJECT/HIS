@@ -5,19 +5,26 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class BmsBillsRecord implements Serializable {
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "账单类型")
     private Integer type;
 
+    @ApiModelProperty(value = "账单号")
     private String billNo;
 
+    @ApiModelProperty(value = "账单穿件时间")
     private Date createTime;
 
+    @ApiModelProperty(value = "账单状态：1 正常")
     private Integer status;
 
+    @ApiModelProperty(value = "发票数")
     private Integer invoiceNum;
 
-    private Long registrationId;
+    @ApiModelProperty(value = "挂号ID")
+    private String registrationId;
 
     private String recordList;
 
@@ -71,11 +78,11 @@ public class BmsBillsRecord implements Serializable {
         this.invoiceNum = invoiceNum;
     }
 
-    public Long getRegistrationId() {
+    public String getRegistrationId() {
         return registrationId;
     }
 
-    public void setRegistrationId(Long registrationId) {
+    public void setRegistrationId(String registrationId) {
         this.registrationId = registrationId;
     }
 

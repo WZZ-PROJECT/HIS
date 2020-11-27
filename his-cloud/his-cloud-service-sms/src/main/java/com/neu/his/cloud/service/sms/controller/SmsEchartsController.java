@@ -36,6 +36,7 @@ public class SmsEchartsController {
         return CommonResult.success(smsStaffAmountStatisticsResult);
     }
 
+
     @ApiOperation(value = "统计各科室每日接待患者人数（近7日）")
     @RequestMapping(value = "/deptPatients", method = RequestMethod.GET)
     @ResponseBody

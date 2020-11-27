@@ -24,6 +24,35 @@ public class DmsMedicinePrescriptionRecord implements Serializable {
 
     private Long createStaffId;
 
+    public Integer getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(Integer frequency) {
+        this.frequency = frequency;
+    }
+
+    public Integer getUsageNum() {
+        return usageNum;
+    }
+
+    public void setUsageNum(Integer usageNum) {
+        this.usageNum = usageNum;
+    }
+
+    private Integer frequency;
+    private Integer usageNum;
+
+    public Integer getUsageNumUnit() {
+        return usageNumUnit;
+    }
+
+    public void setUsageNumUnit(Integer usageNumUnit) {
+        this.usageNumUnit = usageNumUnit;
+    }
+
+    private Integer usageNumUnit;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -114,6 +143,9 @@ public class DmsMedicinePrescriptionRecord implements Serializable {
         sb.append(", type=").append(type);
         sb.append(", createStaffId=").append(createStaffId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append(", frequency=").append(frequency);
+        sb.append(", usageNum=").append(usageNum);
+        sb.append(", usageNumUnit=").append(usageNumUnit);
         sb.append("]");
         return sb.toString();
     }

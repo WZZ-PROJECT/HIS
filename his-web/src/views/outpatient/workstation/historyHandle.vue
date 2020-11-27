@@ -1,8 +1,12 @@
 <template>
   <!-- 处置申请 -->
   <el-container>
+   <!-- <div :width="mainwidth">
+      <el-button type="primary" @click="print">打印</el-button>
+    </div>-->
   <el-aside :width="mainwidth" style="background:white;padding:0 10px 0 0">
     <el-table
+      id="historyHandle1"
     ref="multipleTable"
     :data="record"
     border
@@ -54,69 +58,6 @@
     </el-table-column>
   </el-table>
   </el-aside>
-  <transition name="el-zoom-in-left">
-  <el-main width="50%" v-show="isclose" style="border-style: dotted;border-width: 0px 0px 0px 1px;border-color:#C0C0C0;margin-top:-12px">
-     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="常用模板" name="first">
-        <el-table highlight-current-row @row-dblclick="addModel" @row-click="selectModel" stripe :data="checkmodels" height="230">
-          <el-table-column label="模板名">
-            <template slot-scope="scope">
-              {{scope.row.name}}
-            </template>
-          </el-table-column>
-          <el-table-column label="模板简介">
-            <template slot-scope="scope">
-              {{scope.row.aim}}
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-card v-show="onemodel.name!==undefined" class="box-card" shadow="never" body-style="font-size: 14px;font-family:'微软雅黑';width:350px">
-          <div slot="header" class="clearfix">
-            <span>模板详情</span>
-          </div>
-          <p><b>模板名:</b> {{onemodel.name}}</p>
-          <p><b>模板内容:</b></p>
-          <p v-for="(nondrug,index) in onemodel.nondruglist" :key="index"><b></b> {{nondrug.name}}</p>
-          <p><b>总金额：</b>{{onemodel.totalprice}} 元</p>
-        </el-card>
-     </el-tab-pane>
-     <el-tab-pane label="常用处置项" name="second">
-       <el-table :data="freqlist" highlight-current-row  @row-click="addfreitem">
-         <el-table-column label="项目名" prop="name"></el-table-column>
-         <el-table-column label="项目单价" prop="price"></el-table-column>
-         <el-table-column label="编码" prop="code"></el-table-column>
-       </el-table>
-     </el-tab-pane>
-    </el-tabs>
-  </el-main>
-  </transition>
-  <el-dialog title="检查目录" :visible.sync="dialogTableVisible" top="50px">
-    <div style="height:450px">
-    <span>搜索检查</span>
-    <el-input style="width:200px" v-model="search" placeholder="搜索检查"></el-input>
-    <el-table height="400px" @row-click="selectCheck" highlight-current-row :data="checkList.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())||data.code.toLowerCase().includes(search.toLowerCase()))" style="margin-top:20px">
-      <el-table-column property="name" label="项目名"></el-table-column>
-      <el-table-column property="code" label="项目编码"></el-table-column>
-      <el-table-column property="price" label="价格"></el-table-column>
-    </el-table>
-    </div>
-  </el-dialog>
-  <el-dialog title="填写检查要求" :visible.sync="demandVisible">
-    <div style="height:260px">
-      <el-form inline label-width="100px" >
-        <el-form-item label="项目编码"><el-input disabled placeholder=""  v-model="check.code"></el-input></el-form-item>
-        <el-form-item label="项目名称"><el-input disabled placeholder=""  v-model="check.name"></el-input></el-form-item>
-        <el-form-item label="执行科室" ><el-input disabled placeholder="" v-model="check.deptName"></el-input></el-form-item>
-        <el-form-item label="目的" ><el-input placeholder="" v-model="check.aim"></el-input></el-form-item>
-        <el-form-item label="要求" ><el-input placeholder="" v-model="check.demand"></el-input></el-form-item>
-        <el-form-item label="临床印象"><el-input placeholder=""  v-model="check.clinicalImpression"></el-input></el-form-item>
-        <el-form-item label="临床诊断" ><el-input placeholder="" v-model="check.clinicalDiagnosis"></el-input></el-form-item>
-        <el-form-item label="检查部位"><el-input placeholder=""  v-model="check.checkParts"></el-input></el-form-item>
-      </el-form>
-      <el-button type="danger" style="float:right" @click="demandVisible=false">取消</el-button>
-      <el-button type="primary" style="float:right;margin-right:10px" @click="submitDemand">确认</el-button>
-    </div>
-  </el-dialog>
   </el-container>
 </template>
 <script>
@@ -241,7 +182,6 @@ export default {
     },
     selectModel(val){
       this.onemodel = val
-      console.log(this.onemodel)
     },
     async getmodel(){
       let data = {}
@@ -293,7 +233,6 @@ export default {
     async listRecord(){
       list(this.patient.registrationId,2).then(res=>{
         this.record = res.data
-        console.log(this.record)
         this.record.forEach(item=>{
           this.checkList.filter(check=>{
             if(check.id===item.noDrugId){
@@ -317,7 +256,7 @@ export default {
     },
     handleClick(){
       this.$notify({
-        title: '暂无数据',
+        title: '检查',
         message: '您开立的项目中包含已开立的项目，请检查后重新提交！',
         type: 'warning',
         duration: 2000
@@ -373,7 +312,6 @@ export default {
     },
     async getNondrugList() {
       const response = await getNondrugList(this.listQuery)
-      console.log(response)
       this.checkList = response.data.list
       this.total = response.data.total
     },
@@ -406,7 +344,12 @@ export default {
           if(flag)
             this.record.push(val)
           else
-            alert('已存在该检查项目！')
+            this.$notify({
+              title: '提示',
+              message: '已存在该项目',
+              type: 'warning',
+              duration: 2000
+            })('已存在该检查项目！')
           this.dialogTableVisible = false
         })
     },
@@ -436,6 +379,16 @@ export default {
         this.mainwidth="80%"
       else
         this.mainwidth="65%"
+    },
+    print(e){
+      const subOutputRankPrint = document.getElementById('historyHandle1')
+      const newContent = subOutputRankPrint.innerHTML
+      const oldContent = document.body.innerHTML
+      document.body.innerHTML = newContent
+      window.print()
+      window.location.reload()
+      document.body.innerHTML = oldContent
+      return false
     }
   }
 }

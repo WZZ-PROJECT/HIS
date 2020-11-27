@@ -4,38 +4,38 @@
     <div class="filter-container">
       <!-- <el-input v-model="listQuery.id" placeholder="编码" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
       <el-input v-model="listQuery.name" placeholder="结算类别名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索结算类别
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
+     <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleAdd">
         新增结算类别
+      </el-button>-->
+      <el-button  :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        导出当前页结算类别
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出结算类别
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
+      <!--<el-button  :loading="downloadLoading" class="filter-item" type="danger" icon="el-icon-download" @click="handleSomeDelete">
         批量删除
-      </el-button>
+      </el-button>-->
     </div>
     <!--结算类别列表 -->
     <el-table v-loading="listLoading" :data="depList" style="width: 100%;margin-top:30px;" border @selection-change="changedep">
-      <el-table-column type="selection" width="55"></el-table-column>
+     <!-- <el-table-column type="selection" width="55"></el-table-column>-->
       <el-table-column prop="id" align="center" label="编号" width="220">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="结算类别" width="220">
+      <el-table-column align="center" label="结算类别" >
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作">
+    <!--  <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope.row)">修改</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
 
     <el-dialog :visible.sync="dialogVisible" width="500px" :title="dialogType==='edit'?'修改结算类别信息':'新增结算类别'" @close="getDeplist">
@@ -70,6 +70,7 @@ export default {
   components: {Pagination},
   data() {
     return {
+      allSettleCat:[],
       SettleCatList:[],
       SettleCat:{},
       depart: Object.assign({},defaultDepart),
@@ -93,7 +94,7 @@ export default {
         name: '',
         status:'',
         page: 1,
-        limit: 20
+        limit: 10
       },
       downloadLoading: false,
       rules:{
@@ -115,16 +116,18 @@ export default {
     async getDeplist() {
       this.listLoading = true
       const response = await getSettleCatlist(this.listQuery)
-      console.log(response)
+
       this.depList = response.data.list
       this.total = response.data.total
       this.listLoading = false
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.listQuery.limit = 10
       this.getDeplist()
     },
     handleAdd() {
+      this.all()
       this.resetTemp()
       this.dialogType = 'new'
       this.dialogVisible = true
@@ -134,6 +137,7 @@ export default {
       })
     },
     handleEdit(row) {
+      this.all()
       this.resetTemp()
       this.depart = Object.assign({}, row) // copy obj
       this.dialogType = 'edit'
@@ -166,7 +170,7 @@ export default {
       if (this.deplistref.length===0){
         this.$notify({
           title: '提示',
-          message: "请选择结算累别！",
+          message: "请选择结算类别！",
           type: 'warning',
           duration: 2000
         })
@@ -185,7 +189,7 @@ export default {
           delsom=delsom+(this.deplistref[i].id)
       }
 
-      console.log(delsom)
+
         if(delsom != null && delsom!= ''){
           deleteSettleCat(delsom).then(res=>{
               this.$notify({
@@ -232,7 +236,7 @@ export default {
       }
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['编号', '结算类别名']
+        const tHeader = ['编号', '结算类别']
         const filterVal = ['id', 'name']
         const data = this.formatJson(filterVal, res.data)
         excel.export_json_to_excel({
@@ -249,7 +253,19 @@ export default {
           const isEdit = this.dialogType === 'edit'
           this.listLoading=true
           if(isEdit){
-            console.log(this.depart.id)
+            let name = []
+            this.allSettleCat.forEach(item=>{
+              name.push(item.name)
+            })
+            if (name.join(',').includes(this.depart.name)) {
+              this.$notify({
+                title: '提示',
+                message: "存在该名称！",
+                type: 'warning',
+                duration: 2000
+              })
+              return;
+            }
             updateSettleCat(this.depart).then(res=>{
                 this.getDeplist()
                 this.$notify({
@@ -261,6 +277,19 @@ export default {
             })
             this.dialogVisible=false
           }else{
+            let name = []
+            this.allSettleCat.forEach(item=>{
+              name.push(item.name)
+            })
+            if (name.join(',').includes(this.depart.name)) {
+              this.$notify({
+                title: '提示',
+                message: "存在该名称！",
+                type: 'warning',
+                duration: 2000
+              })
+              return;
+            }
             createSettleCat(this.depart).then(res=>{
               this.getDeplist()
               this.$notify({
@@ -275,6 +304,12 @@ export default {
         }
       })
     },
+    all() {
+      this.allSettleCat=[]
+      getAllSettleCat().then(res=>{
+        this.allSettleCat = res.data
+      })
+    }
   }
 }
 </script>

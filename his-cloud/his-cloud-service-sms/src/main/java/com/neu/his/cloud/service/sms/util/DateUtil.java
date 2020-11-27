@@ -1,5 +1,9 @@
 package com.neu.his.cloud.service.sms.util;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +34,7 @@ public class DateUtil {
     /**
      * 计算日期差
      */
-    public static Integer getDateSubtraction(Date startDate, Date endDate) {
+    /*public static Integer getDateSubtraction(Date startDate, Date endDate) {
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
         calendar1.setTime(startDate);
@@ -38,7 +42,22 @@ public class DateUtil {
         int start = calendar1.get(Calendar.DATE);
         int end = calendar2.get(Calendar.DATE);
         return (end - start);
+    }*/
+
+    public static  Integer getDateSubtraction(Date startDate, Date endDate) {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        String format = simpleDateFormat.format(startDate);
+        String format1 = simpleDateFormat.format(endDate);
+
+        // 指定转换格式
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        LocalDate startDate1 = LocalDate.parse(format,fmt);
+        LocalDate endDate1 = LocalDate.parse(format1,fmt);
+
+        return  (int) (startDate1.until(endDate1, ChronoUnit.DAYS));
     }
+
     /**
      * 将Date类型的时间中设置为今天23.59.59
      */

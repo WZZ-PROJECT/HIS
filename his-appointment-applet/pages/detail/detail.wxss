@@ -1,0 +1,28 @@
+/* pages/detail/detail.wxss */
+.left{
+  float: left;
+}
+.right{
+  float: right;
+}
+.btn{
+  margin-top: 50%;
+  background-color: #F1C232;
+}
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+.user-buttons {
+  margin-top: 100rpx;
+  display: flex;
+  justify-content: space-around;
+}
+.detail-page {
+  font-size: 14px;
+}
+.van-button {
+  width: 180rpx !important;
+}

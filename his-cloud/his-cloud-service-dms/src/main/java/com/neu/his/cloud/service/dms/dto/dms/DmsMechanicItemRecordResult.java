@@ -34,12 +34,17 @@ public class DmsMechanicItemRecordResult  implements Serializable {
         String checkResult;
         @ApiModelProperty(value = "检查检验结果img")
         List<String> resultImgUrlList;
-       @ApiModelProperty(value = "病人姓名")
+
+        @ApiModelProperty(value = "病人ID")
+        Long patientId;
+        @ApiModelProperty(value = "病人姓名")
         String patientName;
         @ApiModelProperty(value = "病人年龄")
         String patientAgeStr;
         @ApiModelProperty(value = "病人性别")
         Integer patientGender;
+        @ApiModelProperty(value = "身份证号")
+        String identificationNo;
 
         @ApiModelProperty(value = "金额")
         BigDecimal amount;
